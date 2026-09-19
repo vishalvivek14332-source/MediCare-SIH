@@ -63,6 +63,7 @@
       </a>
     </li>
 
+    {% if active_page in ['ai_case_taking', 'booking'] %}
     <li>
       <a href="/ai-case-taking" class="{% if active_page == 'ai_case_taking' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -85,6 +86,7 @@
         <span>Clinic Token / Booking</span>
       </a>
     </li>
+    {% endif %}
 
     <li>
       <a href="/profile" class="{% if active_page == 'profile' %}active{% endif %}">
@@ -107,24 +109,8 @@
     </li>
   </ul>
 
-  <!-- Bottom Promotional & Assistance Card matching reference images -->
-  <div class="abdm-sidebar-bottom-card">
-    <div class="card-art">
-      <svg viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Hospital building & heart cross icon -->
-        <rect x="25" y="20" width="50" height="50" rx="4" fill="#DBEAFE"/>
-        <rect x="35" y="32" width="8" height="10" rx="1" fill="#3B82F6"/>
-        <rect x="57" y="32" width="8" height="10" rx="1" fill="#3B82F6"/>
-        <rect x="35" y="48" width="8" height="10" rx="1" fill="#3B82F6"/>
-        <rect x="57" y="48" width="8" height="10" rx="1" fill="#3B82F6"/>
-        <!-- Red/Blue cross badge -->
-        <circle cx="50" cy="18" r="12" fill="#0066E6"/>
-        <rect x="47" y="10" width="6" height="16" rx="1" fill="#FFFFFF"/>
-        <rect x="42" y="15" width="16" height="6" rx="1" fill="#FFFFFF"/>
-      </svg>
-    </div>
-    <div class="card-title">Your Health, Our Priority</div>
-    <div class="card-desc">Book appointments, save time, get better care across India.</div>
-    <div class="accent-bar"></div>
+  <!-- Bottom Promotional Card matching reference images -->
+  <div class="abdm-sidebar-bottom-card" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none; margin-top:auto;">
+    <img src="{{ url_for('static', filename='images/sidebar_card_exact.png') }}?v=1" alt="Together for a Healthier Tomorrow - Share. Access. Care." style="width:100%; border-radius:12px; display:block; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
   </div>
 </aside>

@@ -3,304 +3,338 @@
 {% block title %}Shared Records - CareBridge Digital Health Mission{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<div class="abdm-breadcrumb">
-  <a href="/">Home</a>
-  <span class="sep">&gt;</span>
-  <a href="/health-records">My Health Records</a>
-  <span class="sep">&gt;</span>
-  <span class="current">Shared Records</span>
+<!-- Breadcrumb matching SharedRecords.png -->
+<div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#475569; margin-bottom:18px;">
+  <a href="/" style="color:#475569; text-decoration:none;">Home</a>
+  <span style="color:#94A3B8; font-size:11px;">&gt;</span>
+  <a href="/health-records" style="color:#475569; text-decoration:none;">My Health Records</a>
+  <span style="color:#94A3B8; font-size:11px;">&gt;</span>
+  <span style="color:#002B5C; font-weight:600;">Shared Records</span>
 </div>
 
-<!-- Page Header & Share Action -->
-<div class="abdm-page-header" style="align-items: flex-start;">
-  <div>
-    <h1 class="abdm-page-title">Shared Records</h1>
-    <p class="abdm-page-subtitle">Manage who can access your health records.</p>
-  </div>
-  
-  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:16px;">
-    <button class="abdm-btn-primary" onclick="openShareModal()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="18" cy="5" r="3"></circle>
-        <circle cx="6" cy="12" r="3"></circle>
-        <circle cx="18" cy="19" r="3"></circle>
-        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-      </svg>
-      Share New Record
-    </button>
-  </div>
-</div>
+<!-- Top Section Grid: Left (Title + Share Button + Tabs) | Right (Why Share Records? Card) -->
+<div style="display:grid; grid-template-columns: 1fr 410px; gap: 28px; margin-bottom: 22px; align-items: stretch;">
+  <!-- Left Column: Title Row + Tabs -->
+  <div style="display:flex; flex-direction:column; justify-content:space-between;">
+    <!-- Title & Share Button Row -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 24px;">
+      <div>
+        <h1 style="font-family:var(--font-heading); font-size:28px; font-weight:800; color:#002B5C; margin:0 0 6px 0; letter-spacing:-0.5px;">Shared Records</h1>
+        <p style="font-size:14px; color:#475569; margin:0;">Manage who can access your health records.</p>
+      </div>
 
-<!-- Top Two-Section Grid: Tabs + Why Share Records Banner -->
-<div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; margin-bottom: 20px; align-items: end;">
-  <!-- Tabs -->
-  <div class="abdm-tabs" style="margin-bottom:0;">
-    <button class="abdm-tab-item active" onclick="switchShareTab('people', this)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-      </svg>
-      People &amp; Organisations (6)
-    </button>
-    <button class="abdm-tab-item" onclick="switchShareTab('requests', this)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-      </svg>
-      Share Requests
-    </button>
+      <div>
+        <button class="abdm-btn-primary" onclick="openShareModal()" style="background:#0066E6; border:none; border-radius:8px; padding:11px 20px; color:#FFFFFF; font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0, 102, 230, 0.25);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          Share New Record
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs Container -->
+    <div style="display:flex; align-items:flex-end; gap:12px;">
+      <!-- Active Tab: People & Organisations -->
+      <button class="shared-tab-btn active" id="tabPeople" onclick="switchShareTab('people', this)" style="padding:12px 24px; background:#FFFFFF; border:1px solid #E2E8F0; border-bottom:3px solid #0066E6; border-radius:8px 8px 0 0; color:#0066E6; font-weight:600; font-size:14.5px; display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+        </svg>
+        <span>People &amp; Organisations</span>
+        <span style="font-size:16px; margin-left:2px;">&middot;</span>
+      </button>
+
+      <!-- Inactive Tab: Share Requests -->
+      <button class="shared-tab-btn" id="tabRequests" onclick="switchShareTab('requests', this)" style="padding:10px 20px; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; color:#475569; font-weight:500; font-size:14.5px; display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>Share Requests</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Why Share Records Box (matching SharedRecords.png) -->
-  <div style="background:#F0F7FF; border:1px solid #D0E4FA; border-radius:var(--radius-lg); padding:16px 20px;">
-    <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#002B5C; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#0066E6" stroke="#FFFFFF" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+  <!-- Right Column: Why Share Records? Card (matching SharedRecords.png) -->
+  <div style="background:#F0F7FF; border:1px solid #D8EAFD; border-radius:12px; padding:18px 20px; display:flex; flex-direction:column; justify-content:center;">
+    <div style="font-family:var(--font-heading); font-size:14.5px; font-weight:700; color:#002B5C; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+      <span style="width:20px; height:20px; border-radius:50%; background:#0066E6; color:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; font-family:sans-serif;">i</span>
       Why Share Records?
     </div>
-    <ul style="list-style:none; display:flex; flex-direction:column; gap:6px; font-size:12px; color:#12345B;">
-      <li style="display:flex; align-items:center; gap:6px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        Helps your doctors provide better care
+    <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12.5px; color:#1E293B;">
+      <li style="display:flex; align-items:center; gap:8px;">
+        <span style="width:16px; height:16px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        <span>Helps your doctors provide better care</span>
       </li>
-      <li style="display:flex; align-items:center; gap:6px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        Avoids repeating tests
+      <li style="display:flex; align-items:center; gap:8px;">
+        <span style="width:16px; height:16px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        <span>Avoids repeating tests</span>
       </li>
-      <li style="display:flex; align-items:center; gap:6px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        Ensures continuity of care across hospitals
+      <li style="display:flex; align-items:center; gap:8px;">
+        <span style="width:16px; height:16px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        <span>Ensures continuity of care across hospitals</span>
       </li>
-      <li style="display:flex; align-items:center; gap:6px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        You remain in control of your data
+      <li style="display:flex; align-items:center; gap:8px;">
+        <span style="width:16px; height:16px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        <span>You remain in control of your data</span>
       </li>
     </ul>
   </div>
 </div>
 
-<!-- Shared Records Table -->
-<div class="abdm-table-card">
-  <table class="abdm-table">
+<!-- Shared Records Table Card -->
+<div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,0.04); overflow:hidden; margin-bottom:24px;">
+  <table style="width:100%; border-collapse:collapse; text-align:left;">
     <thead>
-      <tr>
-        <th>Name / Organisation</th>
-        <th>Type</th>
-        <th>Shared Records</th>
-        <th>Shared On</th>
-        <th>Access Validity</th>
-        <th>Status</th>
-        <th style="text-align: right;">Actions</th>
+      <tr style="background:#F8FAFC; border-bottom:1px solid #E2E8F0;">
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Name / Organisation</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Type</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Shared Records</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Shared On</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Access Validity</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569;">Status</th>
+        <th style="padding:14px 20px; font-size:13px; font-weight:600; color:#475569; text-align:right; padding-right:24px;">Actions</th>
       </tr>
     </thead>
     <tbody id="sharedRecordsTableBody">
-      <!-- Row 1 -->
-      <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="avatar-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
+      <!-- Row 1: Dr. Meera Nair -->
+      <tr style="border-bottom:1px solid #F1F5F9;">
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#1E3A5F; display:flex; align-items:center; justify-content:center; color:#FFFFFF; flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             </div>
             <div>
-              <div class="title">Dr. Meera Nair</div>
-              <div class="subtitle">KPHC Thalassery</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">Dr. Meera Nair</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">KPHC Thalassery</div>
             </div>
           </div>
         </td>
-        <td>Doctor</td>
-        <td>Lab Reports, Prescriptions</td>
-        <td>05 Sep 2025</td>
-        <td>6 months (Valid till 05 Mar 2026)</td>
-        <td>
-          <span class="abdm-badge badge-success">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Doctor</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">Lab Reports,<br>Prescriptions</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">05 Sep 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">6 months</div>
+          <div style="color:#64748B; font-size:12px; margin-top:2px;">(Valid till 05 Mar 2026)</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#DCFCE7; color:#15803D; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <span style="width:15px; height:15px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
             Active
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('Dr. Meera Nair')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('Dr. Meera Nair')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('Dr. Meera Nair')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('Dr. Meera Nair')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
 
-      <!-- Row 2 -->
-      <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="facility-icon" style="background:#EBF5FF; color:#0066E6;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path></svg>
+      <!-- Row 2: Govt. District Hospital Kannur -->
+      <tr style="border-bottom:1px solid #F1F5F9;">
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:8px; border:1.5px solid #0066E6; background:#FFFFFF; display:flex; align-items:center; justify-content:center; color:#0066E6; flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"></rect><rect x="6" y="6" width="4" height="4" rx="1"></rect><rect x="14" y="6" width="4" height="4" rx="1"></rect><rect x="10" y="14" width="4" height="4" rx="1"></rect><path d="M8 10v2h8v-2"></path><path d="M12 12v2"></path></svg>
             </div>
             <div>
-              <div class="title">Govt. District Hospital Kannur</div>
-              <div class="subtitle">Kannur, Kerala</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">Govt. District Hospital</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">Kannur</div>
             </div>
           </div>
         </td>
-        <td>Hospital</td>
-        <td>All Records</td>
-        <td>12 Aug 2025</td>
-        <td>1 year (Valid till 12 Aug 2026)</td>
-        <td>
-          <span class="abdm-badge badge-success">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Hospital</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">All Records</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">12 Aug 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">1 year</div>
+          <div style="color:#64748B; font-size:12px; margin-top:2px;">(Valid till 12 Aug 2026)</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#DCFCE7; color:#15803D; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <span style="width:15px; height:15px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
             Active
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('Govt. District Hospital Kannur')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('Govt. District Hospital Kannur')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('Govt. District Hospital Kannur')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('Govt. District Hospital Kannur')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
 
-      <!-- Row 3 -->
-      <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="facility-icon" style="background:#EAFBF7; color:#0D9488;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"></path><path d="M3 22h18"></path><path d="M14 22a7 7 0 1 0-14 0"></path><path d="M9 14h2"></path><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"></path></svg>
+      <!-- Row 3: Sun Diagnostics Thalassery -->
+      <tr style="border-bottom:1px solid #F1F5F9;">
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:8px; border:1.5px solid #0066E6; background:#FFFFFF; display:flex; align-items:center; justify-content:center; color:#0066E6; flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.17 19.3A2 2 0 0 0 5.86 22h12.28a2 2 0 0 0 1.69-2.7L14 9.31V2"></path><line x1="8.5" y1="2" x2="15.5" y2="2"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg>
             </div>
             <div>
-              <div class="title">Sun Diagnostics</div>
-              <div class="subtitle">Thalassery</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">Sun Diagnostics</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">Thalassery</div>
             </div>
           </div>
         </td>
-        <td>Diagnostic Centre</td>
-        <td>Imaging Reports</td>
-        <td>21 Jul 2025</td>
-        <td>3 months (Valid till 21 Oct 2025)</td>
-        <td>
-          <span class="abdm-badge badge-success">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Diagnostic Centre</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">Imaging Reports</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">21 Jul 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">3 months</div>
+          <div style="color:#64748B; font-size:12px; margin-top:2px;">(Valid till 21 Oct 2025)</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#DCFCE7; color:#15803D; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <span style="width:15px; height:15px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
             Active
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('Sun Diagnostics')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('Sun Diagnostics')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('Sun Diagnostics')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('Sun Diagnostics')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
 
-      <!-- Row 4 -->
-      <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="avatar-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-              </svg>
+      <!-- Row 4: My Family (Parent) Biju Mathew -->
+      <tr style="border-bottom:1px solid #F1F5F9;">
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#1E3A5F; display:flex; align-items:center; justify-content:center; color:#FFFFFF; flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             </div>
             <div>
-              <div class="title">My Family (Parent)</div>
-              <div class="subtitle">Biju Mathew</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">My Family (Parent)</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">Biju Mathew</div>
             </div>
           </div>
         </td>
-        <td>Family Member</td>
-        <td>Selected Records</td>
-        <td>01 Jul 2025</td>
-        <td>Permanent</td>
-        <td>
-          <span class="abdm-badge badge-success">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Family Member</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">Selected Records</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">01 Jul 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">Permanent</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#DCFCE7; color:#15803D; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <span style="width:15px; height:15px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
             Active
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('Biju Mathew')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('Biju Mathew')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('Biju Mathew')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('Biju Mathew')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
 
-      <!-- Row 5 -->
-      <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="facility-icon" style="background:#EBF5FF; color:#0066E6;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      <!-- Row 5: National Health Authority (ABDM) -->
+      <tr style="border-bottom:1px solid #F1F5F9;">
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#0066E6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#0066E6"/><path d="M9 12l2 2 4-4" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
             </div>
             <div>
-              <div class="title">National Health Authority (ABDM)</div>
-              <div class="subtitle">MoHFW, Govt of India</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">National Health Authority</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">(ABDM)</div>
             </div>
           </div>
         </td>
-        <td>Government</td>
-        <td>Vaccination Records</td>
-        <td>10 Jan 2025</td>
-        <td>Permanent</td>
-        <td>
-          <span class="abdm-badge badge-success">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Government</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">Vaccination Records</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">10 Jan 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">Permanent</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#DCFCE7; color:#15803D; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <span style="width:15px; height:15px; border-radius:50%; background:#16A34A; display:inline-flex; align-items:center; justify-content:center;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
             Active
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('National Health Authority')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('National Health Authority')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('National Health Authority')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('National Health Authority')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
 
-      <!-- Row 6 -->
+      <!-- Row 6: Apollo Hospitals Kochi -->
       <tr>
-        <td>
-          <div class="table-entity-cell">
-            <div class="facility-icon" style="background:#FDF5EA; color:#EA580C;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect></svg>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:36px; height:36px; border-radius:8px; border:1.5px solid #CBD5E1; background:#F8FAFC; display:flex; align-items:center; justify-content:center; color:#1E3A5F; flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v2h20V7L12 2zm-8 8v9h3v-9H4zm5 0v9h3v-9H9zm5 0v9h3v-9h-3zm5 0v9h3v-9h-3zM2 20v2h20v-2H2z"/></svg>
             </div>
             <div>
-              <div class="title">Apollo Hospitals Kochi</div>
-              <div class="subtitle">Kochi, Kerala</div>
+              <div style="font-weight:600; color:#1E293B; font-size:14px;">Apollo Hospitals</div>
+              <div style="font-size:12.5px; color:#64748B; margin-top:2px;">Kochi</div>
             </div>
           </div>
         </td>
-        <td>Hospital</td>
-        <td>Discharge Summary, Lab Reports</td>
-        <td>15 Jun 2025</td>
-        <td>6 months (Valid till 15 Dec 2025)</td>
-        <td>
-          <span class="abdm-badge badge-expired">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; vertical-align:middle;">Hospital</td>
+        <td style="padding:16px 20px; color:#1E293B; font-size:13px; line-height:1.4; vertical-align:middle;">Discharge Summary,<br>Lab Reports</td>
+        <td style="padding:16px 20px; color:#475569; font-size:13.5px; white-space:nowrap; vertical-align:middle;">15 Jun 2025</td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <div style="color:#1E293B; font-weight:500; font-size:13.5px;">6 months</div>
+          <div style="color:#64748B; font-size:12px; margin-top:2px;">(Valid till 15 Dec 2025)</div>
+        </td>
+        <td style="padding:16px 20px; vertical-align:middle;">
+          <span style="display:inline-flex; align-items:center; gap:6px; background:#F1F5F9; color:#475569; font-size:12.5px; font-weight:600; padding:4px 12px; border-radius:9999px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             Expired
           </span>
         </td>
-        <td>
-          <div class="table-actions" style="justify-content: flex-end;">
-            <button class="table-action-link" onclick="viewSharedDetails('Apollo Hospitals Kochi')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <td style="padding:16px 20px; text-align:right; vertical-align:middle; padding-right:24px;">
+          <div style="display:inline-flex; align-items:center; gap:20px;">
+            <a href="javascript:void(0)" onclick="viewSharedDetails('Apollo Hospitals Kochi')" style="display:inline-flex; align-items:center; gap:6px; color:#0066E6; font-size:13.5px; font-weight:600; text-decoration:none;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               View
-            </button>
-            <button class="table-action-menu-btn" onclick="openRevokeModal('Apollo Hospitals Kochi')">⋮</button>
+            </a>
+            <button onclick="openRevokeModal('Apollo Hospitals Kochi')" style="background:none; border:none; color:#64748B; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;">⋮</button>
           </div>
         </td>
       </tr>
@@ -308,24 +342,28 @@
   </table>
 </div>
 
-<!-- Bottom Banner (matching SharedRecords.png) -->
-<div class="abdm-info-banner">
-  <div class="banner-left">
-    <div class="banner-icon-circle" style="background:#0066E6;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+<!-- Bottom Banner: Your Data. Your Control. (matching SharedRecords.png) -->
+<div style="background:#EFF6FF; border:1px solid #DBEAFE; border-radius:12px; padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+  <div style="display:flex; align-items:center; gap:16px;">
+    <!-- Solid blue lock glyph matching screenshot -->
+    <div style="width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="#0066E6">
+        <path d="M19 11h-1V7a6 6 0 0 0-12 0v4H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-11-4a4 4 0 0 1 8 0v4H8V7z"/>
       </svg>
     </div>
     <div>
-      <div class="banner-title">Your Data. Your Control.</div>
-      <div class="banner-desc">You can view, edit or revoke access at any time. Your health records are shared only with your consent.</div>
+      <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:#002B5C; margin-bottom:3px;">Your Data. Your Control.</div>
+      <div style="font-size:13px; color:#334155;">You can view, edit or revoke access at any time. Your health records are shared only with your consent.</div>
     </div>
   </div>
-  <div class="banner-right">
-    <a href="/help" class="abdm-btn-secondary" style="border-color:#0066E6; color:#0066E6; background:#FFFFFF;">
+  <div>
+    <a href="/settings" style="display:inline-flex; align-items:center; gap:8px; background:#FFFFFF; border:1.5px solid #0066E6; color:#0066E6; font-size:13.5px; font-weight:600; padding:9px 18px; border-radius:8px; text-decoration:none;">
       Learn More
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
     </a>
   </div>
 </div>
@@ -402,9 +440,32 @@
   let targetRevoke = '';
 
   function switchShareTab(tab, el) {
-    document.querySelectorAll('.abdm-tab-item').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
-    showToast(`Viewing ${tab === 'people' ? 'People & Organisations' : 'Pending Share Requests'}`);
+    const tabPeople = document.getElementById('tabPeople');
+    const tabRequests = document.getElementById('tabRequests');
+    
+    if (tab === 'people') {
+      tabPeople.style.color = '#0066E6';
+      tabPeople.style.fontWeight = '600';
+      tabPeople.style.borderBottom = '3px solid #0066E6';
+      tabPeople.style.borderRadius = '8px 8px 0 0';
+      
+      tabRequests.style.color = '#475569';
+      tabRequests.style.fontWeight = '500';
+      tabRequests.style.borderBottom = '1px solid #E2E8F0';
+      tabRequests.style.borderRadius = '8px';
+      showToast('Viewing People & Organisations (6)');
+    } else {
+      tabRequests.style.color = '#0066E6';
+      tabRequests.style.fontWeight = '600';
+      tabRequests.style.borderBottom = '3px solid #0066E6';
+      tabRequests.style.borderRadius = '8px 8px 0 0';
+      
+      tabPeople.style.color = '#475569';
+      tabPeople.style.fontWeight = '500';
+      tabPeople.style.borderBottom = '1px solid #E2E8F0';
+      tabPeople.style.borderRadius = '8px';
+      showToast('No pending share requests at this time');
+    }
   }
 
   function openShareModal() {
@@ -454,7 +515,7 @@
   }
 
   function viewSharedDetails(name) {
-    alert(`Active Sharing Artifact:\nEntity: ${name}\nConsent status: Active\nAudit Trail: Consent granted by patient.`);
+    showToast(`Viewing consent audit log for: ${name}`, 'info');
   }
 </script>
 {% endblock %}
