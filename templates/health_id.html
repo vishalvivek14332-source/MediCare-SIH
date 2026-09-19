@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Digital Health ID Card - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/profile">Profile</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Health ID Card</span>
+</div>
+
+<!-- Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Digital Health ID Card (ABHA)</h1>
+    <p class="abdm-page-subtitle">Your unique digital health identity under CareBridge Digital Health Mission.</p>
+  </div>
+  <div style="display:flex; gap:12px;">
+    <button class="abdm-btn-secondary" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print / Download Card
+    </button>
+    <a href="/linked-facilities" class="abdm-btn-primary">
+      Manage Linked Facilities
+    </a>
+  </div>
+</div>
+
+<!-- Center Card Canvas -->
+<div style="display:flex; justify-content:center; margin:32px 0;">
+  
+  <!-- Digital Health ID Card Mockup (Official Format) -->
+  <div style="width:100%; max-width:520px; background:#FFFFFF; border:2px solid #003B73; border-radius:16px; overflow:hidden; box-shadow:var(--shadow-lg);">
+    
+    <!-- Top Card Header Band -->
+    <div style="background:#003B73; color:#FFFFFF; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:32px; height:32px; border-radius:6px; background:#FFFFFF; display:flex; align-items:center; justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" fill="#0066E6"/>
+            <rect x="44" y="20" width="12" height="60" rx="3" fill="#FFFFFF"/>
+            <rect x="20" y="44" width="60" height="12" rx="3" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading); font-size:13px; font-weight:800; letter-spacing:0.5px;">CAREBRIDGE DIGITAL HEALTH MISSION</div>
+          <div style="font-size:10px; color:#93C5FD;">NATIONAL HEALTH ID CARD &bull; GOVT OF INDIA</div>
+        </div>
+      </div>
+      <span style="font-size:11px; font-weight:700; background:#16A05D; color:#FFFFFF; padding:3px 8px; border-radius:12px;">ACTIVE</span>
+    </div>
+
+    <!-- Card Body -->
+    <div style="padding:24px 28px; display:grid; grid-template-columns:120px 1fr; gap:24px; align-items:center; background:#FBFDFF;">
+      
+      <!-- Left: Photo & QR -->
+      <div style="text-align:center;">
+        <div style="width:90px; height:100px; background:#DBEAFE; border:2px solid #93C5FD; border-radius:8px; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:#1E40AF; font-size:36px; font-weight:800;">
+          S
+        </div>
+        
+        <!-- QR Code -->
+        <div style="width:80px; height:80px; margin:0 auto; background:#FFFFFF; padding:4px; border:1px solid #CBD5E1; border-radius:6px;">
+          <svg viewBox="0 0 100 100" fill="#12345B" style="width:100%; height:100%;">
+            <rect x="5" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
+            <rect x="13" y="13" width="14" height="14"/>
+            <rect x="65" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
+            <rect x="73" y="13" width="14" height="14"/>
+            <rect x="5" y="65" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
+            <rect x="13" y="73" width="14" height="14"/>
+            <rect x="45" y="45" width="12" height="12"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right: Demographic Data -->
+      <div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px; color:#5F7187; text-transform:uppercase;">Full Name</div>
+          <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">Sajil Binu / Alex Mathew</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; font-size:12.5px;">
+          <div>
+            <span style="color:#5F7187; display:block; font-size:11px;">ABHA Number</span>
+            <strong style="font-family:monospace; color:#0066E6;">91-XXXX-XXXX-1234</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187; display:block; font-size:11px;">Health ID / ABHA Address</span>
+            <strong style="color:#12345B;">CB-2026-001245</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187; display:block; font-size:11px;">Date of Birth</span>
+            <strong style="color:#12345B;">12 Mar 2002</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187; display:block; font-size:11px;">Gender / Blood Group</span>
+            <strong style="color:#12345B;">Male / O+</strong>
+          </div>
+        </div>
+
+        <div style="font-size:11px; color:#5F7187; padding-top:8px; border-top:1px solid #E2E8F0;">
+          Mobile: +91 98765 43210 &bull; State: Kerala
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Card Footer Band -->
+    <div style="background:#F1F5F9; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#475569; border-top:1px solid #E2E8F0;">
+      <span>Linked Facilities: <strong>3</strong> &bull; Active Shares: <strong>1</strong></span>
+      <span style="color:#0066E6; font-weight:600; cursor:pointer;" onclick="navigator.clipboard.writeText('CB-2026-001245'); showToast('Copied Health ID')">📋 Copy ID</span>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

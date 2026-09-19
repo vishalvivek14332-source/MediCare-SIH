@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+
+{% block title %}Shared Records - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Shared Records</span>
+</div>
+
+<!-- Page Header & Share Action -->
+<div class="abdm-page-header" style="align-items: flex-start;">
+  <div>
+    <h1 class="abdm-page-title">Shared Records</h1>
+    <p class="abdm-page-subtitle">Manage who can access your health records.</p>
+  </div>
+  
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:16px;">
+    <button class="abdm-btn-primary" onclick="openShareModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+      Share New Record
+    </button>
+  </div>
+</div>
+
+<!-- Top Two-Section Grid: Tabs + Why Share Records Banner -->
+<div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; margin-bottom: 20px; align-items: end;">
+  <!-- Tabs -->
+  <div class="abdm-tabs" style="margin-bottom:0;">
+    <button class="abdm-tab-item active" onclick="switchShareTab('people', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+      </svg>
+      People &amp; Organisations (6)
+    </button>
+    <button class="abdm-tab-item" onclick="switchShareTab('requests', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      Share Requests
+    </button>
+  </div>
+
+  <!-- Why Share Records Box (matching SharedRecords.png) -->
+  <div style="background:#F0F7FF; border:1px solid #D0E4FA; border-radius:var(--radius-lg); padding:16px 20px;">
+    <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#002B5C; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#0066E6" stroke="#FFFFFF" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      Why Share Records?
+    </div>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:6px; font-size:12px; color:#12345B;">
+      <li style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Helps your doctors provide better care
+      </li>
+      <li style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Avoids repeating tests
+      </li>
+      <li style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Ensures continuity of care across hospitals
+      </li>
+      <li style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A05D" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        You remain in control of your data
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Shared Records Table -->
+<div class="abdm-table-card">
+  <table class="abdm-table">
+    <thead>
+      <tr>
+        <th>Name / Organisation</th>
+        <th>Type</th>
+        <th>Shared Records</th>
+        <th>Shared On</th>
+        <th>Access Validity</th>
+        <th>Status</th>
+        <th style="text-align: right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="sharedRecordsTableBody">
+      <!-- Row 1 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="avatar-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="title">Dr. Meera Nair</div>
+              <div class="subtitle">KPHC Thalassery</div>
+            </div>
+          </div>
+        </td>
+        <td>Doctor</td>
+        <td>Lab Reports, Prescriptions</td>
+        <td>05 Sep 2025</td>
+        <td>6 months (Valid till 05 Mar 2026)</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Active
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('Dr. Meera Nair')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('Dr. Meera Nair')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 2 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="facility-icon" style="background:#EBF5FF; color:#0066E6;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path></svg>
+            </div>
+            <div>
+              <div class="title">Govt. District Hospital Kannur</div>
+              <div class="subtitle">Kannur, Kerala</div>
+            </div>
+          </div>
+        </td>
+        <td>Hospital</td>
+        <td>All Records</td>
+        <td>12 Aug 2025</td>
+        <td>1 year (Valid till 12 Aug 2026)</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Active
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('Govt. District Hospital Kannur')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('Govt. District Hospital Kannur')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 3 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="facility-icon" style="background:#EAFBF7; color:#0D9488;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"></path><path d="M3 22h18"></path><path d="M14 22a7 7 0 1 0-14 0"></path><path d="M9 14h2"></path><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"></path></svg>
+            </div>
+            <div>
+              <div class="title">Sun Diagnostics</div>
+              <div class="subtitle">Thalassery</div>
+            </div>
+          </div>
+        </td>
+        <td>Diagnostic Centre</td>
+        <td>Imaging Reports</td>
+        <td>21 Jul 2025</td>
+        <td>3 months (Valid till 21 Oct 2025)</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Active
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('Sun Diagnostics')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('Sun Diagnostics')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 4 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="avatar-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="title">My Family (Parent)</div>
+              <div class="subtitle">Biju Mathew</div>
+            </div>
+          </div>
+        </td>
+        <td>Family Member</td>
+        <td>Selected Records</td>
+        <td>01 Jul 2025</td>
+        <td>Permanent</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Active
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('Biju Mathew')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('Biju Mathew')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 5 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="facility-icon" style="background:#EBF5FF; color:#0066E6;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <div class="title">National Health Authority (ABDM)</div>
+              <div class="subtitle">MoHFW, Govt of India</div>
+            </div>
+          </div>
+        </td>
+        <td>Government</td>
+        <td>Vaccination Records</td>
+        <td>10 Jan 2025</td>
+        <td>Permanent</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Active
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('National Health Authority')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('National Health Authority')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 6 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <div class="facility-icon" style="background:#FDF5EA; color:#EA580C;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect></svg>
+            </div>
+            <div>
+              <div class="title">Apollo Hospitals Kochi</div>
+              <div class="subtitle">Kochi, Kerala</div>
+            </div>
+          </div>
+        </td>
+        <td>Hospital</td>
+        <td>Discharge Summary, Lab Reports</td>
+        <td>15 Jun 2025</td>
+        <td>6 months (Valid till 15 Dec 2025)</td>
+        <td>
+          <span class="abdm-badge badge-expired">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Expired
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <button class="table-action-link" onclick="viewSharedDetails('Apollo Hospitals Kochi')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </button>
+            <button class="table-action-menu-btn" onclick="openRevokeModal('Apollo Hospitals Kochi')">⋮</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Bottom Banner (matching SharedRecords.png) -->
+<div class="abdm-info-banner">
+  <div class="banner-left">
+    <div class="banner-icon-circle" style="background:#0066E6;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <div>
+      <div class="banner-title">Your Data. Your Control.</div>
+      <div class="banner-desc">You can view, edit or revoke access at any time. Your health records are shared only with your consent.</div>
+    </div>
+  </div>
+  <div class="banner-right">
+    <a href="/help" class="abdm-btn-secondary" style="border-color:#0066E6; color:#0066E6; background:#FFFFFF;">
+      Learn More
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    </a>
+  </div>
+</div>
+
+<!-- Share New Record Modal -->
+<div class="abdm-modal-overlay" id="shareRecordModal">
+  <div class="abdm-modal-card">
+    <div class="abdm-modal-header">
+      <div class="abdm-modal-title">Share Health Records</div>
+      <button class="abdm-modal-close-btn" onclick="closeShareModal()">✕</button>
+    </div>
+    <div class="abdm-modal-body">
+      <div class="abdm-form-group">
+        <label>Doctor / Healthcare Facility Name</label>
+        <input type="text" id="shareRecipient" class="abdm-form-input" placeholder="e.g. Dr. Anil Kumar or City Care Clinic">
+      </div>
+      <div class="abdm-form-group">
+        <label>Recipient Entity Type</label>
+        <select id="shareType" class="abdm-form-select">
+          <option value="Doctor">Doctor</option>
+          <option value="Hospital">Hospital</option>
+          <option value="Diagnostic Centre">Diagnostic Centre</option>
+          <option value="Family Member">Family Member</option>
+        </select>
+      </div>
+      <div class="abdm-form-group">
+        <label>Records to Share</label>
+        <select id="shareScope" class="abdm-form-select">
+          <option value="All Records">All Records</option>
+          <option value="Lab Reports, Prescriptions">Lab Reports &amp; Prescriptions Only</option>
+          <option value="Imaging Reports">Imaging Reports Only</option>
+          <option value="Discharge Summaries">Discharge Summaries Only</option>
+        </select>
+      </div>
+      <div class="abdm-form-group">
+        <label>Access Validity Period</label>
+        <select id="shareValidity" class="abdm-form-select">
+          <option value="1 month">1 Month</option>
+          <option value="3 months">3 Months</option>
+          <option value="6 months" selected>6 Months</option>
+          <option value="1 year">1 Year</option>
+          <option value="Permanent">Permanent (Family)</option>
+        </select>
+      </div>
+    </div>
+    <div class="abdm-modal-footer">
+      <button class="abdm-btn-secondary" onclick="closeShareModal()">Cancel</button>
+      <button class="abdm-btn-primary" onclick="submitShareRecord()">Confirm &amp; Share Records</button>
+    </div>
+  </div>
+</div>
+
+<!-- Revoke Access Confirmation Modal -->
+<div class="abdm-modal-overlay" id="revokeModal">
+  <div class="abdm-modal-card">
+    <div class="abdm-modal-header">
+      <div class="abdm-modal-title" style="color:#DC2626;">Revoke Record Access</div>
+      <button class="abdm-modal-close-btn" onclick="closeRevokeModal()">✕</button>
+    </div>
+    <div class="abdm-modal-body">
+      <p>Are you sure you want to revoke <strong id="revokeEntityName">this entity's</strong> access to your health records?</p>
+      <p style="font-size:12.5px; color:#5F7187; margin-top:10px;">The doctor or facility will immediately lose access to view your documents and history.</p>
+    </div>
+    <div class="abdm-modal-footer">
+      <button class="abdm-btn-secondary" onclick="closeRevokeModal()">Cancel</button>
+      <button class="abdm-btn-primary" style="background:#DC2626;" onclick="confirmRevocation()">Yes, Revoke Access</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let targetRevoke = '';
+
+  function switchShareTab(tab, el) {
+    document.querySelectorAll('.abdm-tab-item').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    showToast(`Viewing ${tab === 'people' ? 'People & Organisations' : 'Pending Share Requests'}`);
+  }
+
+  function openShareModal() {
+    document.getElementById('shareRecordModal').classList.add('active');
+  }
+
+  function closeShareModal() {
+    document.getElementById('shareRecordModal').classList.remove('active');
+  }
+
+  async function submitShareRecord() {
+    const name = document.getElementById('shareRecipient').value;
+    const type = document.getElementById('shareType').value;
+    const records = document.getElementById('shareScope').value;
+    const validity = document.getElementById('shareValidity').value;
+
+    if (!name) {
+      showToast('Please specify doctor or organisation', 'error');
+      return;
+    }
+
+    closeShareModal();
+    showToast(`Health records successfully shared with ${name}`, 'success');
+
+    try {
+      await fetch('/api/patient/shared-records/share', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name, type, records, validity})
+      });
+    } catch(e) {}
+  }
+
+  function openRevokeModal(entityName) {
+    targetRevoke = entityName;
+    document.getElementById('revokeEntityName').textContent = entityName;
+    document.getElementById('revokeModal').classList.add('active');
+  }
+
+  function closeRevokeModal() {
+    document.getElementById('revokeModal').classList.remove('active');
+  }
+
+  function confirmRevocation() {
+    closeRevokeModal();
+    showToast(`Access for ${targetRevoke} has been revoked`, 'success');
+  }
+
+  function viewSharedDetails(name) {
+    alert(`Active Sharing Artifact:\nEntity: ${name}\nConsent status: Active\nAudit Trail: Consent granted by patient.`);
+  }
+</script>
+{% endblock %}

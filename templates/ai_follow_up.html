@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Follow-up Questions - AI Case Taking{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/ai-case-taking">AI Case Taking</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Follow-up Questions</span>
+</div>
+
+<!-- Step Progress Indicator -->
+<div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px 24px; margin-bottom:24px; box-shadow:var(--shadow-sm);">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    
+    <!-- Step 1 (Done) -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#16A05D; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">✓</div>
+      <div>
+        <div style="font-weight:600; color:#16A05D; font-size:13px;">Current Concern</div>
+        <div style="font-size:11px; color:#5F7187;">Recorded</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#16A05D; margin:0 14px;"></div>
+
+    <!-- Step 2 (Active) -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#0066E6; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">2</div>
+      <div>
+        <div style="font-weight:700; color:#0066E6; font-size:13px;">Follow-up Questions</div>
+        <div style="font-size:11px; color:#5F7187;">Clinical context</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 3 -->
+    <div style="display:flex; align-items:center; gap:10px; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">3</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Case Summary</div>
+        <div style="font-size:11px; color:#94A3B8;">Doctor brief</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 4 -->
+    <div style="display:flex; align-items:center; gap:10px; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">4</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Priority / Triage</div>
+        <div style="font-size:11px; color:#94A3B8;">Acuity score</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 5 -->
+    <div style="display:flex; align-items:center; gap:10px; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">5</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Token Booking</div>
+        <div style="font-size:11px; color:#94A3B8;">Queue slot</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Follow-up Clinical Questions</h1>
+    <p class="abdm-page-subtitle">Based on what you've told us, please answer two quick questions to clarify clinical history.</p>
+  </div>
+</div>
+
+<!-- Reported Complaint Recap Pill -->
+<div style="background:#F0F7FF; border:1px solid #D0E4FA; border-radius:var(--radius-md); padding:12px 18px; margin-bottom:24px; display:flex; align-items:center; gap:12px;">
+  <span style="font-size:12px; font-weight:700; color:#0066E6; text-transform:uppercase;">Reported Concern:</span>
+  <span id="recapComplaintText" style="font-size:13.5px; color:#12345B; font-weight:500;">Persistent dry cough and low-grade fever for 3 days with mild fatigue.</span>
+</div>
+
+<!-- Questions Form Container -->
+<div class="abdm-table-card" style="padding:28px;">
+  
+  <!-- Question 1 -->
+  <div style="margin-bottom:28px;">
+    <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+      <span style="width:24px; height:24px; border-radius:50%; background:#EAF4FF; color:#0066E6; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span>
+      <span id="q1Text">When did this problem/symptoms start?</span>
+    </h3>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;" id="q1OptionsContainer">
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q1_answer" value="Today / Less than 24 hours ago" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">Today / Less than 24 hours ago</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q1_answer" value="2 to 3 days ago" checked style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">2 to 3 days ago</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q1_answer" value="1 to 2 weeks ago" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">1 to 2 weeks ago</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q1_answer" value="More than 2 weeks ago (Chronic)" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">More than 2 weeks ago (Chronic)</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Question 2 -->
+  <div style="margin-bottom:32px;">
+    <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+      <span style="width:24px; height:24px; border-radius:50%; background:#EAF4FF; color:#0066E6; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span>
+      <span id="q2Text">Has the condition become better, worse, or stayed the same?</span>
+    </h3>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;" id="q2OptionsContainer">
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q2_answer" value="Progressively getting worse" checked style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">Progressively getting worse</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q2_answer" value="Staying about the same" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">Staying about the same</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q2_answer" value="Gradually improving" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">Gradually improving</span>
+      </label>
+
+      <label style="background:#FFFFFF; border:1.5px solid #D9E5F2; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.15s;">
+        <input type="radio" name="q2_answer" value="Comes and goes intermittently" style="accent-color:#0066E6;">
+        <span style="font-size:13.5px; font-weight:500; color:#12345B;">Comes and goes intermittently</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Buttons -->
+  <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #E2E8F0; padding-top:20px;">
+    <a href="/ai-case-taking" class="abdm-btn-secondary">
+      &larr; Back to Concern
+    </a>
+
+    <button type="button" class="abdm-btn-primary" onclick="proceedToSummary()">
+      Generate AI Case Summary
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedComplaint = sessionStorage.getItem('patient_complaint');
+    if (savedComplaint) {
+      document.getElementById('recapComplaintText').textContent = savedComplaint;
+    }
+
+    const savedQuestions = sessionStorage.getItem('follow_up_questions');
+    if (savedQuestions) {
+      try {
+        const qList = JSON.parse(savedQuestions);
+        if (qList.length >= 2) {
+          document.getElementById('q1Text').textContent = qList[0].question;
+          document.getElementById('q2Text').textContent = qList[1].question;
+        }
+      } catch(e) {}
+    }
+  });
+
+  async function proceedToSummary() {
+    const q1Radio = document.querySelector('input[name="q1_answer"]:checked');
+    const q2Radio = document.querySelector('input[name="q2_answer"]:checked');
+    const q1Val = q1Radio ? q1Radio.value : '2 to 3 days ago';
+    const q2Val = q2Radio ? q2Radio.value : 'Progressively getting worse';
+
+    const answers = {
+      "Onset": q1Val,
+      "Progression": q2Val
+    };
+
+    sessionStorage.setItem('follow_up_answers', JSON.stringify(answers));
+
+    const complaint = sessionStorage.getItem('patient_complaint') || 'Persistent cough and fever';
+    const sessionId = sessionStorage.getItem('case_session_id');
+
+    try {
+      const res = await fetch('/api/ai/generate-summary', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({complaint, answers, session_id: sessionId})
+      });
+      const data = await res.json();
+      if (data.success) {
+        sessionStorage.setItem('ai_case_summary', JSON.stringify(data.data));
+      }
+    } catch(e) {}
+
+    window.location.href = '/ai-case-taking/summary';
+  }
+</script>
+{% endblock %}

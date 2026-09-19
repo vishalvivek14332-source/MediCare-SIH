@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Profile</span>
+</div>
+
+<!-- Page Header & Action -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">My Profile</h1>
+    <p class="abdm-page-subtitle">View and manage your personal information.</p>
+  </div>
+  <button class="abdm-btn-primary" onclick="openEditProfileModal()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+    </svg>
+    Edit Profile
+  </button>
+</div>
+
+<!-- Profile Main Grid Layout (matching Profile.png) -->
+<div class="abdm-profile-grid">
+  <!-- Left Side: Basic Info & Additional Info Cards -->
+  <div>
+    <!-- Basic Information Card -->
+    <div class="abdm-profile-card">
+      <div class="section-heading">Basic Information</div>
+
+      <div class="abdm-profile-main-row">
+        <!-- Avatar and Health ID Snippet -->
+        <div class="abdm-profile-avatar-col">
+          <div class="abdm-avatar-wrapper">
+            <div class="abdm-avatar-large" id="profileAvatarLarge">S</div>
+            <button class="abdm-avatar-camera-btn" onclick="showToast('Profile photo updated', 'success')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </button>
+          </div>
+
+          <div class="abdm-profile-name" id="profileDisplayName">Sajil Binu</div>
+          <div class="abdm-verified-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Verified
+          </div>
+
+          <div class="abdm-health-id-card-snippet">
+            <div style="font-size:11px; color:#5F7187; margin-bottom:2px;">Health ID</div>
+            <div class="abdm-health-id-number">
+              <span>91-XXXX-XXXX-1234</span>
+              <button onclick="copyHealthId()" style="background:none; border:none; cursor:pointer; color:#0066E6;" title="Copy ID">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+
+            <!-- QR Code Simulation -->
+            <div class="abdm-qr-box">
+              <svg viewBox="0 0 100 100" fill="#12345B">
+                <!-- QR Finder Patterns -->
+                <rect x="5" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
+                <rect x="13" y="13" width="14" height="14"/>
+                <rect x="65" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
+                <rect x="73" y="13" width="14" height="14"/>
+                <rect x="5" y="65" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
+                <rect x="13" y="73" width="14" height="14"/>
+                <!-- Matrix dots -->
+                <rect x="42" y="10" width="8" height="8"/>
+                <rect x="45" y="24" width="6" height="6"/>
+                <rect x="10" y="45" width="8" height="8"/>
+                <rect x="25" y="48" width="6" height="6"/>
+                <rect x="45" y="45" width="12" height="12"/>
+                <rect x="68" y="45" width="8" height="8"/>
+                <rect x="82" y="52" width="6" height="6"/>
+                <rect x="45" y="68" width="10" height="10"/>
+                <rect x="65" y="70" width="8" height="8"/>
+                <rect x="80" y="80" width="12" height="12"/>
+              </svg>
+            </div>
+            <div style="font-size:10.5px; color:#5F7187; margin-top:6px;">Scan to share your Health ID</div>
+          </div>
+        </div>
+
+        <!-- Information List -->
+        <div>
+          <dl class="abdm-info-dl">
+            <dt>Full Name</dt>
+            <dd id="infoFullName">Sajil Binu</dd>
+
+            <dt>Date of Birth</dt>
+            <dd>12 Mar 2002</dd>
+
+            <dt>Gender</dt>
+            <dd>Male</dd>
+
+            <dt>Blood Group</dt>
+            <dd>O+</dd>
+
+            <dt>Mobile Number</dt>
+            <dd id="infoMobile">+91 98765 43210</dd>
+
+            <dt>Email Address</dt>
+            <dd id="infoEmail">sajilbinu@example.com</dd>
+
+            <dt>Address</dt>
+            <dd id="infoAddress">Panoor, Kannur, Kerala, 670692</dd>
+
+            <dt>Language Preference</dt>
+            <dd id="infoLanguage">English</dd>
+
+            <dt>Emergency Contact</dt>
+            <dd id="infoEmergency">
+              <div>Biju Mathew (Father)</div>
+              <div style="font-size:12px; color:#5F7187; font-weight:normal;">+91 98987 65432</div>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Information Card -->
+    <div class="abdm-profile-card">
+      <div class="section-heading">Additional Information</div>
+      <dl class="abdm-info-dl">
+        <dt>Occupation</dt>
+        <dd id="infoOccupation">Student</dd>
+
+        <dt>State</dt>
+        <dd>Kerala</dd>
+
+        <dt>District</dt>
+        <dd>Kannur</dd>
+
+        <dt>Pincode</dt>
+        <dd>670692</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Right Side Column: Health ID Status, Family, Preferences -->
+  <div>
+    <!-- Health ID Status -->
+    <div class="abdm-profile-card">
+      <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:14px;">
+        <div style="width:36px; height:36px; border-radius:50%; background:#16A05D; color:#FFFFFF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:var(--text-dark);">Your Health ID is Active</div>
+          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.4; margin-top:2px;">
+            Use your Health ID to access and share your health records across healthcare facilities in India.
+          </div>
+        </div>
+      </div>
+      <a href="/health-id" class="abdm-btn-secondary" style="width:100%; justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="12" y2="12"></line></svg>
+        View Health ID Card
+      </a>
+    </div>
+
+    <!-- Family Members -->
+    <div class="abdm-profile-card">
+      <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:14px;">
+        <div style="width:36px; height:36px; border-radius:8px; background:#EBF5FF; color:#0066E6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:var(--text-dark);">Family Members</div>
+          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.4; margin-top:2px;">
+            Manage your family members and their health records.
+          </div>
+        </div>
+      </div>
+      <button onclick="showToast('Family members management opened')" class="abdm-btn-secondary" style="width:100%; justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>
+        Manage Family Members
+      </button>
+    </div>
+
+    <!-- Communication Preferences -->
+    <div class="abdm-profile-card">
+      <div class="section-heading">Communication Preferences</div>
+
+      <div class="abdm-settings-list">
+        <!-- Email -->
+        <div class="abdm-settings-item">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <div class="item-text">
+              <span class="main-text">Email Notifications</span>
+              <span class="sub-text">Get updates about appointments, record sharing, etc.</span>
+            </div>
+          </div>
+          <label class="abdm-toggle">
+            <input type="checkbox" checked onchange="showToast('Email preference updated', 'success')">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- SMS -->
+        <div class="abdm-settings-item">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <div class="item-text">
+              <span class="main-text">SMS Notifications</span>
+              <span class="sub-text">Receive important alerts via SMS.</span>
+            </div>
+          </div>
+          <label class="abdm-toggle">
+            <input type="checkbox" checked onchange="showToast('SMS preference updated', 'success')">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Health Tips -->
+        <div class="abdm-settings-item">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <div class="item-text">
+              <span class="main-text">Health Tips &amp; Updates</span>
+              <span class="sub-text">Get health tips and government notifications.</span>
+            </div>
+          </div>
+          <label class="abdm-toggle">
+            <input type="checkbox" onchange="showToast('Health tips preference updated', 'success')">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="abdm-modal-overlay" id="editProfileModal">
+  <div class="abdm-modal-card">
+    <div class="abdm-modal-header">
+      <div class="abdm-modal-title">Edit Personal Profile</div>
+      <button class="abdm-modal-close-btn" onclick="closeEditProfileModal()">✕</button>
+    </div>
+    <div class="abdm-modal-body">
+      <div class="abdm-form-group">
+        <label>Mobile Number</label>
+        <input type="text" id="editMobile" class="abdm-form-input" value="+91 98765 43210">
+      </div>
+      <div class="abdm-form-group">
+        <label>Address</label>
+        <input type="text" id="editAddress" class="abdm-form-input" value="Panoor, Kannur, Kerala, 670692">
+      </div>
+      <div class="abdm-form-group">
+        <label>Occupation</label>
+        <input type="text" id="editOccupation" class="abdm-form-input" value="Student">
+      </div>
+      <div class="abdm-form-group">
+        <label>Emergency Contact</label>
+        <input type="text" id="editEmergency" class="abdm-form-input" value="Biju Mathew (Father) +91 98987 65432">
+      </div>
+    </div>
+    <div class="abdm-modal-footer">
+      <button class="abdm-btn-secondary" onclick="closeEditProfileModal()">Cancel</button>
+      <button class="abdm-btn-primary" onclick="saveProfileChanges()">Save Changes</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyHealthId() {
+    navigator.clipboard.writeText('91-XXXX-XXXX-1234');
+    showToast('Health ID copied to clipboard!', 'success');
+  }
+
+  function openEditProfileModal() {
+    document.getElementById('editProfileModal').classList.add('active');
+  }
+
+  function closeEditProfileModal() {
+    document.getElementById('editProfileModal').classList.remove('active');
+  }
+
+  async function saveProfileChanges() {
+    const mobile = document.getElementById('editMobile').value;
+    const address = document.getElementById('editAddress').value;
+    const occupation = document.getElementById('editOccupation').value;
+    const emergency = document.getElementById('editEmergency').value;
+
+    document.getElementById('infoMobile').textContent = mobile;
+    document.getElementById('infoAddress').textContent = address;
+    document.getElementById('infoOccupation').textContent = occupation;
+    document.getElementById('infoEmergency').innerHTML = `<div>${emergency}</div>`;
+
+    closeEditProfileModal();
+    showToast('Profile changes saved successfully', 'success');
+
+    try {
+      await fetch('/api/patient/profile', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({phone: mobile, address, occupation, emergency_contact: emergency})
+      });
+    } catch (e) {}
+  }
+</script>
+{% endblock %}

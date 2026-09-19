@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Live Token Queue - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Live Token Queue</span>
+</div>
+
+<!-- Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Live Outpatient Token Queue</h1>
+    <p class="abdm-page-subtitle">Real-time consultation counter synced via Socket.IO for live clinic status.</p>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#16A05D; animation:pulse 1.5s infinite;"></span>
+    <span style="font-size:13px; font-weight:600; color:#16A05D;">Live Real-Time Sync</span>
+  </div>
+</div>
+
+<!-- Live Counter Display Banner -->
+<div style="background:linear-gradient(135deg, #002B5C 0%, #003B73 100%); border-radius:var(--radius-xl); padding:32px; color:#FFFFFF; margin-bottom:28px; box-shadow:var(--shadow-lg);">
+  <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; text-align:center;">
+    
+    <!-- Box 1: Your Token -->
+    <div style="background:rgba(255,255,255,0.1); border:1.5px solid #38BDF8; border-radius:var(--radius-lg); padding:20px;">
+      <div style="font-size:12px; font-weight:700; color:#38BDF8; text-transform:uppercase; letter-spacing:0.5px;">Your Token</div>
+      <div style="font-family:monospace; font-size:44px; font-weight:900; color:#FFFFFF; margin:4px 0;" id="userTokenDisplay">A-026</div>
+      <div style="font-size:12px; color:#CBD5E1;">Dr. Meera Nair &bull; KPHC</div>
+    </div>
+
+    <!-- Box 2: Currently Serving -->
+    <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:20px;">
+      <div style="font-size:12px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.5px;">Currently Serving</div>
+      <div style="font-family:monospace; font-size:44px; font-weight:900; color:#10B981; margin:4px 0;" id="currentServingDisplay">A-021</div>
+      <div style="font-size:12px; color:#CBD5E1;">Counter 01 &bull; Room 4</div>
+    </div>
+
+    <!-- Box 3: People Ahead -->
+    <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:20px;">
+      <div style="font-size:12px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.5px;">People Ahead</div>
+      <div style="font-family:monospace; font-size:44px; font-weight:900; color:#F59E0B; margin:4px 0;" id="peopleAheadDisplay">5</div>
+      <div style="font-size:12px; color:#CBD5E1;">Patients in waiting queue</div>
+    </div>
+
+    <!-- Box 4: Est Wait -->
+    <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:20px;">
+      <div style="font-size:12px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.5px;">Estimated Wait</div>
+      <div style="font-family:monospace; font-size:44px; font-weight:900; color:#38BDF8; margin:4px 0;" id="estWaitDisplay">25 min</div>
+      <div style="font-size:12px; color:#CBD5E1;">Avg 5 min per consult</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Detailed Queue List -->
+<div class="abdm-table-card">
+  <div style="padding:18px 24px; border-bottom:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark);">
+      Active OPD Token Stream
+    </div>
+    <div style="font-size:12.5px; color:#5F7187;">
+      Clinic: <strong>KPHC Thalassery - General Medicine</strong>
+    </div>
+  </div>
+
+  <table class="abdm-table">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Token Number</th>
+        <th>Patient Name</th>
+        <th>Triage Acuity</th>
+        <th>Estimated Call Time</th>
+        <th>Queue Status</th>
+      </tr>
+    </thead>
+    <tbody id="liveQueueTableBody">
+      <!-- In Consultation -->
+      <tr style="background:#F0FDF4;">
+        <td><strong>#1</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#16A05D; font-size:15px;">A-021</span></td>
+        <td>Ramesh K.</td>
+        <td><span class="abdm-badge badge-success">Routine</span></td>
+        <td>Now Serving</td>
+        <td><span class="abdm-badge badge-success">In Consultation</span></td>
+      </tr>
+
+      <!-- Next in line -->
+      <tr>
+        <td><strong>#2</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#12345B; font-size:15px;">A-022</span></td>
+        <td>Fatima M.</td>
+        <td><span class="abdm-badge badge-warning">Priority</span></td>
+        <td>10:05 AM</td>
+        <td><span class="abdm-badge badge-warning">Next in Line</span></td>
+      </tr>
+
+      <tr>
+        <td><strong>#3</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#12345B; font-size:15px;">A-023</span></td>
+        <td>George T.</td>
+        <td><span class="abdm-badge badge-success">Routine</span></td>
+        <td>10:10 AM</td>
+        <td><span class="abdm-badge" style="background:#F1F5F9; color:#475569;">Waiting</span></td>
+      </tr>
+
+      <tr>
+        <td><strong>#4</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#12345B; font-size:15px;">A-024</span></td>
+        <td>Ananya P.</td>
+        <td><span class="abdm-badge badge-success">Routine</span></td>
+        <td>10:15 AM</td>
+        <td><span class="abdm-badge" style="background:#F1F5F9; color:#475569;">Waiting</span></td>
+      </tr>
+
+      <tr>
+        <td><strong>#5</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#12345B; font-size:15px;">A-025</span></td>
+        <td>Deepak V.</td>
+        <td><span class="abdm-badge badge-warning">Priority</span></td>
+        <td>10:20 AM</td>
+        <td><span class="abdm-badge" style="background:#F1F5F9; color:#475569;">Waiting</span></td>
+      </tr>
+
+      <!-- Patient's Own Token (Highlighted) -->
+      <tr style="background:#EFF6FF; border-left:4px solid #0066E6;">
+        <td><strong>#6</strong></td>
+        <td><span style="font-family:monospace; font-weight:900; color:#0066E6; font-size:16px;">A-026 (You)</span></td>
+        <td><strong>Alex Mathew / Sajil Binu</strong></td>
+        <td><span class="abdm-badge badge-warning">Priority</span></td>
+        <td><strong>10:25 AM</strong></td>
+        <td><span class="abdm-badge" style="background:#DBEAFE; color:#1D4ED8; font-weight:700;">Your Turn Approaching</span></td>
+      </tr>
+
+      <tr>
+        <td><strong>#7</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; color:#12345B; font-size:15px;">A-027</span></td>
+        <td>Sneha R.</td>
+        <td><span class="abdm-badge badge-success">Routine</span></td>
+        <td>10:30 AM</td>
+        <td><span class="abdm-badge" style="background:#F1F5F9; color:#475569;">Waiting</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+<script>
+  // Connect to real-time Socket.IO server
+  const socket = io();
+
+  socket.on('connect', () => {
+    console.log('Socket.IO connected to live queue stream');
+    fetchLiveQueue();
+  });
+
+  socket.on('queue_update', (data) => {
+    console.log('Queue update received from server:', data);
+    fetchLiveQueue();
+    showToast('Token queue updated live!', 'success');
+  });
+
+  async function fetchLiveQueue() {
+    try {
+      const res = await fetch('/api/booking/queue-status');
+      const data = await res.json();
+      if (data.success && data.data) {
+        if (data.data.current && data.data.current !== 'N/A') {
+          document.getElementById('currentServingDisplay').textContent = data.data.current;
+        }
+        if (data.data.waiting_count !== undefined) {
+          document.getElementById('peopleAheadDisplay').textContent = data.data.waiting_count;
+          document.getElementById('estWaitDisplay').textContent = (data.data.waiting_count * 5) + ' min';
+        }
+      }
+    } catch(e) {}
+  }
+</script>
+{% endblock %}

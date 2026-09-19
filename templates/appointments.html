@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Appointments</span>
+</div>
+
+<!-- Page Title and Action -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Appointments</h1>
+    <p class="abdm-page-subtitle">Book and manage your hospital appointments.</p>
+  </div>
+  <a href="/booking" class="abdm-btn-primary">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    Book New Appointment
+  </a>
+</div>
+
+<!-- Two-Column Layout (Main Table on Left + Quick Info Cards on Right) -->
+<div class="abdm-two-column-layout">
+  
+  <!-- Left Main Column -->
+  <div>
+    <!-- Tabs -->
+    <div class="abdm-tabs">
+      <button class="abdm-tab-item active" onclick="switchAppointmentTab('upcoming', this)">Upcoming Appointments</button>
+      <button class="abdm-tab-item" onclick="switchAppointmentTab('past', this)">Past Appointments</button>
+      <button class="abdm-tab-item" onclick="switchAppointmentTab('cancelled', this)">Cancelled Appointments</button>
+    </div>
+
+    <!-- Appointments Table Card -->
+    <div class="abdm-table-card">
+      <table class="abdm-table">
+        <thead>
+          <tr>
+            <th style="width: 170px;">Date &amp; Time</th>
+            <th>Facility / Doctor</th>
+            <th>Department</th>
+            <th>Purpose</th>
+            <th>Status</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="appointmentsTableBody">
+          <!-- Row 1 -->
+          <tr>
+            <td class="table-date-cell">
+              <div class="indicator-bar" style="background: #0066E6;"></div>
+              <div class="date-primary">20 Sep 2026</div>
+              <div class="time-sub">10:00 AM</div>
+              <div class="time-sub">Saturday</div>
+            </td>
+            <td>
+              <div class="table-entity-cell">
+                <div class="avatar-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="title">Dr. Meera Nair</div>
+                  <div class="subtitle">KPHC Thalassery</div>
+                </div>
+              </div>
+            </td>
+            <td>General Medicine</td>
+            <td>Regular Checkup</td>
+            <td>
+              <span class="abdm-badge badge-success">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Confirmed
+              </span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: flex-end;">
+                <button class="table-action-link" onclick="openRescheduleModal('Dr. Meera Nair')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+                  Reschedule
+                </button>
+                <button class="table-action-link danger" onclick="openCancelModal('Dr. Meera Nair')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr>
+            <td class="table-date-cell">
+              <div class="indicator-bar" style="background: #D97706;"></div>
+              <div class="date-primary">05 Oct 2026</div>
+              <div class="time-sub">11:30 AM</div>
+              <div class="time-sub">Sunday</div>
+            </td>
+            <td>
+              <div class="table-entity-cell">
+                <div class="avatar-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="title">Dr. Arjun Kumar</div>
+                  <div class="subtitle">Govt. District Hospital Kannur</div>
+                </div>
+              </div>
+            </td>
+            <td>Orthopedics</td>
+            <td>Knee Pain Consultation</td>
+            <td>
+              <span class="abdm-badge badge-warning">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Scheduled
+              </span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: flex-end;">
+                <button class="table-action-link" onclick="openRescheduleModal('Dr. Arjun Kumar')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+                  Reschedule
+                </button>
+                <button class="table-action-link danger" onclick="openCancelModal('Dr. Arjun Kumar')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 3 -->
+          <tr>
+            <td class="table-date-cell">
+              <div class="indicator-bar" style="background: #3B82F6;"></div>
+              <div class="date-primary">18 Oct 2026</div>
+              <div class="time-sub">09:45 AM</div>
+              <div class="time-sub">Saturday</div>
+            </td>
+            <td>
+              <div class="table-entity-cell">
+                <div class="avatar-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="title">Dr. Sreelakshmi Nair</div>
+                  <div class="subtitle">Govt. Medical College Kannur</div>
+                </div>
+              </div>
+            </td>
+            <td>Dermatology</td>
+            <td>Skin Allergy</td>
+            <td>
+              <span class="abdm-badge badge-warning">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Scheduled
+              </span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: flex-end;">
+                <button class="table-action-link" onclick="openRescheduleModal('Dr. Sreelakshmi Nair')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+                  Reschedule
+                </button>
+                <button class="table-action-link danger" onclick="openCancelModal('Dr. Sreelakshmi Nair')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 4 -->
+          <tr>
+            <td class="table-date-cell">
+              <div class="indicator-bar" style="background: #10B981;"></div>
+              <div class="date-primary">02 Nov 2026</div>
+              <div class="time-sub">11:00 AM</div>
+              <div class="time-sub">Sunday</div>
+            </td>
+            <td>
+              <div class="table-entity-cell">
+                <div class="avatar-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="title">Dr. Faisal Rahman</div>
+                  <div class="subtitle">Sun Diagnostics Thalassery</div>
+                </div>
+              </div>
+            </td>
+            <td>Radiology</td>
+            <td>X-Ray Follow-up</td>
+            <td>
+              <span class="abdm-badge badge-warning">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Scheduled
+              </span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: flex-end;">
+                <button class="table-action-link" onclick="openRescheduleModal('Dr. Faisal Rahman')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+                  Reschedule
+                </button>
+                <button class="table-action-link danger" onclick="openCancelModal('Dr. Faisal Rahman')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Help Banner (matching Appointments.png) -->
+    <div class="abdm-info-banner">
+      <div class="banner-left">
+        <div class="banner-icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="banner-title">Need Help?</div>
+          <div class="banner-desc">For any issues related to appointments, contact the hospital directly or call the National Health Helpline.</div>
+        </div>
+      </div>
+      <div class="banner-right">
+        <div class="helpline-contact">
+          <svg class="phone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          <div>
+            <div class="helpline-label">National Health Helpline</div>
+            <div class="helpline-number">14477</div>
+            <div class="helpline-label">Available 24x7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side Column -->
+  <div class="abdm-side-cards">
+    <!-- Card 1: Book an Appointment -->
+    <div class="abdm-side-card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <div class="title">Book an Appointment</div>
+      </div>
+      <p class="desc">Find and book appointments at government and empanelled healthcare facilities.</p>
+      <a href="/booking" class="abdm-btn-primary" style="width:100%; justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Find Hospitals / Doctors
+      </a>
+    </div>
+
+    <!-- Card 2: Quick Links -->
+    <div class="abdm-side-card">
+      <div class="title" style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:var(--text-dark); margin-bottom:12px;">Quick Links</div>
+      <ul class="abdm-quick-links-list">
+        <li>
+          <a href="/appointments">
+            <div class="link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+              <span>My Appointments</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/appointments">
+            <div class="link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+              <span>Reschedule / Cancel</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/settings">
+            <div class="link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span>Set Reminders</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/health-timeline">
+            <div class="link-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <span>View Consultation History</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Get Reminders -->
+    <div class="abdm-side-card banner-green">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+          <polyline points="9 11 12 14 22 4"></polyline>
+        </svg>
+        <div class="title" style="color:var(--success);">Get Reminders</div>
+      </div>
+      <p class="desc" style="color:#2D3748;">Receive SMS/Email reminders for your upcoming appointments.</p>
+      <a href="/settings" style="color:var(--success); font-weight:700; text-decoration:none; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+        Enable Notifications &rarr;
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Simple confirmation modals for Cancel and Reschedule -->
+<div class="abdm-modal-overlay" id="appointmentModal">
+  <div class="abdm-modal-card">
+    <div class="abdm-modal-header">
+      <div class="abdm-modal-title" id="modalTitle">Appointment Action</div>
+      <button class="abdm-modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="abdm-modal-body" id="modalBodyText">
+      Are you sure?
+    </div>
+    <div class="abdm-modal-footer">
+      <button class="abdm-btn-secondary" onclick="closeModal()">Close</button>
+      <button class="abdm-btn-primary" id="modalConfirmBtn" onclick="confirmModalAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchAppointmentTab(tab, element) {
+    document.querySelectorAll('.abdm-tab-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    showToast(`Viewing ${tab} appointments`);
+  }
+
+  function openRescheduleModal(doctor) {
+    document.getElementById('modalTitle').textContent = 'Reschedule Appointment';
+    document.getElementById('modalBodyText').innerHTML = `
+      <p style="margin-bottom:14px;">Select a new preferred date for your consultation with <strong>${doctor}</strong>:</p>
+      <input type="date" class="abdm-form-input" value="2026-09-28">
+    `;
+    document.getElementById('modalConfirmBtn').textContent = 'Confirm Reschedule';
+    document.getElementById('appointmentModal').classList.add('active');
+  }
+
+  function openCancelModal(doctor) {
+    document.getElementById('modalTitle').textContent = 'Cancel Appointment';
+    document.getElementById('modalBodyText').innerHTML = `
+      <p>Are you sure you wish to cancel your scheduled appointment with <strong>${doctor}</strong>?</p>
+      <p style="font-size:12px; color:#DC2626; margin-top:8px;">This will release your allocated token back into the clinic queue.</p>
+    `;
+    document.getElementById('modalConfirmBtn').textContent = 'Yes, Cancel Appointment';
+    document.getElementById('modalConfirmBtn').style.backgroundColor = '#DC2626';
+    document.getElementById('appointmentModal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('appointmentModal').classList.remove('active');
+  }
+
+  function confirmModalAction() {
+    closeModal();
+    showToast('Appointment updated successfully', 'success');
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,182 @@
+<!-- Two-Tier Header: Top White Brand Bar + Primary Navy Nav Bar (matching exact reference banner with detailed symbols and letters) -->
+<header class="abdm-header-container">
+  <!-- Tier 1: White National / Digital Health Mission Banner (~94px) -->
+  <div class="abdm-top-header">
+    <!-- Left: State Emblem of India + Ministry of Health & Family Welfare / Government of India -->
+    <div class="brand-left">
+      <img src="{{ url_for('static', filename='images/emblem_india_v2.png') }}?v=3" alt="State Emblem of India" class="emblem-img">
+      <img src="{{ url_for('static', filename='images/ministry_text_v2.png') }}?v=3" alt="Ministry of Health &amp; Family Welfare, Government of India" class="ministry-img">
+    </div>
+
+    <!-- Center: Ayushman Bharat Digital Health Mission (Full Lotus + Title + One Nation, One Digital Health Ecosystem) -->
+    <a href="/" class="brand-center">
+      <img src="{{ url_for('static', filename='images/abdm_mission_v2.png') }}?v=3" alt="Ayushman Bharat Digital Health Mission - One Nation, One Digital Health Ecosystem" class="abdm-mission-img">
+    </a>
+
+    <!-- Right: Health ID + 75 Azadi Ka Amrit Mahotsav -->
+    <div class="brand-right">
+      <a href="/health-id" class="health-id-link">
+        <img src="{{ url_for('static', filename='images/health_id_v2.png') }}?v=3" alt="Health ID - Your Health, Your Identity" class="health-id-img">
+      </a>
+      <div class="amrit-mahotsav-box">
+        <img src="{{ url_for('static', filename='images/amrit_mahotsav_v2.png') }}?v=3" alt="75 Azadi Ka Amrit Mahotsav" class="amrit-img">
+      </div>
+    </div>
+  </div>
+
+  <!-- Tier 2: Primary Navy Navigation Bar (#003B73, 50px) -->
+  <nav class="abdm-primary-nav">
+    <ul class="abdm-nav-links">
+      <li>
+        <a href="/" class="{% if active_page == 'dashboard' or not active_page %}active{% endif %}">Home</a>
+      </li>
+      <li>
+        <a href="/about" onclick="event.preventDefault(); showAboutModal();">About NDHM</a>
+      </li>
+      <li>
+        <a href="/health-id" class="{% if active_page == 'health_id' %}active{% endif %}">Health ID</a>
+      </li>
+
+      <!-- For Citizens Dropdown -->
+      <li class="abdm-nav-item-dropdown">
+        <a href="/health-records" class="dropdown-toggle">
+          For Citizens
+          <svg style="width:10px; height:10px; margin-left:4px; display:inline-block; vertical-align:middle; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </a>
+        <div class="abdm-subnav-menu">
+          <a href="/health-records">My Health Records</a>
+          <a href="/upload-documents">Upload Documents</a>
+          <a href="/shared-records">Shared Records</a>
+          <a href="/linked-facilities">Linked Facilities</a>
+          <a href="/appointments">Appointments</a>
+          <a href="/ai-case-taking">AI Case Taking</a>
+          <a href="/booking">Find Clinic / Book Token</a>
+          <a href="/queue">Live Token Queue</a>
+        </div>
+      </li>
+
+      <!-- For Healthcare Professionals Dropdown -->
+      <li class="abdm-nav-item-dropdown">
+        <a href="/doctor" class="dropdown-toggle">
+          For Healthcare Professionals
+          <svg style="width:10px; height:10px; margin-left:4px; display:inline-block; vertical-align:middle; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </a>
+        <div class="abdm-subnav-menu">
+          <a href="/doctor">Doctor Consultation Dashboard</a>
+          <a href="/doctor/patient-brief/A-026">Clinical Patient Brief</a>
+          <a href="/admin">Hospital Administration</a>
+        </div>
+      </li>
+
+      <!-- Resources Dropdown -->
+      <li class="abdm-nav-item-dropdown">
+        <a href="/health-timeline" class="dropdown-toggle">
+          Resources
+          <svg style="width:10px; height:10px; margin-left:4px; display:inline-block; vertical-align:middle; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </a>
+        <div class="abdm-subnav-menu">
+          <a href="/health-id">Digital Health ID (ABHA) Card</a>
+          <a href="/health-timeline">Longitudinal Health Timeline</a>
+          <a href="/settings">Security &amp; Consent Preferences</a>
+        </div>
+      </li>
+
+      <li>
+        <a href="/settings" onclick="event.preventDefault(); showToast('Helpline 14477 (Toll-Free) &bull; CareBridge Support Active', 'info');">Support</a>
+      </li>
+    </ul>
+
+    <div class="abdm-nav-actions">
+      <!-- Search Input with icon on RIGHT -->
+      <div class="abdm-search-box">
+        <input type="text" id="globalNavSearch" placeholder="Search..." onkeydown="if(event.key==='Enter') window.location.href='/health-records?q='+encodeURIComponent(this.value)">
+        <svg class="search-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+
+      <!-- Notification Bell with Red Badge -->
+      <div style="position:relative;">
+        <button class="abdm-notification-btn" id="navNotificationBtn" onclick="toggleNotificationDropdown(event)" aria-label="Notifications">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="badge-dot"></span>
+        </button>
+
+        <div class="abdm-dropdown-menu" id="notificationDropdown" style="width:310px; right:-60px;">
+          <div style="padding:10px 16px; font-weight:700; font-size:13px; border-bottom:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+            <span>Notifications</span>
+            <span style="font-size:11px; color:#0066E6; cursor:pointer;" onclick="showToast('All notifications marked as read', 'success')">Mark all read</span>
+          </div>
+          <a href="/appointments" style="padding:10px 16px; border-bottom:1px solid #F1F5F9;">
+            <div style="width:8px; height:8px; border-radius:50%; background:#16A05D; margin-top:5px; flex-shrink:0;"></div>
+            <div>
+              <div style="font-weight:600; color:#12345B; font-size:12.5px;">Appointment Confirmed</div>
+              <div style="font-size:11.5px; color:#5F7187;">With Dr. Meera Nair on 20 Sep 2026, 10:00 AM</div>
+            </div>
+          </a>
+          <a href="/queue" style="padding:10px 16px; border-bottom:1px solid #F1F5F9;">
+            <div style="width:8px; height:8px; border-radius:50%; background:#0066E6; margin-top:5px; flex-shrink:0;"></div>
+            <div>
+              <div style="font-weight:600; color:#12345B; font-size:12.5px;">Token Live Update</div>
+              <div style="font-size:11.5px; color:#5F7187;">Currently serving token A-021. 5 ahead.</div>
+            </div>
+          </a>
+          <a href="/shared-records" style="padding:10px 16px;">
+            <div style="width:8px; height:8px; border-radius:50%; background:#D97706; margin-top:5px; flex-shrink:0;"></div>
+            <div>
+              <div style="font-weight:600; color:#12345B; font-size:12.5px;">Record Access Request</div>
+              <div style="font-size:11.5px; color:#5F7187;">City Care Clinic requested consultation record access</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- User Profile Chip with circular avatar 'S', name and down arrow -->
+      <div class="abdm-user-profile" id="userProfileChip" onclick="toggleUserDropdown(event)">
+        <button class="abdm-user-chip">
+          <div class="abdm-user-avatar" id="navAvatarInitials">S</div>
+          <span class="abdm-user-name" id="navUserName">Sajil Binu</span>
+          <svg style="width:11px; height:11px; margin-left:4px; display:inline-block; vertical-align:middle; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <div class="abdm-dropdown-menu" id="userDropdown">
+          <a href="/profile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+          </a>
+          <a href="/settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings
+          </a>
+          <a href="/doctor">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+            Doctor Portal
+          </a>
+          <div class="divider"></div>
+          <button onclick="handleLogout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#DC2626"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span style="color:#DC2626; font-weight:600;">Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  function showAboutModal() {
+    showToast('Ayushman Bharat Digital Health Mission (ABDM) &bull; CareBridge Digital Ecosystem', 'info');
+  }
+</script>

@@ -1,0 +1,5 @@
+/* Custom Animations extending GSAP */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+}

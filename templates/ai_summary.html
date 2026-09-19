@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Case Summary - AI Case Taking{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/ai-case-taking">AI Case Taking</a>
+  <span class="sep">&gt;</span>
+  <span class="current">AI Case Summary</span>
+</div>
+
+<!-- Step Progress Indicator -->
+<div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px 24px; margin-bottom:24px; box-shadow:var(--shadow-sm);">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <!-- Step 1 (Done) -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#16A05D; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">✓</div>
+      <div>
+        <div style="font-weight:600; color:#16A05D; font-size:13px;">Current Concern</div>
+        <div style="font-size:11px; color:#5F7187;">Recorded</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#16A05D; margin:0 14px;"></div>
+
+    <!-- Step 2 (Done) -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#16A05D; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">✓</div>
+      <div>
+        <div style="font-weight:600; color:#16A05D; font-size:13px;">Follow-up Questions</div>
+        <div style="font-size:11px; color:#5F7187;">Completed</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#16A05D; margin:0 14px;"></div>
+
+    <!-- Step 3 (Active) -->
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#0066E6; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">3</div>
+      <div>
+        <div style="font-weight:700; color:#0066E6; font-size:13px;">Case Summary</div>
+        <div style="font-size:11px; color:#5F7187;">Doctor brief</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 4 -->
+    <div style="display:flex; align-items:center; gap:10px; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">4</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Priority / Triage</div>
+        <div style="font-size:11px; color:#94A3B8;">Acuity score</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 5 -->
+    <div style="display:flex; align-items:center; gap:10px; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">5</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Token Booking</div>
+        <div style="font-size:11px; color:#94A3B8;">Queue slot</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">AI-Assisted Case Summary</h1>
+    <p class="abdm-page-subtitle">Structured clinical summary synthesized for your doctor's consultation review.</p>
+  </div>
+
+  <div style="display:flex; gap:12px;">
+    <a href="/ai-case-taking" class="abdm-btn-secondary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      Edit Information
+    </a>
+    <a href="/ai-case-taking/triage" class="abdm-btn-primary">
+      Confirm &amp; Check Priority
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+  </div>
+</div>
+
+<!-- Prominent Clinical Banner Notice -->
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius-lg); padding:14px 20px; display:flex; align-items:center; gap:14px; margin-bottom:24px;">
+  <div style="width:36px; height:36px; border-radius:50%; background:#D97706; color:#FFFFFF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+  </div>
+  <div>
+    <div style="font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:#92400E;">AI-Generated Summary for Clinician Review</div>
+    <div style="font-size:12.5px; color:#B45309;">This summary aggregates your reported concerns and health records. It is not a clinical diagnosis. Final clinical assessment must be performed by a qualified healthcare professional.</div>
+  </div>
+</div>
+
+<!-- Structured Summary Card -->
+<div class="abdm-table-card" style="padding:28px;">
+  
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #E2E8F0;">
+    <!-- Patient Info -->
+    <div>
+      <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Patient Demographics</div>
+      <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">Sajil Binu / Alex Mathew</div>
+      <div style="font-size:13px; color:#5F7187; margin-top:2px;">Age: 24 Yrs &bull; Gender: Male &bull; Health ID: CB-2026-001245</div>
+    </div>
+
+    <!-- Consultation Category -->
+    <div>
+      <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Target Specialty</div>
+      <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#0066E6;">General Medicine / Outpatient Care</div>
+      <div style="font-size:13px; color:#5F7187; margin-top:2px;">Facility: KPHC Thalassery / Govt. District Hospital</div>
+    </div>
+  </div>
+
+  <!-- Sections List -->
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    
+    <!-- Section 1: Chief Complaint -->
+    <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+      <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+        <span style="color:#0066E6;">●</span> Current Complaint
+      </div>
+      <div id="summaryComplaint" style="font-size:14px; color:#334155; line-height:1.6;">
+        Patient reports a persistent dry cough and low-grade fever (~100.2°F) accompanied by mild fatigue and throat irritation.
+      </div>
+    </div>
+
+    <!-- Section 2: Why Consulting Now -->
+    <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+      <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+        <span style="color:#0066E6;">●</span> Why Consulting Now?
+      </div>
+      <div style="font-size:14px; color:#334155; line-height:1.6;">
+        Symptoms have not subsided with over-the-counter measures and are progressively worsening over the past 72 hours, interfering with sleep and daily activities.
+      </div>
+    </div>
+
+    <!-- Section 3: Follow-up Answers -->
+    <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+      <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+        <span style="color:#0066E6;">●</span> Clinical Follow-up Answers
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:13.5px;">
+        <div>
+          <span style="color:#5F7187; display:block; font-size:12px;">Symptom Onset:</span>
+          <strong style="color:#12345B;" id="summaryOnset">2 to 3 days ago</strong>
+        </div>
+        <div>
+          <span style="color:#5F7187; display:block; font-size:12px;">Progression Trend:</span>
+          <strong style="color:#12345B;" id="summaryProgression">Progressively getting worse</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Relevant Medical History & Medications -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+        <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:6px;">
+          Relevant Medical History
+        </div>
+        <div style="font-size:13px; color:#475569; line-height:1.5;">
+          No known drug allergies (NKDA). Mild seasonal allergic rhinitis. Previous resolved acute gastroenteritis (July 2025).
+        </div>
+      </div>
+
+      <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+        <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:6px;">
+          Current Medications
+        </div>
+        <div style="font-size:13px; color:#475569; line-height:1.5;">
+          Paracetamol 650mg SOS taken 8 hours ago. No chronic prescription medications.
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Recent Diagnostic Records -->
+    <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:var(--radius-md); padding:16px 20px;">
+      <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B; margin-bottom:8px;">
+        Recent Linked Reports on Record
+      </div>
+      <div style="display:flex; gap:14px; flex-wrap:wrap;">
+        <div class="abdm-badge" style="background:#FFFFFF; border:1px solid #CBD5E1; color:#12345B; padding:6px 12px;">
+          📄 Blood Test Report (12 Sep 2025 - Normal Hemogram)
+        </div>
+        <div class="abdm-badge" style="background:#FFFFFF; border:1px solid #CBD5E1; color:#12345B; padding:6px 12px;">
+          🖼️ Chest X-Ray (21 Aug 2025 - Clear lung fields)
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom CTA -->
+  <div style="display:flex; justify-content:flex-end; align-items:center; gap:14px; margin-top:28px; padding-top:20px; border-top:1px solid #E2E8F0;">
+    <a href="/ai-case-taking/follow-up" class="abdm-btn-secondary">&larr; Back</a>
+    <a href="/ai-case-taking/triage" class="abdm-btn-primary" style="padding:12px 24px; font-size:14px;">
+      Confirm Information &amp; Continue to Triage
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const complaint = sessionStorage.getItem('patient_complaint');
+    if (complaint) {
+      document.getElementById('summaryComplaint').textContent = complaint;
+    }
+
+    const answers = sessionStorage.getItem('follow_up_answers');
+    if (answers) {
+      try {
+        const aObj = JSON.parse(answers);
+        if (aObj.Onset) document.getElementById('summaryOnset').textContent = aObj.Onset;
+        if (aObj.Progression) document.getElementById('summaryProgression').textContent = aObj.Progression;
+      } catch(e) {}
+    }
+  });
+</script>
+{% endblock %}

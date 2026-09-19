@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Settings</span>
+</div>
+
+<!-- Page Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Settings</h1>
+    <p class="abdm-page-subtitle">Manage your account, privacy, notifications and preferences.</p>
+  </div>
+</div>
+
+<!-- 3x2 Grid of Settings Cards matching Settings.png -->
+<div class="abdm-settings-grid">
+  
+  <!-- Card 1: Account Settings -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Account Settings</div>
+        <div class="setting-desc">Update your account details and login information.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <a href="/profile">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <div class="item-text">
+              <span class="main-text">Edit Profile</span>
+              <span class="sub-text">Update your personal information</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Change Password')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <div class="item-text">
+              <span class="main-text">Change Password</span>
+              <span class="sub-text">Keep your account secure</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Linked Mobile Number')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <div class="item-text">
+              <span class="main-text">Linked Mobile Number</span>
+              <span class="sub-text">+91 98765 43210</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Linked Email')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <div class="item-text">
+              <span class="main-text">Linked Email</span>
+              <span class="sub-text">sajilbinu@example.com</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Card 2: Privacy & Data Sharing -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Privacy &amp; Data Sharing</div>
+        <div class="setting-desc">Control who can access your health records.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <a href="/shared-records">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <div class="item-text">
+              <span class="main-text">Manage Shared Records</span>
+              <span class="sub-text">View and manage people/organisations with access</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Data Sharing Preferences')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <div class="item-text">
+              <span class="main-text">Data Sharing Preferences</span>
+              <span class="sub-text">Choose what information to share</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <a href="/shared-records">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+            <div class="item-text">
+              <span class="main-text">Revoke Access</span>
+              <span class="sub-text">Remove access for a facility or person</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Card 3: Notification Preferences -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Notification Preferences</div>
+        <div class="setting-desc">Choose how you want to be notified.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <div class="item-text">
+            <span class="main-text">Appointment Reminders</span>
+            <span class="sub-text">Get reminders for upcoming appointments</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" checked onchange="showToast('Appointment reminders updated', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <div class="item-text">
+            <span class="main-text">Record Access Alerts</span>
+            <span class="sub-text">Notify when someone views your records</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" checked onchange="showToast('Record access alerts updated', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <div class="item-text">
+            <span class="main-text">Health Tips &amp; Updates</span>
+            <span class="sub-text">Receive government health advisories</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" checked onchange="showToast('Health tips updated', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <div class="item-text">
+            <span class="main-text">Promotional Communications</span>
+            <span class="sub-text">Updates about new features and services</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" onchange="showToast('Promotional communications updated', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Card 4: Language & Accessibility -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Language &amp; Accessibility</div>
+        <div class="setting-desc">Set your preferred language and accessibility options.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Language')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+            <div class="item-text">
+              <span class="main-text">Language</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:12.5px; color:#5F7187;">English</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Text Size')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+            <div class="item-text">
+              <span class="main-text">Text Size</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:12.5px; color:#5F7187;">Medium</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <div class="item-text">
+            <span class="main-text">High Contrast Mode</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" onchange="showToast('High contrast toggled', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><line x1="2" y1="20" x2="2.01" y2="20"></line></svg>
+          <div class="item-text">
+            <span class="main-text">Screen Reader Support</span>
+          </div>
+        </div>
+        <label class="abdm-toggle">
+          <input type="checkbox" onchange="showToast('Screen reader mode enabled', 'success')">
+          <span class="slider"></span>
+        </label>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Card 5: Connected Accounts -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Connected Accounts</div>
+        <div class="setting-desc">Link and manage external accounts.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <a href="/profile">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg>
+            <div class="item-text">
+              <span class="main-text">Health ID</span>
+              <span class="sub-text">Linked (91-XXXX-XXXX-1234)</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="item-label-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          <div class="item-text">
+            <span class="main-text">Aadhaar (Optional)</span>
+            <span class="sub-text">Not Linked</span>
+          </div>
+        </div>
+        <button class="abdm-btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="showToast('Aadhaar linking portal initialized')">Link</button>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('ABHA Address')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <div class="item-text">
+              <span class="main-text">ABHA Address</span>
+              <span class="sub-text">sajilbinu@abdm</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Card 6: Help & Support -->
+  <div class="abdm-settings-card">
+    <div class="card-top">
+      <div class="icon-circle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div class="title-group">
+        <div class="setting-title">Help &amp; Support</div>
+        <div class="setting-desc">Get help or manage your account.</div>
+      </div>
+    </div>
+
+    <ul class="abdm-settings-list">
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('FAQ')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div class="item-text">
+              <span class="main-text">FAQ</span>
+              <span class="sub-text">Find answers to common questions</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Contact Support')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <div class="item-text">
+              <span class="main-text">Contact Support</span>
+              <span class="sub-text">Get help from our support team</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="openSettingAction('Give Feedback')">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <div class="item-text">
+              <span class="main-text">Give Feedback</span>
+              <span class="sub-text">Help us improve</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+
+      <li class="abdm-settings-item">
+        <div class="clickable-row" onclick="confirmDeleteAccount()">
+          <div class="item-label-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <div class="item-text">
+              <span class="main-text" style="color:#DC2626;">Delete Account</span>
+              <span class="sub-text">Request account deletion</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function openSettingAction(settingName) {
+    showToast(`Opening ${settingName} panel...`);
+  }
+
+  function confirmDeleteAccount() {
+    if (confirm("Are you sure you want to request deletion of your CareBridge Health Account? This action cannot be undone.")) {
+      showToast("Account deletion request submitted", "error");
+    }
+  }
+</script>
+{% endblock %}

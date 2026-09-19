@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CareBridge - Digital Health Mission{% endblock %}</title>
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Base ABDM Theme CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Header Component -->
+  {% include 'components/header.html' %}
+
+  <!-- Main Application Body: Sidebar + Main Content -->
+  <div class="abdm-layout">
+    {% include 'components/sidebar.html' %}
+
+    <main class="abdm-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Deep Navy Footer Component -->
+  {% include 'components/footer.html' %}
+
+  <!-- Toast Alert Container -->
+  <div id="toastContainer" style="position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:8px;"></div>
+
+  <!-- Global JavaScript helper routines -->
+  <script>
+    // User profile and initial setup
+    document.addEventListener('DOMContentLoaded', () => {
+      const storedName = localStorage.getItem('name') || 'Sajil Binu';
+      const navUserName = document.getElementById('navUserName');
+      const navAvatarInitials = document.getElementById('navAvatarInitials');
+      if (navUserName) navUserName.textContent = storedName;
+        navAvatarInitials.textContent = 'S';
+      }
+    });
+
+    function toggleUserDropdown(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('userDropdown');
+      const notifMenu = document.getElementById('notificationDropdown');
+      if (notifMenu) notifMenu.classList.remove('show');
+      if (menu) menu.classList.toggle('show');
+    }
+
+    function toggleNotificationDropdown(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('notificationDropdown');
+      const userMenu = document.getElementById('userDropdown');
+      if (userMenu) userMenu.classList.remove('show');
+      if (menu) menu.classList.toggle('show');
+    }
+
+    // Close open menus when clicking anywhere else
+    document.addEventListener('click', () => {
+      const userMenu = document.getElementById('userDropdown');
+      const notifMenu = document.getElementById('notificationDropdown');
+      if (userMenu) userMenu.classList.remove('show');
+      if (notifMenu) notifMenu.classList.remove('show');
+    });
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('name');
+      window.location.href = '/login';
+    }
+
+    // Interactive Toast Notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? '#16A05D' : (type === 'error' ? '#DC2626' : '#0066E6');
+      toast.style.cssText = `
+        background: #FFFFFF;
+        border-left: 4px solid ${bgColor};
+        color: #12345B;
+        padding: 12px 18px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        font-size: 13.5px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 260px;
+        animation: slideIn 0.2s ease-out;
+      `;
+      toast.innerHTML = `
+        <span style="color:${bgColor}; font-weight:700;">●</span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

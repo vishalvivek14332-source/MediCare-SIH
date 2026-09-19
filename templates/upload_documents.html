@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Documents - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Upload Documents</span>
+</div>
+
+<!-- Page Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Upload Documents</h1>
+    <p class="abdm-page-subtitle">Add your health documents to keep your records secure and accessible anytime.</p>
+  </div>
+</div>
+
+<!-- Two-Column Grid: Drag & Drop Dropzone on Left + Guidelines on Right -->
+<div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; margin-bottom: 32px; align-items: start;">
+  
+  <!-- Left: Drag & Drop Dropzone -->
+  <div>
+    <div class="abdm-upload-dropzone" id="dropZone" onclick="triggerFileInput()">
+      <svg class="upload-cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+        <polyline points="12 13 12 7"></polyline>
+        <polyline points="9 10 12 7 15 10"></polyline>
+      </svg>
+      <div class="dropzone-title">Drag and drop files here</div>
+      <div class="dropzone-sub">or</div>
+
+      <button type="button" class="abdm-btn-primary" style="margin-bottom:16px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        Choose Files
+      </button>
+
+      <div class="dropzone-formats">
+        <span>Supported formats: PDF, JPG, PNG (Max size: 10 MB per file)</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </div>
+
+      <!-- Hidden Real File Input -->
+      <input type="file" id="realFileInput" style="display:none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(event)">
+    </div>
+
+    <!-- Upload Progress Indicator (Hidden by default) -->
+    <div id="uploadProgressContainer" style="display:none; margin-top:14px; background:#FFFFFF; border:1px solid #D9E5F2; border-radius:8px; padding:14px 18px;">
+      <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:#12345B; margin-bottom:6px;">
+        <span id="uploadFileName">Uploading file...</span>
+        <span id="uploadPercentage">0%</span>
+      </div>
+      <div style="width:100%; height:8px; background:#E2E8F0; border-radius:4px; overflow:hidden;">
+        <div id="uploadProgressBar" style="width:0%; height:100%; background:#0066E6; transition:width 0.3s ease;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Document Guidelines Card -->
+  <div class="abdm-guidelines-card">
+    <div class="title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+      </svg>
+      Document Guidelines
+    </div>
+
+    <ul class="abdm-guidelines-list">
+      <li>
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Upload clear and readable documents</span>
+      </li>
+      <li>
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Supported formats: PDF, JPG, PNG</span>
+      </li>
+      <li>
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Maximum file size: 10 MB per file</span>
+      </li>
+      <li>
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>You can upload lab reports, prescriptions, imaging reports, discharge summaries, vaccination certificates, etc.</span>
+      </li>
+      <li>
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Ensure the document contains your name and date for easy identification</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Bottom Section: Recent Uploads -->
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+  <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:700; color:var(--text-dark);">Recent Uploads</h2>
+  <a href="/health-records" style="font-size:13px; font-weight:600; color:#0066E6; text-decoration:none;">View All</a>
+</div>
+
+<div class="abdm-table-card">
+  <table class="abdm-table">
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Category</th>
+        <th>Date Uploaded</th>
+        <th>Status</th>
+        <th style="text-align: right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="recentUploadsTableBody">
+      <!-- Upload 1 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <span class="file-badge pdf">PDF</span>
+            <span class="title">Blood Test Report.pdf</span>
+          </div>
+        </td>
+        <td>Lab Reports</td>
+        <td>12 Sep 2025, 10:24 AM</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Uploaded
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <a href="/health-records" class="table-action-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </a>
+            <button class="table-action-menu-btn" onclick="showToast('Document options')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Upload 2 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <span class="file-badge jpg">JPG</span>
+            <span class="title">X-Ray Chest.jpg</span>
+          </div>
+        </td>
+        <td>Imaging Reports</td>
+        <td>21 Aug 2025, 02:15 PM</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Uploaded
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <a href="/health-records" class="table-action-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </a>
+            <button class="table-action-menu-btn" onclick="showToast('Document options')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Upload 3 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <span class="file-badge pdf">PDF</span>
+            <span class="title">Prescription - Dr. Meera.pdf</span>
+          </div>
+        </td>
+        <td>Prescriptions</td>
+        <td>05 Sep 2025, 11:30 AM</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Uploaded
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <a href="/health-records" class="table-action-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </a>
+            <button class="table-action-menu-btn" onclick="showToast('Document options')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Upload 4 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <span class="file-badge pdf">PDF</span>
+            <span class="title">COVID-19 Vaccination Certificate.pdf</span>
+          </div>
+        </td>
+        <td>Vaccination Records</td>
+        <td>10 Jan 2022, 09:45 AM</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Uploaded
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <a href="/health-records" class="table-action-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </a>
+            <button class="table-action-menu-btn" onclick="showToast('Document options')">⋮</button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Upload 5 -->
+      <tr>
+        <td>
+          <div class="table-entity-cell">
+            <span class="file-badge pdf">PDF</span>
+            <span class="title">Discharge Summary.pdf</span>
+          </div>
+        </td>
+        <td>Discharge Summaries</td>
+        <td>15 Jul 2025, 04:20 PM</td>
+        <td>
+          <span class="abdm-badge badge-success">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Uploaded
+          </span>
+        </td>
+        <td>
+          <div class="table-actions" style="justify-content: flex-end;">
+            <a href="/health-records" class="table-action-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              View
+            </a>
+            <button class="table-action-menu-btn" onclick="showToast('Document options')">⋮</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const realFileInput = document.getElementById('realFileInput');
+
+  function triggerFileInput() {
+    realFileInput.click();
+  }
+
+  // Drag and drop events
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    }, false);
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length) uploadFile(files[0]);
+  });
+
+  function handleFileSelect(event) {
+    if (event.target.files.length) {
+      uploadFile(event.target.files[0]);
+    }
+  }
+
+  function uploadFile(file) {
+    const progressContainer = document.getElementById('uploadProgressContainer');
+    const progressBar = document.getElementById('uploadProgressBar');
+    const uploadFileName = document.getElementById('uploadFileName');
+    const uploadPercentage = document.getElementById('uploadPercentage');
+
+    progressContainer.style.display = 'block';
+    uploadFileName.textContent = `Uploading ${file.name}...`;
+
+    let percent = 0;
+    const interval = setInterval(() => {
+      percent += 20;
+      progressBar.style.width = percent + '%';
+      uploadPercentage.textContent = percent + '%';
+
+      if (percent >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          progressContainer.style.display = 'none';
+          showToast(`${file.name} uploaded and verified successfully!`, 'success');
+
+          // Append to recent uploads table
+          const ext = file.name.split('.').pop().toUpperCase();
+          const badgeClass = ext === 'PDF' ? 'pdf' : 'jpg';
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+            <td>
+              <div class="table-entity-cell">
+                <span class="file-badge ${badgeClass.toLowerCase()}">${ext}</span>
+                <span class="title">${file.name}</span>
+              </div>
+            </td>
+            <td>Lab Reports</td>
+            <td>Just now</td>
+            <td>
+              <span class="abdm-badge badge-success">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Uploaded
+              </span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a href="/health-records" class="table-action-link">View</a>
+                <button class="table-action-menu-btn">⋮</button>
+              </div>
+            </td>
+          `;
+          document.getElementById('recentUploadsTableBody').prepend(newRow);
+        }, 500);
+      }
+    }, 150);
+
+    // Also send to backend
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', 'Lab Reports');
+    formData.append('hospital', 'Govt. District Hospital, Kannur');
+    fetch('/api/patient/upload-document', {
+      method: 'POST',
+      body: formData
+    }).catch(() => {});
+  }
+</script>
+{% endblock %}

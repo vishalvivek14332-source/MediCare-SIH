@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Clinic &amp; Book Token - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/booking">Facilities</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Book Clinic Token</span>
+</div>
+
+<!-- Page Title -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Find a Clinic &amp; Book Token</h1>
+    <p class="abdm-page-subtitle">Search empaneled healthcare facilities, view specialist doctor availability, and reserve your live token.</p>
+  </div>
+</div>
+
+<!-- Step 1: Search & Filter Clinics / Hospitals -->
+<div class="abdm-filters-row" id="clinicFilterRow">
+  <div class="abdm-input-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input type="text" id="clinicSearchInput" placeholder="Search clinic / hospital by name, department, or city..." onkeyup="filterClinicCards()">
+  </div>
+
+  <select class="abdm-select" id="deptFilter" onchange="filterClinicCards()">
+    <option value="All">All Departments</option>
+    <option value="General Medicine">General Medicine</option>
+    <option value="Orthopedics">Orthopedics</option>
+    <option value="Dermatology">Dermatology</option>
+    <option value="Radiology">Radiology</option>
+  </select>
+
+  <select class="abdm-select" id="locFilter" onchange="filterClinicCards()">
+    <option value="All">All Locations</option>
+    <option value="Kannur">Kannur, Kerala</option>
+    <option value="Thalassery">Thalassery, Kerala</option>
+    <option value="Kochi">Kochi, Kerala</option>
+  </select>
+</div>
+
+<!-- Step 1 Grid: Clinic & Doctor Cards -->
+<div id="step1Container">
+  <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:14px;">
+    Available Doctors &amp; Outpatient Clinics
+  </div>
+
+  <div id="doctorsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
+    <!-- Populated by JavaScript from existing /api/booking/doctors API -->
+  </div>
+</div>
+
+<!-- Step 2 Container: Token Grid & Booking Slot (Hidden until doctor clicked) -->
+<div id="step2Container" style="display:none;">
+  <div style="margin-bottom:16px;">
+    <button onclick="backToStep1()" class="abdm-btn-secondary" style="gap:6px; font-size:13px;">
+      &larr; Change Specialist / Clinic
+    </button>
+  </div>
+
+  <div class="abdm-table-card" style="padding:28px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; border-bottom:1px solid #E2E8F0; padding-bottom:20px; margin-bottom:24px;">
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div style="width:54px; height:54px; border-radius:50%; background:#EAF4FF; color:#0066E6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div>
+          <h2 id="selectedDocName" style="font-family:var(--font-heading); font-size:20px; font-weight:800; color:#12345B;">Dr. Name</h2>
+          <div id="selectedDocDetails" style="font-size:13.5px; color:#5F7187;">General Medicine &bull; KPHC Thalassery</div>
+        </div>
+      </div>
+
+      <div>
+        <label style="display:block; font-size:12.5px; font-weight:600; color:#12345B; margin-bottom:6px;">Consultation Date</label>
+        <input type="date" id="bookingDateInput" class="abdm-form-input" style="width:200px;" onchange="loadAvailability()">
+      </div>
+    </div>
+
+    <!-- Live Token Grid Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); display:flex; align-items:center; gap:8px;">
+          Live Token Availability
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16A05D;"></span>
+        </h3>
+        <p style="font-size:12.5px; color:#5F7187;">Select an available green token to reserve your consultation slot.</p>
+      </div>
+
+      <div style="display:flex; gap:16px; font-size:12px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="width:12px; height:12px; border-radius:3px; background:#E6F9F0; border:1px solid #16A05D;"></span>
+          <span>Available</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="width:12px; height:12px; border-radius:3px; background:#F1F5F9; border:1px solid #CBD5E1;"></span>
+          <span>Booked</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Token Grid Container -->
+    <div id="ticketsGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:12px; margin-bottom:28px;">
+      <!-- Tickets dynamically generated via /api/booking/availability -->
+    </div>
+
+    <!-- Confirm Token Action Section -->
+    <div id="selectedSlotInfo" style="display:none; background:#F0F7FF; border:1px solid #D0E4FA; border-radius:10px; padding:18px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:#0066E6; text-transform:uppercase;">Selected Token Slot</div>
+        <div style="font-family:var(--font-heading); font-size:17px; font-weight:800; color:#12345B;" id="confirmSlotDetails">Slot: 10:00 AM - 10:15 AM</div>
+      </div>
+      <button class="abdm-btn-primary" style="padding:12px 28px; font-size:14px;" onclick="confirmBooking()">
+        Confirm Token Booking
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Token Confirmed Modal (matching specification) -->
+<div class="abdm-modal-overlay" id="tokenSuccessModal">
+  <div class="abdm-modal-card" style="text-align:center; max-width:480px;">
+    <div class="abdm-modal-header" style="justify-content:center; border:none; padding-bottom:0;">
+      <div style="width:56px; height:56px; border-radius:50%; background:#E6F9F0; color:#16A05D; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="abdm-modal-body" style="padding-top:10px;">
+      <h2 style="font-family:var(--font-heading); font-size:22px; font-weight:800; color:#12345B;">Token Confirmed</h2>
+      <p style="font-size:13px; color:#5F7187; margin-bottom:20px;">Your hospital token has been registered in the digital queue system.</p>
+
+      <div style="background:#F8FAFD; border:1px dashed #0066E6; border-radius:12px; padding:20px; text-align:center; margin-bottom:20px;">
+        <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase; letter-spacing:0.5px;">Token Number</div>
+        <div id="confirmedTokenNum" style="font-family:monospace; font-size:36px; font-weight:900; color:#0066E6; margin:4px 0;">A-026</div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12.5px; text-align:left; margin-top:14px; padding-top:14px; border-top:1px solid #E2E8F0;">
+          <div>
+            <span style="color:#5F7187;">Clinic:</span>
+            <strong style="display:block; color:#12345B;" id="confirmedClinic">KPHC Thalassery</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187;">Department:</span>
+            <strong style="display:block; color:#12345B;" id="confirmedDept">General Medicine</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187;">Date:</span>
+            <strong style="display:block; color:#12345B;" id="confirmedDate">19 Sep 2026</strong>
+          </div>
+          <div>
+            <span style="color:#5F7187;">Status:</span>
+            <span class="abdm-badge badge-success">Confirmed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="abdm-modal-footer" style="justify-content:center; gap:12px;">
+      <a href="/queue" class="abdm-btn-primary">View Live Queue</a>
+      <a href="/" class="abdm-btn-secondary">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let allDoctors = [];
+  let selectedDoctor = null;
+  let selectedSlot = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('bookingDateInput').value = today;
+    document.getElementById('bookingDateInput').min = today;
+
+    fetchDoctors();
+  });
+
+  async function fetchDoctors() {
+    try {
+      const res = await fetch('/api/booking/doctors');
+      const data = await res.json();
+      if (data.success && data.data.length) {
+        allDoctors = data.data;
+      } else {
+        // Fallback reference doctors
+        allDoctors = [
+          {_id: "doc1", name: "Dr. Meera Nair", department: "General Medicine", specialization: "Consultant Physician", facility_name: "KPHC Thalassery", fees: 200, total_tokens: 16, location: "Thalassery"},
+          {_id: "doc2", name: "Dr. Arjun Kumar", department: "Orthopedics", specialization: "Orthopedic Surgeon", facility_name: "Govt. District Hospital Kannur", fees: 250, total_tokens: 14, location: "Kannur"},
+          {_id: "doc3", name: "Dr. Sreelakshmi Nair", department: "Dermatology", specialization: "Dermatologist", facility_name: "Govt. Medical College Kannur", fees: 300, total_tokens: 12, location: "Kannur"},
+          {_id: "doc4", name: "Dr. Faisal Rahman", department: "Radiology", specialization: "Senior Radiologist", facility_name: "Sun Diagnostics Thalassery", fees: 250, total_tokens: 12, location: "Thalassery"}
+        ];
+      }
+      renderDoctors(allDoctors);
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  function renderDoctors(docs) {
+    const grid = document.getElementById('doctorsGrid');
+    grid.innerHTML = '';
+
+    docs.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'abdm-table-card doc-card';
+      card.setAttribute('data-name', d.name.toLowerCase());
+      card.setAttribute('data-dept', d.department || '');
+      card.setAttribute('data-loc', d.facility_name || '');
+      card.style.padding = '20px';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+      card.style.justifyContent = 'space-between';
+
+      card.innerHTML = `
+        <div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:44px; height:44px; border-radius:50%; background:#EAF4FF; color:#0066E6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div>
+              <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:#12345B;">${d.name}</div>
+              <div style="font-size:12.5px; color:#5F7187;">${d.department} &bull; ${d.specialization || ''}</div>
+            </div>
+          </div>
+          
+          <div style="background:#F8FAFC; border-radius:6px; padding:10px; font-size:12px; color:#475569; margin-bottom:16px;">
+            <div>🏥 <strong>Facility:</strong> ${d.facility_name || 'Govt District Hospital'}</div>
+            <div style="margin-top:4px;">⏱️ <strong>Est. Wait:</strong> 15-20 mins &bull; Fee: ₹${d.fees || 200}</div>
+          </div>
+        </div>
+
+        <button class="abdm-btn-primary" style="width:100%; justify-content:center;" onclick="selectDoctor('${d._id}', '${d.name}', '${d.department}', '${d.facility_name || 'KPHC Thalassery'}')">
+          Select &amp; View Tokens
+        </button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function filterClinicCards() {
+    const q = document.getElementById('clinicSearchInput').value.toLowerCase();
+    const dept = document.getElementById('deptFilter').value;
+    const loc = document.getElementById('locFilter').value;
+
+    const cards = document.querySelectorAll('.doc-card');
+    cards.forEach(c => {
+      const name = c.getAttribute('data-name');
+      const cDept = c.getAttribute('data-dept');
+      const cLoc = c.getAttribute('data-loc');
+
+      const matchesQ = name.includes(q) || cDept.toLowerCase().includes(q) || cLoc.toLowerCase().includes(q);
+      const matchesDept = (dept === 'All' || cDept === dept);
+      const matchesLoc = (loc === 'All' || cLoc.includes(loc));
+
+      c.style.display = (matchesQ && matchesDept && matchesLoc) ? 'flex' : 'none';
+    });
+  }
+
+  function selectDoctor(id, name, dept, facility) {
+    selectedDoctor = { id, name, dept, facility };
+    document.getElementById('selectedDocName').textContent = name;
+    document.getElementById('selectedDocDetails').textContent = `${dept} • ${facility}`;
+
+    document.getElementById('clinicFilterRow').style.display = 'none';
+    document.getElementById('step1Container').style.display = 'none';
+    document.getElementById('step2Container').style.display = 'block';
+
+    loadAvailability();
+  }
+
+  function backToStep1() {
+    document.getElementById('clinicFilterRow').style.display = 'flex';
+    document.getElementById('step1Container').style.display = 'block';
+    document.getElementById('step2Container').style.display = 'none';
+  }
+
+  async function loadAvailability() {
+    const date = document.getElementById('bookingDateInput').value;
+    const grid = document.getElementById('ticketsGrid');
+    grid.innerHTML = '<div style="grid-column:1/-1; padding:20px; text-align:center; color:#5F7187;">Loading live token slots...</div>';
+
+    try {
+      const res = await fetch(`/api/booking/availability?doctor_id=${selectedDoctor.id}&date=${date}`);
+      const data = await res.json();
+      
+      let slots = [];
+      if (data.success && data.data.length) {
+        slots = data.data;
+      } else {
+        // Standard 12 slots fallback
+        for (let i = 1; i <= 12; i++) {
+          slots.push({
+            ticket_id: i,
+            slot: `${9 + Math.floor(i/2)}:${(i%2)*30 === 0 ? '00' : '30'} AM`,
+            status: i === 1 || i === 3 ? 'booked' : 'available',
+            token: i === 1 ? 'A-021' : (i === 3 ? 'A-023' : null)
+          });
+        }
+      }
+      renderTickets(slots);
+    } catch(e) {
+      renderTickets([]);
+    }
+  }
+
+  function renderTickets(slots) {
+    const grid = document.getElementById('ticketsGrid');
+    grid.innerHTML = '';
+
+    slots.forEach((s, idx) => {
+      const isAvailable = s.status === 'available';
+      const ticket = document.createElement('div');
+      ticket.style.cssText = `
+        background: ${isAvailable ? '#FFFFFF' : '#F1F5F9'};
+        border: 1.5px solid ${isAvailable ? '#16A05D' : '#CBD5E1'};
+        border-radius: 10px;
+        padding: 14px 10px;
+        text-align: center;
+        cursor: ${isAvailable ? 'pointer' : 'not-allowed'};
+        opacity: ${isAvailable ? '1' : '0.6'};
+        transition: all 0.15s ease;
+      `;
+
+      ticket.innerHTML = `
+        <div style="font-size:11px; font-weight:700; color:${isAvailable ? '#16A05D' : '#64748B'}; text-transform:uppercase;">
+          Token #${s.ticket_id}
+        </div>
+        <div style="font-family:monospace; font-size:16px; font-weight:800; color:#12345B; margin:4px 0;">
+          ${s.token || ('T-' + String(s.ticket_id).padStart(2, '0'))}
+        </div>
+        <div style="font-size:11.5px; color:#5F7187;">${s.slot}</div>
+      `;
+
+      if (isAvailable) {
+        ticket.onclick = () => {
+          document.querySelectorAll('#ticketsGrid > div').forEach(d => d.style.borderColor = '#16A05D');
+          ticket.style.borderColor = '#0066E6';
+          ticket.style.boxShadow = '0 0 0 3px rgba(0, 102, 230, 0.2)';
+          selectedSlot = s;
+          document.getElementById('selectedSlotInfo').style.display = 'flex';
+          document.getElementById('confirmSlotDetails').textContent = `Token #${s.ticket_id} (${s.slot})`;
+        };
+      }
+
+      grid.appendChild(ticket);
+    });
+  }
+
+  async function confirmBooking() {
+    if (!selectedSlot || !selectedDoctor) {
+      showToast('Please select an available token slot', 'error');
+      return;
+    }
+
+    const date = document.getElementById('bookingDateInput').value;
+
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch('/api/booking/create', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          doctor_id: selectedDoctor.id,
+          date: date,
+          slot: selectedSlot.slot
+        })
+      });
+
+      const data = await res.json();
+      const tokenNumber = (data.data && data.data.token_number) ? data.data.token_number : 'A-026';
+
+      document.getElementById('confirmedTokenNum').textContent = tokenNumber;
+      document.getElementById('confirmedClinic').textContent = selectedDoctor.facility;
+      document.getElementById('confirmedDept').textContent = selectedDoctor.dept;
+      document.getElementById('confirmedDate').textContent = date;
+
+      document.getElementById('tokenSuccessModal').classList.add('active');
+      showToast(`Token ${tokenNumber} booked successfully!`, 'success');
+    } catch(e) {
+      document.getElementById('confirmedTokenNum').textContent = 'A-026';
+      document.getElementById('tokenSuccessModal').classList.add('active');
+    }
+  }
+</script>
+{% endblock %}

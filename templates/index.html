@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Booking System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+<body class="antialiased overflow-x-hidden selection:bg-blue-200">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="font-bold text-3xl tracking-tight text-blue-600">MediCare<span class="text-blue-400">+</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center" id="navLoginContainer">
+                    <a href="#services" class="text-gray-600 hover:text-blue-600 font-medium transition">Services</a>
+                    <a href="#discovery" class="text-gray-600 hover:text-blue-600 font-medium transition">Clinics</a>
+                    <a href="/login" class="text-blue-600 hover:text-blue-800 font-semibold transition">Login</a>
+                    <a href="/register" class="bg-blue-600 text-white px-5 py-2.5 rounded-full shadow hover:bg-blue-700 transition font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
+        <!-- Background Elements -->
+        <div class="absolute top-0 right-0 -z-10 opacity-30 transform translate-x-1/3 -translate-y-1/4">
+            <div class="w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+        </div>
+        <div class="absolute bottom-0 left-0 -z-10 opacity-30 transform -translate-x-1/4 translate-y-1/4">
+            <div class="w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full">
+            <div class="text-center max-w-4xl mx-auto hero-content">
+                <span id="heroGreeting" class="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-4 block">Welcome to the future of healthcare</span>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
+                    Modern Healthcare at <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Your Fingertips</span>
+                </h1>
+                <p class="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+                    Book appointments, check live queues, and manage your health records seamlessly with our modern hospital ticketing system.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4" id="heroButtons">
+                    <a href="/register" class="bg-blue-600 text-white px-8 py-4 rounded-full shadow-lg shadow-blue-200 hover:bg-blue-700 font-semibold text-lg transition transform hover:-translate-y-1">
+                        Get Started Today
+                    </a>
+                    <a href="#services" class="bg-white text-blue-600 px-8 py-4 rounded-full shadow-lg hover:bg-gray-50 font-semibold text-lg transition glass border border-gray-200">
+                        View Our Services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Appointments Section (Patient Dashboard) -->
+    <section id="appointmentsSection" class="py-20 hidden relative z-10 bg-blue-50/50 border-t border-blue-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">My Appointments</h2>
+                    <p class="mt-2 text-slate-600 font-medium">Manage your upcoming visits and track your live queue status.</p>
+                </div>
+                <a href="#discovery" class="mt-6 md:mt-0 bg-white border border-blue-200 text-blue-600 px-6 py-3 rounded-full shadow hover:bg-blue-50 transition font-bold flex items-center gap-2">
+                    Book New Appointment
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="appointmentsGrid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Discovery Section -->
+    <section id="discovery" class="py-20 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">Find Nearby Clinics</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Allow GPS access to discover our top-rated medical facilities in your immediate vicinity, or search by your location.</p>
+                
+                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4 max-w-2xl mx-auto">
+                    <div class="flex-1 relative">
+                        <input type="text" id="searchInput" placeholder="Search by city, state, or clinic name..." class="w-full px-6 py-4 rounded-full shadow-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg">
+                        <button onclick="searchLocation()" class="absolute right-2 top-2 bottom-2 bg-blue-600 text-white px-6 rounded-full hover:bg-blue-700 transition font-semibold">Search</button>
+                    </div>
+                    <button onclick="getLocation()" class="bg-indigo-600 text-white px-8 py-4 rounded-full shadow-lg font-semibold hover:bg-indigo-700 transition transform hover:-translate-y-1 whitespace-nowrap">
+                        📍 Use GPS
+                    </button>
+                </div>
+                <p id="locStatus" class="mt-4 text-blue-600 font-medium"></p>
+            </div>
+            <div id="clinicsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Clinics injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 bg-white/50 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">Our Services</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Comprehensive, state-of-the-art care for you and your family.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Service 1 -->
+                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Cardiology</h3>
+                    <p class="text-slate-600 leading-relaxed">Expert care for your heart with advanced diagnostics and monitoring tools.</p>
+                </div>
+                <!-- Service 2 -->
+                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Laboratory</h3>
+                    <p class="text-slate-600 leading-relaxed">Fast and accurate test results with state-of-the-art laboratory technology.</p>
+                </div>
+                <!-- Service 3 -->
+                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">General Practice</h3>
+                    <p class="text-slate-600 leading-relaxed">Routine checkups and continuous personal care for everyone in the family.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-3xl font-bold tracking-tight mb-4">MediCare<span class="text-blue-500">+</span></h3>
+            <p class="text-slate-400 mb-8 font-medium">Modern Healthcare at Your Fingertips</p>
+            <p class="text-slate-500 text-sm">&copy; 2026 MediCare+. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        function getLocation() {
+            const status = document.getElementById('locStatus');
+            if (!navigator.geolocation) {
+                status.textContent = 'Geolocation is not supported by your browser';
+            } else {
+                status.textContent = 'Locating your exact position...';
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+        }
+
+        async function searchLocation() {
+            const query = document.getElementById('searchInput').value;
+            if (!query) return;
+            const status = document.getElementById('locStatus');
+            status.textContent = 'Searching clinics...';
+            try {
+                const res = await fetch(`/api/booking/clinics/search?query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                renderClinics(data.data, `Found ${data.data.length} clinics matching "${query}"`);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderClinics(clinics, statusText) {
+            const grid = document.getElementById('clinicsGrid');
+            if(clinics.length > 0) {
+                grid.innerHTML = clinics.map(c => `
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 clinic-card hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-2xl font-bold text-gray-900">${c.name}</h3>
+                            ${c.distance_km ? `<span class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full">${c.distance_km} km</span>` : ''}
+                        </div>
+                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">${c.address}</p>
+                        
+                        <div class="border-t border-gray-100 pt-4 mt-auto">
+                            <a href="/booking?clinic_id=${c._id}" class="text-blue-600 font-bold text-sm hover:underline flex items-center justify-end">
+                                View Doctors & Book <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+                
+                gsap.from(".clinic-card", { y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: "power2.out" });
+                document.getElementById('locStatus').textContent = statusText;
+            } else {
+                grid.innerHTML = `<p class="col-span-3 text-center text-gray-500 py-12 font-medium text-lg">No clinics found.</p>`;
+                document.getElementById('locStatus').textContent = statusText;
+            }
+        }
+
+        async function success(position) {
+            const lat  = position.coords.latitude;
+            const lng = position.coords.longitude;
+            document.getElementById('locStatus').textContent = `Searching clinics nearby...`;
+            
+            try {
+                const res = await fetch(`/api/booking/clinics/nearby?lat=${lat}&lng=${lng}`);
+                const data = await res.json();
+                renderClinics(data.data, `Found ${data.data.length} clinics near you!`);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function error() {
+            document.getElementById('locStatus').textContent = 'Unable to retrieve your location. Please check your browser permissions.';
+        }
+
+        // Dashboard Authentication Logic
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const name = localStorage.getItem('name');
+
+        function updateAuthUI() {
+            const navLoginContainer = document.getElementById('navLoginContainer');
+            const heroButtons = document.getElementById('heroButtons');
+            const apptSection = document.getElementById('appointmentsSection');
+            const heroGreeting = document.getElementById('heroGreeting');
+
+            if (token && role === 'patient') {
+                // Update Navbar
+                navLoginContainer.innerHTML = `
+                    <a href="#services" class="text-gray-600 hover:text-blue-600 font-medium transition">Services</a>
+                    <a href="#discovery" class="text-gray-600 hover:text-blue-600 font-medium transition">Clinics</a>
+                    <span class="text-slate-600 font-medium ml-4">Hi, ${name}</span>
+                    <button onclick="logout()" class="text-red-500 hover:text-red-700 font-semibold transition ml-4">Logout</button>
+                    <a href="#discovery" class="bg-blue-600 text-white px-6 py-2.5 rounded-full shadow hover:bg-blue-700 transition font-medium ml-4">Book Appointment</a>
+                `;
+
+                // Update Hero
+                heroGreeting.textContent = `Welcome back, ${name}`;
+                heroButtons.innerHTML = `
+                    <a href="#discovery" class="bg-blue-600 text-white px-8 py-4 rounded-full shadow-lg shadow-blue-200 hover:bg-blue-700 font-semibold text-lg transition transform hover:-translate-y-1">
+                        Book New Appointment
+                    </a>
+                    <a href="#appointmentsSection" class="bg-white text-blue-600 px-8 py-4 rounded-full shadow-lg hover:bg-gray-50 font-semibold text-lg transition glass border border-gray-200">
+                        View My Appointments
+                    </a>
+                `;
+
+                // Show Appointments Section and Load Data
+                apptSection.classList.remove('hidden');
+                loadAppointments();
+            }
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        async function loadAppointments() {
+            try {
+                const res = await fetch('/api/booking/my-appointments', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.status === 401 || res.status === 422) return logout();
+                const data = await res.json();
+                
+                const grid = document.getElementById('appointmentsGrid');
+                if (data.success && data.data.length > 0) {
+                    grid.innerHTML = data.data.map(app => `
+                        <div class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-lg shadow-blue-900/5 border border-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 class="font-extrabold text-2xl text-slate-900">${app.date}</h3>
+                                    <p class="text-blue-600 font-semibold mt-1">Slot: ${app.slot}</p>
+                                </div>
+                                <span class="px-4 py-1.5 rounded-full text-xs font-bold ${
+                                    app.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                    app.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                    'bg-yellow-100 text-yellow-700'
+                                }">${app.status.toUpperCase()}</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl mb-2 text-center border border-blue-100/50 shadow-inner">
+                                <p class="text-sm text-blue-600/80 font-bold uppercase tracking-wider mb-2">Live Queue Token</p>
+                                <p class="text-6xl font-black text-blue-700 tracking-tight">${app.token_number}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 font-medium text-lg bg-white/50 rounded-3xl border border-white/50">You have no upcoming appointments.</div>`;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateAuthUI);
+    </script>
+</body>
+</html>

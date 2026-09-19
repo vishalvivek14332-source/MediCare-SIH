@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Case Taking - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <span class="current">AI Case Taking</span>
+</div>
+
+<!-- Step Progress Indicator -->
+<div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px 24px; margin-bottom:24px; box-shadow:var(--shadow-sm);">
+  <div style="display:flex; justify-content:space-between; align-items:center; position:relative;">
+    
+    <!-- Step 1 (Active) -->
+    <div style="display:flex; align-items:center; gap:10px; z-index:2;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#0066E6; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">1</div>
+      <div>
+        <div style="font-weight:700; color:#0066E6; font-size:13px;">Current Concern</div>
+        <div style="font-size:11px; color:#5F7187;">Chief complaint</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 2 -->
+    <div style="display:flex; align-items:center; gap:10px; z-index:2; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">2</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Follow-up Questions</div>
+        <div style="font-size:11px; color:#94A3B8;">Clinical context</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 3 -->
+    <div style="display:flex; align-items:center; gap:10px; z-index:2; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">3</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Case Summary</div>
+        <div style="font-size:11px; color:#94A3B8;">Doctor brief</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 4 -->
+    <div style="display:flex; align-items:center; gap:10px; z-index:2; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">4</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Priority / Triage</div>
+        <div style="font-size:11px; color:#94A3B8;">Acuity score</div>
+      </div>
+    </div>
+
+    <div style="flex:1; height:2px; background:#E2E8F0; margin:0 14px;"></div>
+
+    <!-- Step 5 -->
+    <div style="display:flex; align-items:center; gap:10px; z-index:2; opacity:0.6;">
+      <div style="width:32px; height:32px; border-radius:50%; background:#E2E8F0; color:#475569; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;">5</div>
+      <div>
+        <div style="font-weight:600; color:#475569; font-size:13px;">Token Booking</div>
+        <div style="font-size:11px; color:#94A3B8;">Queue slot</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page Title -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">AI-Assisted Case Taking</h1>
+    <p class="abdm-page-subtitle">Tell us about your current concern and provide relevant information for your healthcare professional.</p>
+  </div>
+</div>
+
+<!-- Two-Column Form: Main Complaint Area + Recent Medical Context Sidebar -->
+<div class="abdm-two-column-layout">
+  
+  <!-- Main Complaint Input -->
+  <div class="abdm-table-card" style="padding:28px;">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <label style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark);" for="complaintText">
+        What brings you here today?
+      </label>
+
+      <!-- Language Selector -->
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:12.5px; color:#5F7187; font-weight:500;">Language:</span>
+        <select id="caseLanguage" class="abdm-select" style="min-width:130px; padding:6px 28px 6px 10px; font-size:12.5px;">
+          <option value="English" selected>English</option>
+          <option value="Malayalam">Malayalam (മലയാളം)</option>
+          <option value="Hindi">Hindi (हिंदी)</option>
+          <option value="Tamil">Tamil (தமிழ்)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Textarea for complaint -->
+    <textarea id="complaintText" class="abdm-form-textarea" rows="7" placeholder="Please describe your symptoms, when they began, any pain or discomfort, and anything that makes it feel better or worse...&#10;&#10;Example: I have been experiencing a persistent dry cough and low-grade fever (around 100°F) for the past 3 days with mild fatigue." style="font-size:14.5px; line-height:1.6; resize:vertical;"></textarea>
+
+    <!-- Voice Recording & Action Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; flex-wrap:wrap; gap:16px;">
+      
+      <!-- Voice Dictation Button -->
+      <button type="button" id="voiceBtn" class="abdm-btn-secondary" style="gap:10px; border-color:#93C5FD;" onclick="toggleVoiceDictation()">
+        <svg id="micIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066E6" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="8" y1="23" x2="16" y2="23"></line>
+        </svg>
+        <span id="voiceStatusText">Speak Symptoms</span>
+      </button>
+
+      <!-- Quick Symptom Tags -->
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span class="abdm-badge" style="background:#F1F5F9; color:#475569; cursor:pointer;" onclick="appendSymptom('Fever and chills')">+ Fever</span>
+        <span class="abdm-badge" style="background:#F1F5F9; color:#475569; cursor:pointer;" onclick="appendSymptom('Persistent dry cough')">+ Cough</span>
+        <span class="abdm-badge" style="background:#F1F5F9; color:#475569; cursor:pointer;" onclick="appendSymptom('Severe headache')">+ Headache</span>
+        <span class="abdm-badge" style="background:#F1F5F9; color:#475569; cursor:pointer;" onclick="appendSymptom('Joint pain')">+ Joint Pain</span>
+      </div>
+
+      <!-- Submit & Proceed to Step 2 -->
+      <button type="button" class="abdm-btn-primary" onclick="proceedToFollowUp()">
+        Continue to Follow-up Questions
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+
+    <!-- Clinical Disclaimer -->
+    <div style="margin-top:24px; padding-top:16px; border-top:1px solid #E2E8F0; font-size:12px; color:#64748B; display:flex; align-items:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span>This system prepares your case brief for your consulting doctor. It does not provide medical diagnosis or replace physician consultation.</span>
+    </div>
+  </div>
+
+  <!-- Right: Patient Past Context Preview -->
+  <div class="abdm-side-cards">
+    <!-- Current Medications Card -->
+    <div class="abdm-side-card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.5 20.5 3 13a9 9 0 0 1 12.7-12.7l7.5 7.5a9 9 0 0 1-12.7 12.7Z"></path>
+          <path d="m8.5 8.5 7 7"></path>
+        </svg>
+        <div class="title">Current Medications</div>
+      </div>
+      <p class="desc">Active prescriptions linked to your Health ID:</p>
+      <div style="font-size:12.5px; color:#12345B; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:10px;">
+        <div><strong>Paracetamol 650mg</strong> &bull; SOS for fever</div>
+        <div style="color:#5F7187; font-size:11px; margin-top:2px;">Prescribed by Dr. Meera Nair (05 Sep 2025)</div>
+      </div>
+    </div>
+
+    <!-- Recent Records Card -->
+    <div class="abdm-side-card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <div class="title">Recent Health Records</div>
+      </div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:12.5px;">
+        <li style="display:flex; justify-content:space-between;">
+          <span>Blood Test Report</span>
+          <span style="color:#5F7187;">12 Sep 2025</span>
+        </li>
+        <li style="display:flex; justify-content:space-between;">
+          <span>Chest X-Ray</span>
+          <span style="color:#5F7187;">21 Aug 2025</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let recognition = null;
+  let isRecording = false;
+
+  // Initialize Web Speech API if supported
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      const textarea = document.getElementById('complaintText');
+      textarea.value = (textarea.value ? textarea.value + ' ' : '') + transcript;
+    };
+
+    recognition.onerror = (event) => {
+      console.error(event);
+      stopVoice();
+    };
+
+    recognition.onend = () => {
+      stopVoice();
+    };
+  }
+
+  function toggleVoiceDictation() {
+    if (!recognition) {
+      // Fallback demonstration if browser has mic permissions restricted
+      const textarea = document.getElementById('complaintText');
+      textarea.value = "I have been experiencing a persistent dry cough and low-grade fever (around 100.2°F) for the past 3 days with mild fatigue.";
+      showToast("Voice speech transcription simulated", "success");
+      return;
+    }
+
+    if (!isRecording) {
+      const lang = document.getElementById('caseLanguage').value;
+      recognition.lang = lang === 'Malayalam' ? 'ml-IN' : (lang === 'Hindi' ? 'hi-IN' : 'en-US');
+      try {
+        recognition.start();
+        isRecording = true;
+        document.getElementById('voiceBtn').style.backgroundColor = '#FEE2E2';
+        document.getElementById('voiceBtn').style.borderColor = '#DC2626';
+        document.getElementById('voiceStatusText').textContent = 'Listening... Speak now';
+        showToast('Microphone activated. Please speak your symptoms.');
+      } catch(e) {
+        console.error(e);
+      }
+    } else {
+      stopVoice();
+    }
+  }
+
+  function stopVoice() {
+    isRecording = false;
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+    document.getElementById('voiceBtn').style.backgroundColor = '#FFFFFF';
+    document.getElementById('voiceBtn').style.borderColor = '#93C5FD';
+    document.getElementById('voiceStatusText').textContent = 'Speak Symptoms';
+  }
+
+  function appendSymptom(text) {
+    const textarea = document.getElementById('complaintText');
+    textarea.value = (textarea.value ? textarea.value + '. ' : '') + text;
+    showToast(`Added symptom: ${text}`);
+  }
+
+  async function proceedToFollowUp() {
+    const text = document.getElementById('complaintText').value.trim();
+    if (!text) {
+      showToast('Please describe your symptoms to continue', 'error');
+      return;
+    }
+
+    const language = document.getElementById('caseLanguage').value;
+    sessionStorage.setItem('patient_complaint', text);
+    sessionStorage.setItem('patient_language', language);
+
+    try {
+      const res = await fetch('/api/ai/analyze-complaint', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({complaint: text, language})
+      });
+      const data = await res.json();
+      if (data.success && data.data.questions) {
+        sessionStorage.setItem('follow_up_questions', JSON.stringify(data.data.questions));
+        sessionStorage.setItem('case_session_id', data.data.session_id);
+      }
+    } catch(e) {}
+
+    window.location.href = '/ai-case-taking/follow-up';
+  }
+</script>
+{% endblock %}

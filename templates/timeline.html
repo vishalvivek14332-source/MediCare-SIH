@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Longitudinal Health Timeline - CareBridge Digital Health Mission{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="abdm-breadcrumb">
+  <a href="/">Home</a>
+  <span class="sep">&gt;</span>
+  <a href="/health-records">My Health Records</a>
+  <span class="sep">&gt;</span>
+  <span class="current">Longitudinal Health Timeline</span>
+</div>
+
+<!-- Header -->
+<div class="abdm-page-header">
+  <div>
+    <h1 class="abdm-page-title">Longitudinal Health Timeline</h1>
+    <p class="abdm-page-subtitle">Unified chronological medical trajectory across all linked facilities and consultations.</p>
+  </div>
+  <a href="/upload-documents" class="abdm-btn-primary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    Add Timeline Event
+  </a>
+</div>
+
+<!-- Timeline Container -->
+<div class="abdm-table-card" style="padding:32px;">
+  
+  <div style="position:relative; margin-left:20px; padding-left:32px; border-left:2px solid #D9E5F2;">
+    
+    <!-- Item 1 -->
+    <div style="position:relative; margin-bottom:32px;">
+      <!-- Timeline Node Dot -->
+      <div style="position:absolute; left:-43px; top:0; width:20px; height:20px; border-radius:50%; background:#0066E6; border:4px solid #EFF6FF; box-shadow:0 0 0 2px #0066E6;"></div>
+      
+      <div style="font-size:12px; font-weight:700; color:#0066E6; text-transform:uppercase; margin-bottom:4px;">19 Sep 2026 &bull; Current Session</div>
+      <h3 style="font-family:var(--font-heading); font-size:17px; font-weight:700; color:#12345B;">AI Case Taking &amp; Triage Consultation</h3>
+      <div style="font-size:13px; color:#5F7187; margin:2px 0 8px;">CareBridge Digital Triage &bull; Routine/Priority Outpatient</div>
+      <p style="font-size:13.5px; color:#334155; line-height:1.5; background:#F8FAFC; border-radius:8px; padding:12px; border:1px solid #E2E8F0;">
+        Intake recorded for persistent cough and low-grade fever. Triaged as Priority Outpatient. Token A-026 allocated.
+      </p>
+    </div>
+
+    <!-- Item 2 -->
+    <div style="position:relative; margin-bottom:32px;">
+      <div style="position:absolute; left:-43px; top:0; width:20px; height:20px; border-radius:50%; background:#16A05D; border:4px solid #F0FDF4; box-shadow:0 0 0 2px #16A05D;"></div>
+      
+      <div style="font-size:12px; font-weight:700; color:#16A05D; text-transform:uppercase; margin-bottom:4px;">12 Sep 2025</div>
+      <h3 style="font-family:var(--font-heading); font-size:17px; font-weight:700; color:#12345B;">Comprehensive Blood Test Report</h3>
+      <div style="font-size:13px; color:#5F7187; margin:2px 0 8px;">Govt. District Hospital, Kannur &bull; Lab Diagnostic</div>
+      <p style="font-size:13.5px; color:#334155; line-height:1.5; background:#F8FAFC; border-radius:8px; padding:12px; border:1px solid #E2E8F0;">
+        Complete Blood Count (CBC) and Metabolic Panel within normal reference limits. Hemoglobin: 14.2 g/dL. Fasting blood glucose normal.
+      </p>
+    </div>
+
+    <!-- Item 3 -->
+    <div style="position:relative; margin-bottom:32px;">
+      <div style="position:absolute; left:-43px; top:0; width:20px; height:20px; border-radius:50%; background:#D97706; border:4px solid #FFFBEB; box-shadow:0 0 0 2px #D97706;"></div>
+      
+      <div style="font-size:12px; font-weight:700; color:#D97706; text-transform:uppercase; margin-bottom:4px;">05 Sep 2025</div>
+      <h3 style="font-family:var(--font-heading); font-size:17px; font-weight:700; color:#12345B;">Clinical Prescription</h3>
+      <div style="font-size:13px; color:#5F7187; margin:2px 0 8px;">Dr. Meera Nair &bull; KPHC Thalassery</div>
+      <p style="font-size:13.5px; color:#334155; line-height:1.5; background:#F8FAFC; border-radius:8px; padding:12px; border:1px solid #E2E8F0;">
+        Prescribed Paracetamol 650mg SOS for seasonal viral fever. Advised adequate hydration and rest.
+      </p>
+    </div>
+
+    <!-- Item 4 -->
+    <div style="position:relative; margin-bottom:32px;">
+      <div style="position:absolute; left:-43px; top:0; width:20px; height:20px; border-radius:50%; background:#8B5CF6; border:4px solid #F5F3FF; box-shadow:0 0 0 2px #8B5CF6;"></div>
+      
+      <div style="font-size:12px; font-weight:700; color:#8B5CF6; text-transform:uppercase; margin-bottom:4px;">21 Aug 2025</div>
+      <h3 style="font-family:var(--font-heading); font-size:17px; font-weight:700; color:#12345B;">Chest X-Ray (PA View)</h3>
+      <div style="font-size:13px; color:#5F7187; margin:2px 0 8px;">Govt. Medical College Kannur &bull; Diagnostic Radiology</div>
+      <p style="font-size:13.5px; color:#334155; line-height:1.5; background:#F8FAFC; border-radius:8px; padding:12px; border:1px solid #E2E8F0;">
+        Clear lung parenchymal fields without consolidation or effusion. Cardiothoracic ratio within normal physiological limits.
+      </p>
+    </div>
+
+    <!-- Item 5 -->
+    <div style="position:relative;">
+      <div style="position:absolute; left:-43px; top:0; width:20px; height:20px; border-radius:50%; background:#0D9488; border:4px solid #F0FDFA; box-shadow:0 0 0 2px #0D9488;"></div>
+      
+      <div style="font-size:12px; font-weight:700; color:#0D9488; text-transform:uppercase; margin-bottom:4px;">15 Jul 2025</div>
+      <h3 style="font-family:var(--font-heading); font-size:17px; font-weight:700; color:#12345B;">Hospital Discharge Summary</h3>
+      <div style="font-size:13px; color:#5F7187; margin:2px 0 8px;">Govt. District Hospital, Kannur</div>
+      <p style="font-size:13.5px; color:#334155; line-height:1.5; background:#F8FAFC; border-radius:8px; padding:12px; border:1px solid #E2E8F0;">
+        Admitted for 48-hour fluid replenishment for acute gastroenteritis. Fully resolved with normal vitals and electrolyte balance.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
