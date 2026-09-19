@@ -3,9 +3,9 @@ from flask import Flask, render_template, redirect
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
-from database.db import init_db
-from database.db import init_db
+from database.db import init_db, mongo
 from extensions import socketio
+from utils.qr_generator import get_patient_qr_payload, generate_qr_svg, generate_qr_data_url
 
 # Import routes
 from routes.auth_routes import auth_bp
@@ -13,7 +13,8 @@ from routes.booking_routes import booking_bp
 from routes.admin_routes import admin_bp
 from routes.doctor_routes import doctor_bp
 from routes.patient_routes import patient_bp
-from routes.ai_routes import ai_bp
+from routes.ai_routes import ai_bp, voice_transcribe
+from routes.facility_routes import facility_bp
 from database.indexes import init_indexes
 from utils.seed_data import seed_database
 import gzip
@@ -33,6 +34,33 @@ def create_app():
     with app.app_context():
         seed_database()
         init_indexes()
+
+    # Context processor to inject the authenticated user profile into every template
+    @app.context_processor
+    def inject_user():
+        patient = mongo.db.patients.find_one({"email": "sajilbinu@example.com"}) or mongo.db.patients.find_one({}) or {}
+        name = patient.get("name", "Sajil Binu")
+        initial = (name.strip()[:1] or "S").upper()
+        return {
+            "current_user": {
+                "id": str(patient.get("_id", "")),
+                "name": name,
+                "initial": initial,
+                "email": patient.get("email", "sajilbinu@example.com"),
+                "phone": patient.get("phone", "+91 98765 43210"),
+                "health_id": patient.get("health_id", "91-XXXX-XXXX-1234"),
+                "abdm_id": patient.get("abdm_id", "CB-2026-001245"),
+                "dob": patient.get("dob", "12 Mar 2002"),
+                "gender": patient.get("gender", "Male"),
+                "blood_group": patient.get("blood_group", "O+"),
+                "address": patient.get("address", "Panoor, Kannur, Kerala, 670692"),
+                "occupation": patient.get("occupation", "Student"),
+                "emergency_contact": patient.get("emergency_contact", "Biju Mathew (Father) +91 98987 65432"),
+                "state": patient.get("state", "Kerala"),
+                "district": patient.get("district", "Kannur"),
+                "pincode": patient.get("pincode", "670692")
+            }
+        }
 
     # Performance optimization middleware: Gzip compression & Static caching
     @app.after_request
@@ -62,6 +90,11 @@ def create_app():
     app.register_blueprint(doctor_bp, url_prefix='/api/doctor')
     app.register_blueprint(patient_bp, url_prefix='/api/patient')
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
+    app.register_blueprint(facility_bp, url_prefix='/api')
+
+    @app.route('/api/voice/transcribe', methods=['POST'])
+    def voice_transcribe_alias():
+        return voice_transcribe()
 
     # Frontend routes (serving templates)
     @app.route('/')
@@ -124,11 +157,39 @@ def create_app():
 
     @app.route('/doctor')
     def doctor():
-        return render_template('doctor.html', active_page='doctor')
+        from bson.objectid import ObjectId
+        appointments = list(mongo.db.appointments.find({"status": {"$in": ["pending", "confirmed", "scheduled", "completed"]}}).sort([("created_at", -1)]).limit(12))
+        for a in appointments:
+            a['_id'] = str(a['_id'])
+        return render_template('doctor.html', active_page='doctor', live_appointments=appointments)
 
     @app.route('/doctor/patient-brief/<patient_id>')
     def doctor_brief(patient_id):
-        return render_template('doctor_brief.html', patient_id=patient_id, active_page='doctor')
+        from bson.objectid import ObjectId
+        # Find matching appointment by token number or id
+        app_record = mongo.db.appointments.find_one({"token_number": patient_id})
+        if not app_record and len(patient_id) == 24:
+            try:
+                app_record = mongo.db.appointments.find_one({"_id": ObjectId(patient_id)})
+            except Exception:
+                pass
+
+        ai_session = None
+        if app_record and app_record.get('ai_case_id'):
+            try:
+                ai_session = mongo.db.ai_case_sessions.find_one({"_id": ObjectId(app_record['ai_case_id'])})
+            except Exception:
+                pass
+        if not ai_session:
+            ai_session = mongo.db.ai_case_sessions.find_one(sort=[("created_at", -1)])
+
+        return render_template(
+            'doctor_brief.html',
+            patient_id=patient_id,
+            active_page='doctor',
+            appointment=app_record,
+            ai_session=ai_session
+        )
 
     @app.route('/health-timeline')
     def health_timeline():
@@ -136,7 +197,23 @@ def create_app():
 
     @app.route('/health-id')
     def health_id():
-        return render_template('health_id.html', active_page='health_id')
+        import json
+        patient = mongo.db.patients.find_one({"email": "sajilbinu@example.com"})
+        if not patient:
+            patient = mongo.db.patients.find_one({}) or {}
+        
+        payload = get_patient_qr_payload(patient)
+        qr_svg = generate_qr_svg(payload)
+        qr_data_url = generate_qr_data_url(payload)
+        return render_template(
+            'health_id.html',
+            active_page='health_id',
+            patient=patient,
+            qr_svg=qr_svg,
+            qr_data_url=qr_data_url,
+            qr_payload=payload,
+            qr_payload_json=json.dumps(payload, indent=2)
+        )
 
     @app.route('/login')
     def login():

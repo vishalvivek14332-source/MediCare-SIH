@@ -18,10 +18,20 @@
     </div>
     <div>
       <div style="display:flex; align-items:center; gap:10px;">
-        <h1 class="abdm-page-title" style="font-size:24px;">Sajil Binu / Alex Mathew</h1>
-        <span class="abdm-badge badge-warning" style="font-size:12px;">Priority Consultation</span>
+        <h1 class="abdm-page-title patient-auth-name" style="font-size:24px;">{{ current_user.name if current_user else 'Sajil Binu' }}</h1>
+        <span class="abdm-badge {% if appointment and appointment.priority == 'Routine' %}badge-success{% elif appointment and (appointment.priority == 'Urgent' or appointment.priority == 'Emergency') %}badge-critical{% else %}badge-warning{% endif %}" style="font-size:12px;">
+          {{ appointment.priority if appointment and appointment.priority else 'Priority' }} Consultation
+        </span>
       </div>
-      <p class="abdm-page-subtitle">24 Yrs &bull; Male &bull; Health ID: <strong>CB-2026-001245</strong> &bull; Slot: 10:25 AM</p>
+      <p class="abdm-page-subtitle">
+        24 Yrs &bull; Male &bull; Health ID: <strong>CB-2026-001245</strong> &bull; Slot: <strong>{{ appointment.slot if appointment and appointment.slot else '10:25 AM' }}</strong>
+        &bull; Facility: <strong>{{ appointment.facility_name if appointment and appointment.facility_name else 'KPHC Thalassery' }}</strong>
+      </p>
+      <div style="margin-top:4px; font-size:12.5px; color:#475569;">
+        Medical System: <strong style="color:#003B73;">{{ appointment.medical_system if appointment and appointment.medical_system else 'Modern / Conventional Medicine' }}</strong>
+        &bull; Department: <strong>{{ appointment.department if appointment and appointment.department else 'General Medicine' }}</strong>
+        &bull; Doctor: <strong>{{ appointment.doctor_name if appointment and appointment.doctor_name else 'Dr. Meera Nair' }}</strong>
+      </div>
     </div>
   </div>
 
@@ -38,13 +48,18 @@
   </div>
 </div>
 
-<!-- Clinician Verification Banner -->
-<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius-lg); padding:12px 18px; display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
-  <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#92400E;">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-    <span><strong>AI-Assisted Patient Summary:</strong> Synthesized from patient intake and ABDM longitudinal records. Clinician review required.</span>
+<!-- Clinician Verification Banner & Mandatory Disclaimers -->
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius-lg); padding:14px 18px; display:flex; flex-direction:column; gap:6px; margin-bottom:24px;">
+  <div style="display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex; align-items:center; gap:10px; font-size:13.5px; color:#92400E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span><strong>AI-Assisted Patient Summary &amp; Preliminary Triage:</strong> Clinician review required.</span>
+    </div>
+    <span style="font-size:12px; color:#B45309; font-weight:600; background:#FEF3C7; padding:2px 8px; border-radius:4px;">Consent Artifact: ACTIVE</span>
   </div>
-  <span style="font-size:12px; color:#B45309; font-weight:600;">Consent Artifact: ACTIVE</span>
+  <div style="font-size:12px; color:#78350F; padding-left:30px; font-style:italic;">
+    "AI-assisted summary — clinician review required. Final clinical assessment must be performed by a qualified healthcare professional."
+  </div>
 </div>
 
 <!-- 2-Column Professional Clinician Layout -->
@@ -56,25 +71,35 @@
     <!-- Box 1: Chief Complaint & Why Consulting Now -->
     <div class="abdm-table-card" style="padding:22px;">
       <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:#12345B; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
-        <span style="color:#0066E6;">●</span> Current Complaint &amp; Intake
+        <span style="color:#0066E6;">●</span> Current Complaint &amp; Clinical Intake
       </div>
 
       <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; margin-bottom:14px;">
         <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase;">Reported Concern</div>
         <div style="font-size:14px; color:#12345B; line-height:1.5; margin-top:2px;">
-          "Persistent dry cough and low-grade fever (~100.2°F) for the past 3 days with mild throat irritation and general fatigue."
+          "{{ ai_session.summary.chief_complaint if ai_session and ai_session.summary and ai_session.summary.chief_complaint else (ai_session.complaint if ai_session and ai_session.complaint else (appointment.purpose if appointment and appointment.purpose else 'Persistent dry cough and low-grade fever (~100.2°F) for the past 3 days with mild throat irritation and general fatigue.')) }}"
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
           <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase;">Why Consulting Now?</div>
-          <div style="font-size:13px; color:#334155; margin-top:2px;">Symptoms progressing over 72 hours; lack of resolution with standard antipyretics.</div>
+          <div style="font-size:13px; color:#334155; margin-top:2px;">
+            {{ ai_session.summary.why_consulting_now if ai_session and ai_session.summary and ai_session.summary.why_consulting_now else (ai_session.why_consulting_now if ai_session and ai_session.why_consulting_now else 'Symptoms persisting over 72 hours; lack of resolution with OTC medication.') }}
+          </div>
         </div>
 
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
-          <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase;">Follow-up Q&amp;A</div>
-          <div style="font-size:13px; color:#334155; margin-top:2px;">Onset: <strong>2 to 3 days ago</strong><br>Progression: <strong>Getting worse</strong></div>
+          <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase;">Contextual Follow-up Q&amp;A</div>
+          <div style="font-size:13px; color:#334155; margin-top:2px;">
+            {% if ai_session and ai_session.summary and ai_session.summary.follow_up_answers %}
+              {% for k, v in ai_session.summary.follow_up_answers.items() %}
+                <div>&bull; <strong>{{ k }}:</strong> {{ v }}</div>
+              {% endfor %}
+            {% else %}
+              Onset: <strong>2 to 3 days ago</strong><br>Progression: <strong>Progressively getting worse</strong>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>

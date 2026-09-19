@@ -10,7 +10,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; position:relative; z-index:2;">
     <div>
       <div style="font-size:13px; font-weight:600; color:#38BDF8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Good morning</div>
-      <h1 style="font-family:var(--font-heading); font-size:28px; font-weight:800; line-height:1.2;">Alex Mathew / Sajil Binu</h1>
+      <h1 style="font-family:var(--font-heading); font-size:28px; font-weight:800; line-height:1.2;" class="patient-auth-name">{{ current_user.name if current_user else 'Sajil Binu' }}</h1>
       <p style="font-size:14px; color:#CBD5E1; margin-top:4px;">Manage your health records, appointments and clinical consultations from one unified place.</p>
     </div>
 
@@ -26,16 +26,8 @@
         </div>
       </div>
       <!-- QR code mini -->
-      <a href="/health-id" style="background:#FFFFFF; padding:6px; border-radius:6px; display:flex;">
-        <svg width="42" height="42" viewBox="0 0 100 100" fill="#12345B">
-          <rect x="5" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-          <rect x="13" y="13" width="14" height="14"/>
-          <rect x="65" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-          <rect x="73" y="13" width="14" height="14"/>
-          <rect x="5" y="65" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-          <rect x="13" y="73" width="14" height="14"/>
-          <rect x="45" y="45" width="12" height="12"/>
-        </svg>
+      <a href="/health-id" title="View & Scan Health ID (ABHA) Card" style="background:#FFFFFF; padding:4px; border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.15); width:50px; height:50px;">
+        <img src="/api/patient/qr?format=svg" alt="ABHA QR Code" width="42" height="42" style="display:block; object-fit:contain;">
       </a>
     </div>
   </div>

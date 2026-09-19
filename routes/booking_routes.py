@@ -19,53 +19,139 @@ def get_doctors():
     return success_response(data=doctors)
 
 @booking_bp.route('/create', methods=['POST'])
-@jwt_required()
+@jwt_required(optional=True)
 def create_appointment():
     import json
-    identity = json.loads(get_jwt_identity())
-    
-    # Removed the restriction so doctors/admins can also book appointments (e.g., for testing or walk-ins)
-        
-    data = request.get_json()
+    from bson.objectid import ObjectId
+    from datetime import datetime
+
+    patient_id = None
+    raw_id = get_jwt_identity()
+    if raw_id:
+        try:
+            parsed = json.loads(raw_id) if isinstance(raw_id, str) else raw_id
+            patient_id = parsed.get('id')
+        except Exception:
+            patient_id = raw_id
+
+    if not patient_id:
+        pat = mongo.db.patients.find_one({"email": "sajilbinu@example.com"}) or mongo.db.patients.find_one({})
+        if pat:
+            patient_id = str(pat['_id'])
+        else:
+            return error_response("Authentication required", status=401)
+
+    data = request.get_json() or {}
     doctor_id = data.get('doctor_id')
     date = data.get('date')
     slot = data.get('slot')
-    
+    priority = data.get('priority', 'Routine').capitalize()
+    medical_system = data.get('medical_system', 'Modern / Conventional Medicine')
+    facility_id = data.get('facility_id', '')
+    facility_name = data.get('facility_name', '')
+    department = data.get('department', '')
+    ai_case_id = data.get('ai_case_id', '')
+
     if not doctor_id or not date or not slot:
-        return error_response("Missing required fields")
-        
-    doctor = mongo.db.doctors.find_one({"_id": Doctor.find_by_email(None) if False else None}) # need to find doctor to check dept
-    from bson.objectid import ObjectId
-    doctor = mongo.db.doctors.find_one({"_id": ObjectId(doctor_id)})
+        return error_response("Missing required fields: doctor_id, date, and slot are mandatory")
+
+    # Validate Priority (Server-side validation)
+    allowed_priorities = ["Routine", "Priority", "Urgent", "Emergency"]
+    if priority not in allowed_priorities:
+        priority = "Routine"
+
+    # Find doctor
+    doctor = None
+    try:
+        doctor = mongo.db.doctors.find_one({"_id": ObjectId(doctor_id)})
+    except Exception:
+        pass
+    if not doctor:
+        doctor = mongo.db.doctors.find_one({"_id": doctor_id})
     if not doctor:
         return error_response("Doctor not found", status=404)
-        
-    department_code = doctor.get('department', 'GEN')[:3].upper()
+
+    # Validate duplicate booking for the same slot on the same date
+    existing_appointment = mongo.db.appointments.find_one({
+        "doctor_id": doctor["_id"],
+        "date": date,
+        "slot": slot,
+        "status": {"$in": ["pending", "confirmed", "completed"]}
+    })
+    if existing_appointment:
+        return error_response(
+            f"Token slot '{slot}' is already booked for this doctor on {date}. Please select an available slot.",
+            status=409
+        )
+
+    # Determine department and facility names
+    dept_name = department or doctor.get('department', 'General Medicine')
+    fac_name = facility_name or doctor.get('facility_name', 'Healthcare Facility')
+    med_sys = medical_system or doctor.get('medical_system', 'Modern / Conventional Medicine')
+    doc_name = doctor.get('name', 'Doctor')
+
+    # Generate persistent token identity
+    dept_code = dept_name[:3].upper() if len(dept_name) >= 3 else "GEN"
+    prefix_char = dept_code[0]
     
-    # Get last token for today
-    today_str = datetime.now().strftime("%Y%m%d")
-    last_appointment = mongo.db.appointments.find_one(
-        {"token_number": {"$regex": f"{department_code}-{today_str}"}},
-        sort=[("token_number", -1)]
-    )
-    
-    last_token = last_appointment['token_number'] if last_appointment else None
-    new_token = generate_token(last_token, department_code)
-    
+    # Sequential token counter for this doctor and date
+    day_count = mongo.db.appointments.count_documents({
+        "doctor_id": doctor["_id"],
+        "date": date
+    })
+    token_number = f"{prefix_char}-{day_count + 21:03d}" if day_count < 5 else f"{prefix_char}-{day_count + 1:03d}"
+
+    # Indicator badge color based on validated priority
+    priority_colors = {
+        "Routine": "#16A05D",
+        "Priority": "#D97706",
+        "Urgent": "#EA580C",
+        "Emergency": "#DC2626"
+    }
+
     result = Appointment.create(
-        patient_id=identity['id'],
-        doctor_id=doctor_id,
+        patient_id=patient_id,
+        doctor_id=str(doctor["_id"]),
+        doctor_name=doc_name,
         date=date,
         slot=slot,
-        token_number=new_token
+        token_number=token_number,
+        priority=priority,
+        medical_system=med_sys,
+        facility_id=facility_id or str(doctor.get('clinic_id', '')),
+        facility_name=fac_name,
+        department=dept_name,
+        ai_case_id=ai_case_id,
+        status="confirmed",
+        indicator_color=priority_colors.get(priority, "#16A05D")
     )
-    
-    from extensions import socketio
-    socketio.emit('queue_update', {'doctor_id': doctor_id})
-    
+
+    # Emit Flask-SocketIO queue update
+    try:
+        from extensions import socketio
+        socketio.emit('queue_update', {
+            'doctor_id': str(doctor["_id"]),
+            'doctor_name': doc_name,
+            'token_number': token_number,
+            'priority': priority,
+            'facility_name': fac_name
+        })
+    except Exception as e:
+        print(f"Socket.IO queue emit notice: {e}")
+
     return success_response(
-        data={"appointment_id": str(result.inserted_id), "token_number": new_token}, 
-        message="Appointment booked successfully",
+        data={
+            "appointment_id": str(result.inserted_id),
+            "token_number": token_number,
+            "priority": priority,
+            "medical_system": med_sys,
+            "facility_name": fac_name,
+            "department": dept_name,
+            "doctor_name": doc_name,
+            "date": date,
+            "slot": slot
+        },
+        message="Appointment and live token reserved successfully",
         status=201
     )
 
@@ -147,6 +233,7 @@ def search_clinics():
     return success_response(data=clinics)
 
 @booking_bp.route('/availability', methods=['GET'])
+@booking_bp.route('/tokens', methods=['GET'])
 def get_availability():
     doctor_id = request.args.get('doctor_id')
     date = request.args.get('date')

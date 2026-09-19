@@ -38,14 +38,83 @@
 
   <!-- Global JavaScript helper routines -->
   <script>
-    // User profile and initial setup
+    // Synchronize authenticated user identity dynamically across all pages
+    async function syncAuthenticatedUser() {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      const isDoctorOrAdmin = window.location.pathname.startsWith('/doctor') || 
+                              window.location.pathname.startsWith('/admin') || 
+                              window.location.pathname.startsWith('/clinic_dashboard');
+
+      // Purge mismatched non-patient session from citizen portal
+      if (!isDoctorOrAdmin && role && role !== 'patient') {
+        localStorage.removeItem('name');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+      }
+
+      try {
+        const headers = {};
+        if (token && role === 'patient') {
+          headers['Authorization'] = 'Bearer ' + token;
+        }
+        const res = await fetch('/api/patient/profile', { headers });
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data) {
+            const patient = json.data;
+            const name = patient.name || 'Sajil Binu';
+            const initial = (name.trim().charAt(0) || 'S').toUpperCase();
+
+            // Persist the consistent patient name in localStorage
+            if (!isDoctorOrAdmin) {
+              localStorage.setItem('name', name);
+              localStorage.setItem('patient_id', patient._id || patient.id || '');
+              if (patient.health_id) localStorage.setItem('health_id', patient.health_id);
+            }
+
+            // Dynamically update header display elements
+            const navUserName = document.getElementById('navUserName');
+            const navAvatarInitials = document.getElementById('navAvatarInitials');
+            if (navUserName) navUserName.textContent = name;
+            if (navAvatarInitials) navAvatarInitials.textContent = initial;
+
+            // Dynamically update any element marked as patient-auth-name across the active page
+            document.querySelectorAll('.patient-auth-name').forEach(el => {
+              el.textContent = name;
+            });
+
+            // Dispatch global event for page-specific components
+            window.dispatchEvent(new CustomEvent('patientProfileSynced', { detail: patient }));
+          }
+        }
+      } catch (err) {
+        console.warn('Authenticated profile sync note:', err);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      const storedName = localStorage.getItem('name') || 'Sajil Binu';
+      const isDoctorOrAdmin = window.location.pathname.startsWith('/doctor') || 
+                              window.location.pathname.startsWith('/admin') || 
+                              window.location.pathname.startsWith('/clinic_dashboard');
+
+      const role = localStorage.getItem('role');
+      if (!isDoctorOrAdmin && role && role !== 'patient') {
+        localStorage.removeItem('name');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+      }
+
+      const storedName = localStorage.getItem('name');
       const navUserName = document.getElementById('navUserName');
       const navAvatarInitials = document.getElementById('navAvatarInitials');
-      if (navUserName) navUserName.textContent = storedName;
-        navAvatarInitials.textContent = 'S';
+      if (storedName) {
+        if (navUserName) navUserName.textContent = storedName;
+        if (navAvatarInitials) navAvatarInitials.textContent = (storedName.trim().charAt(0) || 'S').toUpperCase();
       }
+
+      // Fetch authentic patient record from /api/patient/profile
+      syncAuthenticatedUser();
     });
 
     function toggleUserDropdown(e) {

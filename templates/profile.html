@@ -39,7 +39,7 @@
         <!-- Avatar and Health ID Snippet -->
         <div class="abdm-profile-avatar-col">
           <div class="abdm-avatar-wrapper">
-            <div class="abdm-avatar-large" id="profileAvatarLarge">S</div>
+            <div class="abdm-avatar-large" id="profileAvatarLarge">{{ current_user.initial if current_user else 'S' }}</div>
             <button class="abdm-avatar-camera-btn" onclick="showToast('Profile photo updated', 'success')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
@@ -48,7 +48,7 @@
             </button>
           </div>
 
-          <div class="abdm-profile-name" id="profileDisplayName">Sajil Binu</div>
+          <div class="abdm-profile-name" id="profileDisplayName">{{ current_user.name if current_user else 'Sajil Binu' }}</div>
           <div class="abdm-verified-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
               <polyline points="20 6 9 17 4 12"></polyline>
@@ -59,36 +59,17 @@
           <div class="abdm-health-id-card-snippet">
             <div style="font-size:11px; color:#5F7187; margin-bottom:2px;">Health ID</div>
             <div class="abdm-health-id-number">
-              <span>91-XXXX-XXXX-1234</span>
+              <span id="profileHealthId">{{ current_user.health_id if current_user else '91-XXXX-XXXX-1234' }}</span>
               <button onclick="copyHealthId()" style="background:none; border:none; cursor:pointer; color:#0066E6;" title="Copy ID">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               </button>
             </div>
 
-            <!-- QR Code Simulation -->
-            <div class="abdm-qr-box">
-              <svg viewBox="0 0 100 100" fill="#12345B">
-                <!-- QR Finder Patterns -->
-                <rect x="5" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-                <rect x="13" y="13" width="14" height="14"/>
-                <rect x="65" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-                <rect x="73" y="13" width="14" height="14"/>
-                <rect x="5" y="65" width="30" height="30" fill="none" stroke="#12345B" stroke-width="5"/>
-                <rect x="13" y="73" width="14" height="14"/>
-                <!-- Matrix dots -->
-                <rect x="42" y="10" width="8" height="8"/>
-                <rect x="45" y="24" width="6" height="6"/>
-                <rect x="10" y="45" width="8" height="8"/>
-                <rect x="25" y="48" width="6" height="6"/>
-                <rect x="45" y="45" width="12" height="12"/>
-                <rect x="68" y="45" width="8" height="8"/>
-                <rect x="82" y="52" width="6" height="6"/>
-                <rect x="45" y="68" width="10" height="10"/>
-                <rect x="65" y="70" width="8" height="8"/>
-                <rect x="80" y="80" width="12" height="12"/>
-              </svg>
-            </div>
-            <div style="font-size:10.5px; color:#5F7187; margin-top:6px;">Scan to share your Health ID</div>
+            <!-- Official ABDM Scannable QR Code -->
+            <a href="/health-id" class="abdm-qr-box" title="View official ABHA Health ID Card & Scannable QR" style="display:flex; align-items:center; justify-content:center; padding:4px; text-decoration:none;">
+              <img src="/api/patient/qr?format=svg" alt="ABHA QR Code" style="width:100%; height:100%; object-fit:contain; display:block;">
+            </a>
+            <div style="font-size:10.5px; color:#0066E6; margin-top:6px; font-weight:600;"><a href="/health-id" style="color:#0066E6; text-decoration:none;">Scan or View ABHA Card &rarr;</a></div>
           </div>
         </div>
 
@@ -96,33 +77,32 @@
         <div>
           <dl class="abdm-info-dl">
             <dt>Full Name</dt>
-            <dd id="infoFullName">Sajil Binu</dd>
+            <dd id="infoFullName">{{ current_user.name if current_user else 'Sajil Binu' }}</dd>
 
             <dt>Date of Birth</dt>
-            <dd>12 Mar 2002</dd>
+            <dd id="infoDob">{{ current_user.dob if current_user else '12 Mar 2002' }}</dd>
 
             <dt>Gender</dt>
-            <dd>Male</dd>
+            <dd id="infoGender">{{ current_user.gender if current_user else 'Male' }}</dd>
 
             <dt>Blood Group</dt>
-            <dd>O+</dd>
+            <dd id="infoBloodGroup">{{ current_user.blood_group if current_user else 'O+' }}</dd>
 
             <dt>Mobile Number</dt>
-            <dd id="infoMobile">+91 98765 43210</dd>
+            <dd id="infoMobile">{{ current_user.phone if current_user else '+91 98765 43210' }}</dd>
 
             <dt>Email Address</dt>
-            <dd id="infoEmail">sajilbinu@example.com</dd>
+            <dd id="infoEmail">{{ current_user.email if current_user else 'sajilbinu@example.com' }}</dd>
 
             <dt>Address</dt>
-            <dd id="infoAddress">Panoor, Kannur, Kerala, 670692</dd>
+            <dd id="infoAddress">{{ current_user.address if current_user else 'Panoor, Kannur, Kerala, 670692' }}</dd>
 
             <dt>Language Preference</dt>
             <dd id="infoLanguage">English</dd>
 
             <dt>Emergency Contact</dt>
             <dd id="infoEmergency">
-              <div>Biju Mathew (Father)</div>
-              <div style="font-size:12px; color:#5F7187; font-weight:normal;">+91 98987 65432</div>
+              <div>{{ current_user.emergency_contact if current_user else 'Biju Mathew (Father) +91 98987 65432' }}</div>
             </dd>
           </dl>
         </div>
@@ -134,16 +114,16 @@
       <div class="section-heading">Additional Information</div>
       <dl class="abdm-info-dl">
         <dt>Occupation</dt>
-        <dd id="infoOccupation">Student</dd>
+        <dd id="infoOccupation">{{ current_user.occupation if current_user else 'Student' }}</dd>
 
         <dt>State</dt>
-        <dd>Kerala</dd>
+        <dd id="infoState">{{ current_user.state if current_user else 'Kerala' }}</dd>
 
         <dt>District</dt>
-        <dd>Kannur</dd>
+        <dd id="infoDistrict">{{ current_user.district if current_user else 'Kannur' }}</dd>
 
         <dt>Pincode</dt>
-        <dd>670692</dd>
+        <dd id="infoPincode">{{ current_user.pincode if current_user else '670692' }}</dd>
       </dl>
     </div>
   </div>
@@ -285,8 +265,9 @@
 {% block extra_scripts %}
 <script>
   function copyHealthId() {
-    navigator.clipboard.writeText('91-XXXX-XXXX-1234');
-    showToast('Health ID copied to clipboard!', 'success');
+    const hid = document.getElementById('profileHealthId')?.textContent.trim() || '91-XXXX-XXXX-1234';
+    navigator.clipboard.writeText(hid);
+    showToast(`Health ID copied: ${hid}`, 'success');
   }
 
   function openEditProfileModal() {
@@ -296,6 +277,40 @@
   function closeEditProfileModal() {
     document.getElementById('editProfileModal').classList.remove('active');
   }
+
+  // Live update when base.html finishes syncing the authenticated patient
+  window.addEventListener('patientProfileSynced', (e) => {
+    const p = e.detail;
+    if (!p) return;
+    if (p.name) {
+      document.getElementById('profileDisplayName').textContent = p.name;
+      document.getElementById('profileAvatarLarge').textContent = p.name.charAt(0).toUpperCase();
+      document.getElementById('infoFullName').textContent = p.name;
+    }
+    if (p.email) document.getElementById('infoEmail').textContent = p.email;
+    if (p.phone) {
+      document.getElementById('infoMobile').textContent = p.phone;
+      if (document.getElementById('editMobile')) document.getElementById('editMobile').value = p.phone;
+    }
+    if (p.address) {
+      document.getElementById('infoAddress').textContent = p.address;
+      if (document.getElementById('editAddress')) document.getElementById('editAddress').value = p.address;
+    }
+    if (p.occupation) {
+      document.getElementById('infoOccupation').textContent = p.occupation;
+      if (document.getElementById('editOccupation')) document.getElementById('editOccupation').value = p.occupation;
+    }
+    if (p.emergency_contact) {
+      document.getElementById('infoEmergency').innerHTML = `<div>${p.emergency_contact}</div>`;
+      if (document.getElementById('editEmergency')) document.getElementById('editEmergency').value = p.emergency_contact;
+    }
+    if (p.dob) document.getElementById('infoDob').textContent = p.dob;
+    if (p.gender) document.getElementById('infoGender').textContent = p.gender;
+    if (p.blood_group) document.getElementById('infoBloodGroup').textContent = p.blood_group;
+    if (p.health_id && document.getElementById('profileHealthId')) {
+      document.getElementById('profileHealthId').textContent = p.health_id;
+    }
+  });
 
   async function saveProfileChanges() {
     const mobile = document.getElementById('editMobile').value;
@@ -312,11 +327,17 @@
     showToast('Profile changes saved successfully', 'success');
 
     try {
+      const token = localStorage.getItem('token');
+      const headers = {'Content-Type': 'application/json'};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
       await fetch('/api/patient/profile', {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
+        headers,
         body: JSON.stringify({phone: mobile, address, occupation, emergency_contact: emergency})
       });
+      if (typeof syncAuthenticatedUser === 'function') {
+        syncAuthenticatedUser();
+      }
     } catch (e) {}
   }
 </script>

@@ -1,372 +1,1793 @@
 {% extends 'base.html' %}
 
-{% block title %}Find Clinic &amp; Book Token - CareBridge Digital Health Mission{% endblock %}
+{% block title %}Book Outpatient Appointment &amp; Token - CareBridge Digital Health Mission{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
 <div class="abdm-breadcrumb">
   <a href="/">Home</a>
   <span class="sep">&gt;</span>
-  <a href="/booking">Facilities</a>
+  <a href="/appointments">Appointments</a>
   <span class="sep">&gt;</span>
-  <span class="current">Book Clinic Token</span>
+  <span class="current">Book New Appointment</span>
 </div>
 
-<!-- Page Title -->
-<div class="abdm-page-header">
+<!-- Page Title Header -->
+<div class="abdm-page-header" style="margin-bottom:18px;">
   <div>
-    <h1 class="abdm-page-title">Find a Clinic &amp; Book Token</h1>
-    <p class="abdm-page-subtitle">Search empaneled healthcare facilities, view specialist doctor availability, and reserve your live token.</p>
+    <h1 class="abdm-page-title">Book Outpatient Consultation &amp; Live Token</h1>
+    <p class="abdm-page-subtitle">Select accredited medical system, find healthcare facilities across India, consult specialist doctors with AI clinical case intake, and reserve verified queue tokens.</p>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <span class="abdm-badge badge-success" style="font-size:12px;">● CareBridge OPD Live Sync</span>
   </div>
 </div>
 
-<!-- Step 1: Search & Filter Clinics / Hospitals -->
-<div class="abdm-filters-row" id="clinicFilterRow">
-  <div class="abdm-input-search">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-    <input type="text" id="clinicSearchInput" placeholder="Search clinic / hospital by name, department, or city..." onkeyup="filterClinicCards()">
-  </div>
-
-  <select class="abdm-select" id="deptFilter" onchange="filterClinicCards()">
-    <option value="All">All Departments</option>
-    <option value="General Medicine">General Medicine</option>
-    <option value="Orthopedics">Orthopedics</option>
-    <option value="Dermatology">Dermatology</option>
-    <option value="Radiology">Radiology</option>
-  </select>
-
-  <select class="abdm-select" id="locFilter" onchange="filterClinicCards()">
-    <option value="All">All Locations</option>
-    <option value="Kannur">Kannur, Kerala</option>
-    <option value="Thalassery">Thalassery, Kerala</option>
-    <option value="Kochi">Kochi, Kerala</option>
-  </select>
-</div>
-
-<!-- Step 1 Grid: Clinic & Doctor Cards -->
-<div id="step1Container">
-  <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:14px;">
-    Available Doctors &amp; Outpatient Clinics
-  </div>
-
-  <div id="doctorsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
-    <!-- Populated by JavaScript from existing /api/booking/doctors API -->
-  </div>
-</div>
-
-<!-- Step 2 Container: Token Grid & Booking Slot (Hidden until doctor clicked) -->
-<div id="step2Container" style="display:none;">
-  <div style="margin-bottom:16px;">
-    <button onclick="backToStep1()" class="abdm-btn-secondary" style="gap:6px; font-size:13px;">
-      &larr; Change Specialist / Clinic
-    </button>
-  </div>
-
-  <div class="abdm-table-card" style="padding:28px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; border-bottom:1px solid #E2E8F0; padding-bottom:20px; margin-bottom:24px;">
-      <div style="display:flex; align-items:center; gap:16px;">
-        <div style="width:54px; height:54px; border-radius:50%; background:#EAF4FF; color:#0066E6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </div>
-        <div>
-          <h2 id="selectedDocName" style="font-family:var(--font-heading); font-size:20px; font-weight:800; color:#12345B;">Dr. Name</h2>
-          <div id="selectedDocDetails" style="font-size:13.5px; color:#5F7187;">General Medicine &bull; KPHC Thalassery</div>
-        </div>
-      </div>
-
-      <div>
-        <label style="display:block; font-size:12.5px; font-weight:600; color:#12345B; margin-bottom:6px;">Consultation Date</label>
-        <input type="date" id="bookingDateInput" class="abdm-form-input" style="width:200px;" onchange="loadAvailability()">
+<!-- 11-STEP PROGRESS INDICATOR -->
+<div class="abdm-table-card" style="padding:16px 20px; margin-bottom:24px; overflow-x:auto;">
+  <div style="display:flex; align-items:center; justify-content:space-between; min-width:860px; position:relative;" id="progressStepsBar">
+    <!-- Step 1: System -->
+    <div class="wiz-step active" id="pStep1" onclick="handleStepNav(1)">
+      <div class="wiz-circle">1</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Medical System</div>
+        <div class="wiz-sub">AYUSH &amp; Modern</div>
       </div>
     </div>
+    <div class="wiz-line" id="pLine1"></div>
 
-    <!-- Live Token Grid Header -->
+    <!-- Step 2: Location -->
+    <div class="wiz-step" id="pStep2" onclick="handleStepNav(2)">
+      <div class="wiz-circle">2</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Location</div>
+        <div class="wiz-sub">State &amp; District</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine2"></div>
+
+    <!-- Step 3: Hospital -->
+    <div class="wiz-step" id="pStep3" onclick="handleStepNav(3)">
+      <div class="wiz-circle">3</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Facility</div>
+        <div class="wiz-sub">Find Hospital</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine3"></div>
+
+    <!-- Step 4: Department -->
+    <div class="wiz-step" id="pStep4" onclick="handleStepNav(4)">
+      <div class="wiz-circle">4</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Department</div>
+        <div class="wiz-sub">Specialty Unit</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine4"></div>
+
+    <!-- Step 5: Doctor -->
+    <div class="wiz-step" id="pStep5" onclick="handleStepNav(5)">
+      <div class="wiz-circle">5</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Doctor</div>
+        <div class="wiz-sub">Specialist</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine5"></div>
+
+    <!-- Step 6: Case Taking -->
+    <div class="wiz-step" id="pStep6" onclick="handleStepNav(6)">
+      <div class="wiz-circle">6</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">AI Case Intake</div>
+        <div class="wiz-sub">Chief Complaint</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine6"></div>
+
+    <!-- Step 7: Follow-up & Summary -->
+    <div class="wiz-step" id="pStep7" onclick="handleStepNav(7)">
+      <div class="wiz-circle">7</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Case Summary</div>
+        <div class="wiz-sub">Clinical Q&amp;A</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine7"></div>
+
+    <!-- Step 8: Triage -->
+    <div class="wiz-step" id="pStep8" onclick="handleStepNav(8)">
+      <div class="wiz-circle">8</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Triage Acuity</div>
+        <div class="wiz-sub">Priority Level</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine8"></div>
+
+    <!-- Step 9: Token -->
+    <div class="wiz-step" id="pStep9" onclick="handleStepNav(9)">
+      <div class="wiz-circle">9</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Token Slot</div>
+        <div class="wiz-sub">Live Availability</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine9"></div>
+
+    <!-- Step 10: Confirmation -->
+    <div class="wiz-step" id="pStep10" onclick="handleStepNav(10)">
+      <div class="wiz-circle">10</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Confirmation</div>
+        <div class="wiz-sub">Token Receipt</div>
+      </div>
+    </div>
+    <div class="wiz-line" id="pLine10"></div>
+
+    <!-- Step 11: Live Queue -->
+    <div class="wiz-step" id="pStep11" onclick="handleStepNav(11)">
+      <div class="wiz-circle">11</div>
+      <div class="wiz-labels">
+        <div class="wiz-title">Live Queue</div>
+        <div class="wiz-sub">Counter Status</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP CONTAINERS -->
+<div id="bookingWizardContent">
+
+  <!-- ============================================== -->
+  <!-- STEP 1: SELECT MEDICAL SYSTEM -->
+  <!-- ============================================== -->
+  <div id="stepView1" class="step-view">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
-        <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--text-dark); display:flex; align-items:center; gap:8px;">
-          Live Token Availability
-          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#16A05D;"></span>
-        </h3>
-        <p style="font-size:12.5px; color:#5F7187;">Select an available green token to reserve your consultation slot.</p>
-      </div>
-
-      <div style="display:flex; gap:16px; font-size:12px;">
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span style="width:12px; height:12px; border-radius:3px; background:#E6F9F0; border:1px solid #16A05D;"></span>
-          <span>Available</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span style="width:12px; height:12px; border-radius:3px; background:#F1F5F9; border:1px solid #CBD5E1;"></span>
-          <span>Booked</span>
-        </div>
+        <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+          Step 1: Select Medical System
+        </h2>
+        <p style="font-size:13px; color:#5F7187;">
+          Choose an accredited healthcare discipline recognized under the National Health Mission and Ministry of Ayush.
+        </p>
       </div>
     </div>
 
-    <!-- Token Grid Container -->
-    <div id="ticketsGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:12px; margin-bottom:28px;">
-      <!-- Tickets dynamically generated via /api/booking/availability -->
+    <div id="medicalSystemsGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px;">
+      <div style="text-align:center; padding:40px; color:#5F7187; grid-column:span 4;">
+        Loading accredited medical systems...
+      </div>
     </div>
 
-    <!-- Confirm Token Action Section -->
-    <div id="selectedSlotInfo" style="display:none; background:#F0F7FF; border:1px solid #D0E4FA; border-radius:10px; padding:18px; display:flex; justify-content:space-between; align-items:center;">
-      <div>
-        <div style="font-size:12px; font-weight:700; color:#0066E6; text-transform:uppercase;">Selected Token Slot</div>
-        <div style="font-family:var(--font-heading); font-size:17px; font-weight:800; color:#12345B;" id="confirmSlotDetails">Slot: 10:00 AM - 10:15 AM</div>
-      </div>
-      <button class="abdm-btn-primary" style="padding:12px 28px; font-size:14px;" onclick="confirmBooking()">
-        Confirm Token Booking
+    <div style="display:flex; justify-content:flex-end; gap:12px;">
+      <button class="abdm-btn-primary" id="btnContinueStep1" disabled onclick="goToStep(2)" style="padding:10px 24px;">
+        Continue to Location &rarr;
       </button>
     </div>
   </div>
-</div>
 
-<!-- Token Confirmed Modal (matching specification) -->
-<div class="abdm-modal-overlay" id="tokenSuccessModal">
-  <div class="abdm-modal-card" style="text-align:center; max-width:480px;">
-    <div class="abdm-modal-header" style="justify-content:center; border:none; padding-bottom:0;">
-      <div style="width:56px; height:56px; border-radius:50%; background:#E6F9F0; color:#16A05D; display:flex; align-items:center; justify-content:center; margin:0 auto;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
+  <!-- ============================================== -->
+  <!-- STEP 2: LOCATION FILTER (STATE / DISTRICT / CITY) -->
+  <!-- ============================================== -->
+  <div id="stepView2" class="step-view" style="display:none;">
+    <div class="abdm-table-card" style="padding:24px; margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #E2E8F0; padding-bottom:16px; margin-bottom:20px;">
+        <div>
+          <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+            Step 2: Select Location in India
+          </h2>
+          <p style="font-size:13px; color:#5F7187;">
+            Filter empaneled healthcare facilities across all 28 States and 8 Union Territories.
+          </p>
+        </div>
+        <div id="badgeSelectedSystemStep2" class="abdm-badge badge-primary" style="font-size:12px; padding:6px 12px;">
+          Medical System: Modern Medicine
+        </div>
       </div>
-    </div>
 
-    <div class="abdm-modal-body" style="padding-top:10px;">
-      <h2 style="font-family:var(--font-heading); font-size:22px; font-weight:800; color:#12345B;">Token Confirmed</h2>
-      <p style="font-size:13px; color:#5F7187; margin-bottom:20px;">Your hospital token has been registered in the digital queue system.</p>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
+        <!-- State -->
+        <div>
+          <label style="display:block; font-size:13px; font-weight:700; color:#12345B; margin-bottom:8px;">
+            1. State / Union Territory <span style="color:#DC2626;">*</span>
+          </label>
+          <select id="selectState" class="abdm-select" style="width:100%; height:44px;" onchange="onStateChanged()">
+            <option value="">Select State or UT...</option>
+          </select>
+        </div>
 
-      <div style="background:#F8FAFD; border:1px dashed #0066E6; border-radius:12px; padding:20px; text-align:center; margin-bottom:20px;">
-        <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase; letter-spacing:0.5px;">Token Number</div>
-        <div id="confirmedTokenNum" style="font-family:monospace; font-size:36px; font-weight:900; color:#0066E6; margin:4px 0;">A-026</div>
+        <!-- District -->
+        <div>
+          <label style="display:block; font-size:13px; font-weight:700; color:#12345B; margin-bottom:8px;">
+            2. District <span style="color:#DC2626;">*</span>
+          </label>
+          <select id="selectDistrict" class="abdm-select" style="width:100%; height:44px;" disabled onchange="onDistrictChanged()">
+            <option value="">Choose State First...</option>
+          </select>
+        </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12.5px; text-align:left; margin-top:14px; padding-top:14px; border-top:1px solid #E2E8F0;">
-          <div>
-            <span style="color:#5F7187;">Clinic:</span>
-            <strong style="display:block; color:#12345B;" id="confirmedClinic">KPHC Thalassery</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187;">Department:</span>
-            <strong style="display:block; color:#12345B;" id="confirmedDept">General Medicine</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187;">Date:</span>
-            <strong style="display:block; color:#12345B;" id="confirmedDate">19 Sep 2026</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187;">Status:</span>
-            <span class="abdm-badge badge-success">Confirmed</span>
-          </div>
+        <!-- City / Location -->
+        <div>
+          <label style="display:block; font-size:13px; font-weight:700; color:#12345B; margin-bottom:8px;">
+            3. City / Town / Taluk
+          </label>
+          <select id="selectCity" class="abdm-select" style="width:100%; height:44px;" disabled>
+            <option value="All">All Cities in District</option>
+          </select>
         </div>
       </div>
     </div>
 
-    <div class="abdm-modal-footer" style="justify-content:center; gap:12px;">
-      <a href="/queue" class="abdm-btn-primary">View Live Queue</a>
-      <a href="/" class="abdm-btn-secondary">Back to Dashboard</a>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(1)">
+        &larr; Back to Medical System
+      </button>
+      <button class="abdm-btn-primary" id="btnContinueStep2" disabled onclick="goToStep(3)" style="padding:10px 24px;">
+        Find Healthcare Facilities &rarr;
+      </button>
     </div>
   </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 3: DISCOVER HOSPITALS / FACILITIES -->
+  <!-- ============================================== -->
+  <div id="stepView3" class="step-view" style="display:none;">
+    <!-- Active filters overview bar -->
+    <div style="background:#EAF4FF; border:1px solid #BFDBFE; border-radius:var(--radius-md); padding:12px 18px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div style="display:flex; align-items:center; gap:12px; font-size:13px; color:#1E40AF;">
+        <span><strong>Medical System:</strong> <span id="summarySystemStep3">Ayurveda</span></span>
+        <span>&bull;</span>
+        <span><strong>Location:</strong> <span id="summaryLocationStep3">Kannur, Kerala</span></span>
+      </div>
+      <button onclick="goToStep(2)" class="abdm-btn-secondary" style="padding:4px 10px; font-size:12px;">
+        Modify Location
+      </button>
+    </div>
+
+    <!-- Search & Filters Toolbar -->
+    <div class="abdm-filters-row" style="margin-bottom:20px;">
+      <div class="abdm-input-search" style="flex:1;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="facilitySearchInput" placeholder="Search hospital by name, department, or address (debounced)..." oninput="onFacilitySearchInput()">
+      </div>
+
+      <select id="facilityTypeFilter" class="abdm-select" onchange="loadFacilities()">
+        <option value="All">All Facility Types</option>
+        <option value="Government Hospital">Government Hospital</option>
+        <option value="Primary Health Centre">Primary Health Centre</option>
+        <option value="Medical College">Medical College Hospital</option>
+        <option value="Autonomous">Autonomous National Institute</option>
+        <option value="Ayurvedic Hospital">Ayurvedic Hospital</option>
+      </select>
+
+      <select id="facilitySortFilter" class="abdm-select" onchange="loadFacilities()">
+        <option value="name">Sort: Name (A-Z)</option>
+        <option value="availability">Sort: Availability</option>
+      </select>
+    </div>
+
+    <!-- Facility Cards Grid -->
+    <div id="facilitiesGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-bottom:24px;">
+      <div style="text-align:center; padding:40px; color:#5F7187; grid-column:span 3;">
+        Loading matching healthcare facilities...
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(2)">
+        &larr; Back to Location
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 4: SELECT DEPARTMENT -->
+  <!-- ============================================== -->
+  <div id="stepView4" class="step-view" style="display:none;">
+    <div class="abdm-table-card" style="padding:22px; margin-bottom:22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #E2E8F0; padding-bottom:14px; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="width:48px; height:48px; border-radius:10px; background:#003B73; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:20px;">
+            🏥
+          </div>
+          <div>
+            <h2 id="facilityNameBannerStep4" style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">Selected Hospital</h2>
+            <div id="facilityDetailsBannerStep4" style="font-size:13px; color:#5F7187;">Kannur, Kerala &bull; Ayurveda</div>
+          </div>
+        </div>
+        <button class="abdm-btn-secondary" onclick="goToStep(3)" style="font-size:12.5px; padding:6px 12px;">
+          Change Hospital
+        </button>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:#12345B;">
+          Step 4: Select Clinical Department
+        </h3>
+        <p style="font-size:13px; color:#5F7187;">
+          Showing only accredited specialty departments configured for this facility.
+        </p>
+      </div>
+
+      <!-- Departments Grid -->
+      <div id="departmentsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:14px;">
+        <div style="text-align:center; padding:30px; color:#5F7187; grid-column:span 3;">
+          Loading facility departments...
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(3)">
+        &larr; Back to Hospital List
+      </button>
+      <button class="abdm-btn-primary" id="btnContinueStep4" disabled onclick="goToStep(5)" style="padding:10px 24px;">
+        Continue to Doctor Selection &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 5: SELECT DOCTOR -->
+  <!-- ============================================== -->
+  <div id="stepView5" class="step-view" style="display:none;">
+    <div style="background:#F1F5F9; border:1px solid #CBD5E1; border-radius:var(--radius-md); padding:12px 18px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:13px; color:#1E293B;">
+        <strong>Hospital:</strong> <span id="summaryFacilityStep5">Govt Hospital</span> &bull; <strong>Department:</strong> <span id="summaryDeptStep5">General</span>
+      </div>
+      <button onclick="goToStep(4)" class="abdm-btn-secondary" style="padding:4px 10px; font-size:12px;">
+        Change Department
+      </button>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+        Step 5: Choose Specialist Doctor
+      </h2>
+      <p style="font-size:13px; color:#5F7187;">
+        Select an attending doctor on duty for your chosen department today.
+      </p>
+    </div>
+
+    <!-- Doctors Cards Grid -->
+    <div id="doctorsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-bottom:24px;">
+      <div style="text-align:center; padding:40px; color:#5F7187; grid-column:span 3;">
+        Loading specialist doctors...
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(4)">
+        &larr; Back to Departments
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 6: AI CASE TAKING (CHIEF COMPLAINT & CONTEXT) -->
+  <!-- ============================================== -->
+  <div id="stepView6" class="step-view" style="display:none;">
+    <!-- Active Context Bar -->
+    <div style="background:linear-gradient(135deg, #002B5C 0%, #003B73 100%); color:#FFFFFF; border-radius:var(--radius-lg); padding:16px 20px; margin-bottom:22px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:12px; text-transform:uppercase; color:#93C5FD; font-weight:700;">Clinical Consultation Target</div>
+        <div style="font-size:16px; font-weight:800; margin:2px 0;">
+          <span id="aiContextDoc">Dr. Meera Nair</span> &bull; <span id="aiContextDept">General Medicine</span>
+        </div>
+        <div style="font-size:12.5px; color:#CBD5E1;">
+          <span id="aiContextFac">KPHC Thalassery</span> &bull; <span id="aiContextSys">Modern Medicine</span>
+        </div>
+      </div>
+      <button class="abdm-btn-secondary" onclick="goToStep(5)" style="background:rgba(255,255,255,0.15); color:#FFFFFF; border-color:rgba(255,255,255,0.3); font-size:12px;">
+        Change Doctor
+      </button>
+    </div>
+
+    <div class="abdm-table-card" style="padding:24px; margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+            Step 6: AI-Assisted Clinical Case Intake
+          </h2>
+          <p style="font-size:13px; color:#5F7187;">
+            Describe your current symptoms. Our clinical AI pre-intake assistant organizes your concern for the doctor's consultation brief.
+          </p>
+        </div>
+        
+        <!-- Language selector -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label style="font-size:12px; font-weight:600; color:#5F7187;">Language:</label>
+          <select id="aiLanguageSelect" class="abdm-select" style="padding:4px 10px; font-size:12px;">
+            <option value="English">English</option>
+            <option value="Malayalam">മലയാളം (Malayalam)</option>
+            <option value="Hindi">हिन्दी (Hindi)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Chief Complaint Textarea with Microphone -->
+      <div style="margin-bottom:18px;">
+        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;">
+          What symptoms or medical concern brings you here today? <span style="color:#DC2626;">*</span>
+        </label>
+        <div style="position:relative;">
+          <textarea id="chiefComplaintInput" class="abdm-form-textarea" rows="4" style="padding-right:48px;" placeholder="Example: Persistent dry cough and mild fever for 3 days with throat irritation, feeling fatigued..."></textarea>
+          
+          <!-- Mic button -->
+          <button type="button" onclick="simulateVoiceInput()" title="Dictate symptoms via microphone" style="position:absolute; right:12px; bottom:14px; width:34px; height:34px; border-radius:50%; background:#EAF4FF; border:1px solid #BFDBFE; color:#0066E6; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div style="font-size:11.5px; color:#5F7187; margin-top:4px;">
+          💡 Tip: Click the microphone button to auto-fill sample symptom audio transcript.
+        </div>
+      </div>
+
+      <!-- Why consulting now -->
+      <div style="margin-bottom:18px;">
+        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;">
+          Why are you consulting now? (What prompted you to seek medical attention today?)
+        </label>
+        <input type="text" id="whyConsultingInput" class="abdm-form-input" placeholder="e.g. Symptoms have worsened over the last 24 hours and OTC medication did not resolve fever...">
+      </div>
+
+      <!-- Longitudinal Context Preview -->
+      <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; margin-top:16px;">
+        <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase; margin-bottom:6px;">
+          Longitudinal Medical History Included for Clinician
+        </div>
+        <div style="font-size:12.5px; color:#334155; line-height:1.6;">
+          &bull; <strong>Known Allergies:</strong> No Known Drug Allergies (NKDA) &bull; Mild pollen rhinitis<br>
+          &bull; <strong>Current Medications:</strong> Paracetamol 650mg SOS as reported<br>
+          &bull; <strong>Linked Records:</strong> CBC Blood Test (12 Sep 2025), Chest X-Ray (21 Aug 2025 - Clear)
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(5)">
+        &larr; Back to Doctor
+      </button>
+      <button class="abdm-btn-primary" id="btnAnalyzeComplaint" onclick="analyzeComplaintAndProceed()" style="padding:10px 24px;">
+        Analyze Symptoms &amp; Generate Clinical Questions &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 7 & 8: FOLLOW-UP QUESTIONS, SUMMARY & TRIAGE -->
+  <!-- ============================================== -->
+  <div id="stepView7" class="step-view" style="display:none;">
+    <!-- Box 1: Two Context-Aware Clinical Questions -->
+    <div class="abdm-table-card" style="padding:24px; margin-bottom:22px;">
+      <div style="border-bottom:1px solid #E2E8F0; padding-bottom:12px; margin-bottom:18px;">
+        <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+          Step 7: Context-Aware Clinical Follow-up (2 Questions)
+        </h2>
+        <p style="font-size:13px; color:#5F7187;">
+          Our medical reasoning system generated exactly two specific follow-up questions for your reported concern.
+        </p>
+      </div>
+
+      <div id="twoQuestionsContainer" style="display:flex; flex-direction:column; gap:20px;">
+        <!-- Question 1 -->
+        <div id="q1Box" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:16px;">
+          <div style="font-size:14px; font-weight:700; color:#12345B; margin-bottom:10px;" id="q1Text">
+            1. When did these symptoms first begin?
+          </div>
+          <div id="q1Options" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+        <!-- Question 2 -->
+        <div id="q2Box" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:16px;">
+          <div style="font-size:14px; font-weight:700; color:#12345B; margin-bottom:10px;" id="q2Text">
+            2. Has the condition become better, worse, or stayed about the same?
+          </div>
+          <div id="q2Options" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Box 2: AI-Assisted Case Summary & Triage Priority -->
+    <div class="abdm-table-card" style="padding:24px; margin-bottom:22px;">
+      <div style="border-bottom:1px solid #E2E8F0; padding-bottom:12px; margin-bottom:18px;">
+        <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B; display:flex; align-items:center; justify-content:space-between;">
+          <span>Step 8: AI-Assisted Case Summary &amp; Triage Priority</span>
+          <span id="triagePriorityBadge" class="abdm-badge badge-warning" style="font-size:14px; padding:6px 14px;">Priority</span>
+        </h2>
+      </div>
+
+      <!-- Synthesized Intake Preview -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px;">
+          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;">Synthesized Complaint</div>
+          <div id="summaryComplaintText" style="font-size:13.5px; color:#12345B; margin-top:4px; line-height:1.5;"></div>
+        </div>
+
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px;">
+          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;">Reason for Consulting Now</div>
+          <div id="summaryWhyNowText" style="font-size:13.5px; color:#12345B; margin-top:4px; line-height:1.5;"></div>
+        </div>
+      </div>
+
+      <!-- Triage Rationale Box -->
+      <div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:8px; padding:16px; margin-bottom:18px;">
+        <div style="font-size:13px; font-weight:800; color:#92400E; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          Preliminary Clinical Triage Recommendation: <span id="triageLevelText" style="text-decoration:underline;">Priority</span>
+        </div>
+        <div id="triageReasonText" style="font-size:12.5px; color:#78350F; line-height:1.5;">
+          Patient-reported symptoms indicate acute sub-acute progression requiring outpatient clinical evaluation.
+        </div>
+      </div>
+
+      <!-- MANDATORY CLINICAL DISCLAIMERS -->
+      <div style="background:#F8FAFC; border-left:4px solid #0066E6; border-radius:4px; padding:12px 16px; font-size:12px; color:#334155; line-height:1.5;">
+        <strong>Clinical Disclaimer:</strong> AI-assisted case summary — clinician review required. Preliminary triage recommendation only. Final clinical assessment and treatment diagnosis must be performed by a qualified healthcare professional.
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(6)">
+        &larr; Edit Symptoms
+      </button>
+      <button class="abdm-btn-primary" onclick="goToStep(9)" style="padding:10px 24px;">
+        Confirm &amp; View Available Tokens &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 9: AVAILABLE TOKEN SLOTS -->
+  <!-- ============================================== -->
+  <div id="stepView9" class="step-view" style="display:none;">
+    <div class="abdm-table-card" style="padding:24px; margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; border-bottom:1px solid #E2E8F0; padding-bottom:18px; margin-bottom:20px;">
+        <div>
+          <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+            Step 9: Select Live Consultation Token Slot
+          </h2>
+          <div style="font-size:13px; color:#5F7187; margin-top:2px;">
+            Consulting: <strong id="tokenDocNameBanner" style="color:#003B73;">Dr. Meera Nair</strong> &bull; <span id="tokenFacNameBanner">KPHC</span>
+          </div>
+        </div>
+
+        <!-- Date selector -->
+        <div style="display:flex; align-items:center; gap:12px;">
+          <label style="font-size:12.5px; font-weight:700; color:#12345B;">Consultation Date:</label>
+          <input type="date" id="tokenDateInput" class="abdm-form-input" style="width:180px;" onchange="loadDoctorTokens()">
+        </div>
+      </div>
+
+      <!-- Priority Notice Banner -->
+      <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:6px; padding:10px 16px; font-size:12.5px; color:#1D4ED8; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+        <span>Your AI Triage Acuity: <strong id="tokenAcuityDisplay">Priority</strong> &bull; Tokens are priority-aware and queue sequenced for the attending clinician.</span>
+        <span class="abdm-badge badge-warning" id="tokenAcuityBadge">Priority</span>
+      </div>
+
+      <!-- Token Tiles Grid -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:14px; font-weight:700; color:#12345B;">Available Outpatient Tokens</div>
+          <div style="display:flex; gap:16px; font-size:12px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div style="width:12px; height:12px; border-radius:3px; background:#16A05D;"></div>
+              <span>Available</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div style="width:12px; height:12px; border-radius:3px; background:#0066E6;"></div>
+              <span>Selected</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div style="width:12px; height:12px; border-radius:3px; background:#CBD5E1;"></div>
+              <span>Reserved / Full</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="tokensSlotsGrid" style="display:grid; grid-template-columns:repeat(6, 1fr); gap:12px;">
+          <div style="text-align:center; padding:30px; color:#5F7187; grid-column:span 6;">
+            Loading available tokens for selected date...
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected slot indicator -->
+      <div id="selectedSlotAlert" style="display:none; background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:8px; padding:14px; margin-top:16px; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:36px; height:36px; border-radius:50%; background:#16A05D; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:800;">✓</div>
+          <div>
+            <div style="font-size:14px; font-weight:800; color:#166534;" id="selectedSlotText">Token #24 (10:00 AM)</div>
+            <div style="font-size:12px; color:#15803D;">Slot is held for 10 minutes to complete reservation.</div>
+          </div>
+        </div>
+        <button class="abdm-btn-primary" onclick="confirmAndBookToken()" style="padding:8px 20px;">
+          Confirm Token Reservation &rarr;
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="abdm-btn-secondary" onclick="goToStep(7)">
+        &larr; Back to Case Summary
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 10: BOOKING CONFIRMATION & RECEIPT -->
+  <!-- ============================================== -->
+  <div id="stepView10" class="step-view" style="display:none;">
+    <div style="max-width:640px; margin:0 auto;">
+      <div class="abdm-table-card" style="padding:32px; border-top:6px solid #16A05D; box-shadow:var(--shadow-lg);">
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="width:64px; height:64px; border-radius:50%; background:#DCFCE7; color:#16A05D; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 style="font-family:var(--font-heading); font-size:22px; font-weight:800; color:#12345B;">
+            Appointment &amp; Token Confirmed
+          </h2>
+          <p style="font-size:13px; color:#5F7187; margin-top:4px;">
+            CareBridge OPD Appointment Token Reserved Successfully
+          </p>
+        </div>
+
+        <!-- Token Number Big Callout -->
+        <div style="background:linear-gradient(135deg, #002B5C 0%, #003B73 100%); border-radius:var(--radius-lg); padding:20px; color:#FFFFFF; text-align:center; margin-bottom:24px;">
+          <div style="font-size:12px; font-weight:700; color:#38BDF8; text-transform:uppercase; letter-spacing:0.5px;">Your Queue Token Number</div>
+          <div style="font-family:monospace; font-size:48px; font-weight:900; color:#FFFFFF; margin:4px 0;" id="confirmedTokenNumber">A-026</div>
+          <div style="font-size:13px; color:#E2E8F0;">
+            Priority: <strong id="confirmedPriorityBadge">Priority Consultation</strong>
+          </div>
+        </div>
+
+        <!-- Receipt Table -->
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:16px; margin-bottom:24px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Patient Name:</span>
+              <div style="font-weight:700; color:#12345B;" class="patient-auth-name">{{ current_user.name if current_user else 'Sajil Binu' }}</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Health ID:</span>
+              <div style="font-weight:700; color:#12345B;">91-XXXX-XXXX-1234 / CB-2026-001245</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Healthcare Facility:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedFacilityName">Govt Hospital</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Medical System:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedMedicalSystem">Ayurveda</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Specialty Department:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedDepartment">General Medicine</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Attending Doctor:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedDoctorName">Dr. Meera Nair</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Appointment Date:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedDate">20 Sep 2026</div>
+            </div>
+            <div>
+              <span style="color:#5F7187; font-size:11.5px;">Consultation Slot:</span>
+              <div style="font-weight:700; color:#12345B;" id="confirmedSlot">10:00 AM</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointment QR Code -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; padding:14px; background:#F8FAFC; border:1px dashed #CBD5E1; border-radius:8px;">
+          <div id="confirmedQrBox" style="width:90px; height:90px; background:#FFFFFF; padding:4px; border-radius:6px; border:1px solid #E2E8F0; display:flex; align-items:center; justify-content:center;">
+            <!-- QR SVG populated dynamically -->
+          </div>
+          <div>
+            <div style="font-size:13px; font-weight:700; color:#12345B;">Digital Appointment Token QR</div>
+            <div style="font-size:11.5px; color:#5F7187; max-width:280px; margin-top:2px;">
+              Present this token at the OPD verification counter or kiosk for direct check-in.
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; gap:12px; justify-content:center;">
+          <button class="abdm-btn-secondary" onclick="window.print()" style="font-size:13px;">
+            🖨️ Print / Download Receipt
+          </button>
+          <button class="abdm-btn-primary" onclick="goToStep(11)" style="font-size:13px; padding:10px 20px;">
+            Go to Live Queue &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- STEP 11: LIVE QUEUE (SOCKET.IO) -->
+  <!-- ============================================== -->
+  <div id="stepView11" class="step-view" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+      <div>
+        <h2 style="font-family:var(--font-heading); font-size:20px; font-weight:800; color:#12345B;">
+          Live Outpatient Token Queue
+        </h2>
+        <p style="font-size:13px; color:#5F7187;">
+          Real-time consultation counter status synced live via CareBridge Flask-SocketIO.
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#16A05D; animation:pulse 1.5s infinite;"></span>
+        <span style="font-size:13px; font-weight:600; color:#16A05D;">Live Queue Connected</span>
+      </div>
+    </div>
+
+    <!-- Live Counter Banner -->
+    <div style="background:linear-gradient(135deg, #002B5C 0%, #003B73 100%); border-radius:var(--radius-xl); padding:28px; color:#FFFFFF; margin-bottom:24px; box-shadow:var(--shadow-lg);">
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; text-align:center;">
+        <!-- Box 1: Your Token -->
+        <div style="background:rgba(255,255,255,0.12); border:2px solid #38BDF8; border-radius:var(--radius-lg); padding:16px;">
+          <div style="font-size:11.5px; font-weight:700; color:#38BDF8; text-transform:uppercase;">Your Token</div>
+          <div style="font-family:monospace; font-size:38px; font-weight:900; color:#FFFFFF; margin:4px 0;" id="liveUserTokenDisplay">A-026</div>
+          <div style="font-size:12px; color:#CBD5E1;" id="liveTokenSubText">Attending OPD</div>
+        </div>
+
+        <!-- Box 2: Currently Serving -->
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:16px;">
+          <div style="font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase;">Currently Serving</div>
+          <div style="font-family:monospace; font-size:38px; font-weight:900; color:#10B981; margin:4px 0;" id="liveServingDisplay">A-021</div>
+          <div style="font-size:12px; color:#CBD5E1;">Counter 01 &bull; OPD Room</div>
+        </div>
+
+        <!-- Box 3: People Ahead -->
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:16px;">
+          <div style="font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase;">People Ahead</div>
+          <div style="font-family:monospace; font-size:38px; font-weight:900; color:#F59E0B; margin:4px 0;" id="livePeopleAheadDisplay">4</div>
+          <div style="font-size:12px; color:#CBD5E1;">In waiting room</div>
+        </div>
+
+        <!-- Box 4: Estimated Wait -->
+        <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:16px;">
+          <div style="font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase;">Estimated Wait</div>
+          <div style="font-family:monospace; font-size:38px; font-weight:900; color:#38BDF8; margin:4px 0;" id="liveWaitDisplay">20 min</div>
+          <div style="font-size:12px; color:#CBD5E1;">~5 min per consult</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Queue List -->
+    <div class="abdm-table-card">
+      <div style="padding:16px 20px; border-bottom:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:#12345B;">
+          Active Outpatient Queue Stream
+        </div>
+        <div style="font-size:12px; color:#5F7187;" id="liveQueueFacilityCaption">
+          Facility OPD Queue
+        </div>
+      </div>
+
+      <table class="abdm-table">
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Token Number</th>
+            <th>Patient Name</th>
+            <th>Priority Acuity</th>
+            <th>Estimated Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="liveQueueTableRows">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px; display:flex; justify-content:space-between;">
+      <a href="/appointments" class="abdm-btn-secondary">
+        &larr; Return to Appointments
+      </a>
+      <a href="/queue" class="abdm-btn-primary">
+        Open Full Screen Queue Kiosk
+      </a>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
+<style>
+  /* Wizard Progress Steps */
+  .wiz-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .wiz-step.active {
+    opacity: 1;
+  }
+  .wiz-step.completed {
+    opacity: 0.9;
+  }
+  .wiz-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #E2E8F0;
+    color: #475569;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .wiz-step.active .wiz-circle {
+    background: #0066E6;
+    color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.2);
+  }
+  .wiz-step.completed .wiz-circle {
+    background: #16A05D;
+    color: #FFFFFF;
+  }
+  .wiz-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #12345B;
+    white-space: nowrap;
+  }
+  .wiz-step.active .wiz-title {
+    color: #0066E6;
+  }
+  .wiz-sub {
+    font-size: 10px;
+    color: #94A3B8;
+    white-space: nowrap;
+  }
+  .wiz-line {
+    flex: 1;
+    height: 2px;
+    background: #E2E8F0;
+    margin: 0 8px;
+    min-width: 14px;
+  }
+  .wiz-line.completed {
+    background: #16A05D;
+  }
+
+  /* Medical System Selectable Cards */
+  .ms-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .ms-card:hover {
+    border-color: #0066E6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(0,0,0,0.08);
+  }
+  .ms-card.selected {
+    border-color: #0066E6;
+    background: #F8FAFD;
+    box-shadow: 0 0 0 2.5px rgba(0, 102, 230, 0.25);
+  }
+  .ms-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #EAF4FF;
+    color: #0066E6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .ms-card.selected .ms-icon-wrap {
+    background: #0066E6;
+    color: #FFFFFF;
+  }
+
+  /* Facility Cards */
+  .fac-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .fac-card:hover {
+    border-color: #0066E6;
+    box-shadow: 0 8px 18px -4px rgba(0,0,0,0.08);
+  }
+
+  /* Department Card */
+  .dept-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .dept-card:hover {
+    border-color: #0066E6;
+    background: #F8FAFD;
+  }
+  .dept-card.selected {
+    border-color: #0066E6;
+    background: #EFF6FF;
+    box-shadow: 0 0 0 2px rgba(0, 102, 230, 0.2);
+  }
+
+  /* Doctor Card */
+  .doc-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .doc-card:hover {
+    border-color: #0066E6;
+    box-shadow: 0 8px 18px -4px rgba(0,0,0,0.08);
+  }
+
+  /* Token slot tile */
+  .token-tile {
+    border: 1.5px solid #16A05D;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .token-tile:hover {
+    background: #F0FDF4;
+    transform: translateY(-2px);
+  }
+  .token-tile.selected {
+    border-color: #0066E6;
+    background: #EFF6FF;
+    box-shadow: 0 0 0 2.5px rgba(0, 102, 230, 0.25);
+  }
+  .token-tile.disabled {
+    border-color: #E2E8F0;
+    background: #F8FAFC;
+    color: #94A3B8;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+  }
+</style>
+
 <script>
-  let allDoctors = [];
-  let selectedDoctor = null;
-  let selectedSlot = null;
+  // Central Booking Wizard State
+  const bookingState = {
+    step: 1,
+    medical_system: null,
+    location: {
+      state: 'Kerala',
+      district: 'Kannur',
+      city: 'All'
+    },
+    facility: null,
+    department: null,
+    doctor: null,
+    ai_case: {
+      complaint: '',
+      why_consulting_now: '',
+      language: 'English',
+      session_id: null,
+      questions: [],
+      answers: {}
+    },
+    triage: {
+      priority: 'Priority',
+      reason: '',
+      color: '#D97706'
+    },
+    slot: null,
+    confirmed_appointment: null
+  };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Set default date to today
+  let searchDebounceTimer = null;
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Set default date picker to today
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('bookingDateInput').value = today;
-    document.getElementById('bookingDateInput').min = today;
+    const dateInput = document.getElementById('tokenDateInput');
+    if (dateInput) dateInput.value = today;
 
-    fetchDoctors();
+    // Load Step 1: Medical Systems
+    await loadMedicalSystems();
+
+    // Load States for Step 2
+    await loadStates();
   });
 
-  async function fetchDoctors() {
-    try {
-      const res = await fetch('/api/booking/doctors');
-      const data = await res.json();
-      if (data.success && data.data.length) {
-        allDoctors = data.data;
-      } else {
-        // Fallback reference doctors
-        allDoctors = [
-          {_id: "doc1", name: "Dr. Meera Nair", department: "General Medicine", specialization: "Consultant Physician", facility_name: "KPHC Thalassery", fees: 200, total_tokens: 16, location: "Thalassery"},
-          {_id: "doc2", name: "Dr. Arjun Kumar", department: "Orthopedics", specialization: "Orthopedic Surgeon", facility_name: "Govt. District Hospital Kannur", fees: 250, total_tokens: 14, location: "Kannur"},
-          {_id: "doc3", name: "Dr. Sreelakshmi Nair", department: "Dermatology", specialization: "Dermatologist", facility_name: "Govt. Medical College Kannur", fees: 300, total_tokens: 12, location: "Kannur"},
-          {_id: "doc4", name: "Dr. Faisal Rahman", department: "Radiology", specialization: "Senior Radiologist", facility_name: "Sun Diagnostics Thalassery", fees: 250, total_tokens: 12, location: "Thalassery"}
-        ];
+  // Step Navigation Engine
+  function goToStep(stepNumber) {
+    // Validate prerequisites before advancing
+    if (stepNumber >= 2 && !bookingState.medical_system) {
+      showToast('Please select a medical system to continue', 'error');
+      return;
+    }
+    if (stepNumber >= 3 && (!bookingState.location.state || !bookingState.location.district)) {
+      showToast('Please select both State and District to find facilities', 'error');
+      return;
+    }
+    if (stepNumber >= 4 && !bookingState.facility) {
+      showToast('Please select a healthcare facility first', 'error');
+      return;
+    }
+    if (stepNumber >= 5 && !bookingState.department) {
+      showToast('Please select a clinical department first', 'error');
+      return;
+    }
+    if (stepNumber >= 6 && !bookingState.doctor) {
+      showToast('Please select a specialist doctor first', 'error');
+      return;
+    }
+
+    // Hide all step views
+    for (let i = 1; i <= 11; i++) {
+      const v = document.getElementById(`stepView${i}`);
+      if (v) v.style.display = 'none';
+      const stepEl = document.getElementById(`pStep${i}`);
+      if (stepEl) {
+        stepEl.classList.remove('active');
+        if (i < stepNumber) {
+          stepEl.classList.add('completed');
+          const circle = stepEl.querySelector('.wiz-circle');
+          if (circle) circle.innerHTML = '✓';
+        } else {
+          stepEl.classList.remove('completed');
+          const circle = stepEl.querySelector('.wiz-circle');
+          if (circle) circle.innerHTML = i;
+        }
       }
-      renderDoctors(allDoctors);
+      const lineEl = document.getElementById(`pLine${i}`);
+      if (lineEl) {
+        if (i < stepNumber) lineEl.classList.add('completed');
+        else lineEl.classList.remove('completed');
+      }
+    }
+
+    // Show current view
+    const currentView = document.getElementById(`stepView${stepNumber}`);
+    if (currentView) currentView.style.display = 'block';
+
+    const currentStepEl = document.getElementById(`pStep${stepNumber}`);
+    if (currentStepEl) currentStepEl.classList.add('active');
+
+    bookingState.step = stepNumber;
+
+    // Trigger step-specific data loading
+    if (stepNumber === 3) {
+      document.getElementById('summarySystemStep3').textContent = bookingState.medical_system.name;
+      document.getElementById('summaryLocationStep3').textContent = `${bookingState.location.district}, ${bookingState.location.state}`;
+      loadFacilities();
+    } else if (stepNumber === 4) {
+      loadFacilityDepartments();
+    } else if (stepNumber === 5) {
+      loadDepartmentDoctors();
+    } else if (stepNumber === 6) {
+      initStep6Context();
+    } else if (stepNumber === 9) {
+      loadDoctorTokens();
+    } else if (stepNumber === 11) {
+      initLiveQueueView();
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleStepNav(targetStep) {
+    if (targetStep < bookingState.step) {
+      goToStep(targetStep);
+    }
+  }
+
+  // ==============================================
+  // STEP 1: MEDICAL SYSTEMS
+  // ==============================================
+  async function loadMedicalSystems() {
+    const grid = document.getElementById('medicalSystemsGrid');
+    try {
+      const res = await fetch('/api/medical-systems');
+      const json = await res.json();
+      const systems = json.data || [];
+
+      grid.innerHTML = '';
+      systems.forEach(sys => {
+        const card = document.createElement('div');
+        card.className = 'ms-card';
+        card.id = `sysCard_${sys.code}`;
+        card.onclick = () => selectMedicalSystem(sys);
+
+        card.innerHTML = `
+          <div>
+            <div class="ms-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                ${sys.svg_path || '<circle cx="12" cy="12" r="9"></circle>'}
+              </svg>
+            </div>
+            <div style="font-family:var(--font-heading); font-size:15px; font-weight:800; color:#12345B; margin-bottom:4px;">
+              ${sys.name}
+            </div>
+            <p style="font-size:12px; color:#5F7187; line-height:1.45;">
+              ${sys.short_description}
+            </p>
+          </div>
+          <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #F1F5F9; padding-top:10px;">
+            <span class="abdm-badge badge-primary" style="font-size:11px;">
+              ${sys.facility_count || '2+'} Facilities
+            </span>
+            <span style="font-size:12px; font-weight:700; color:#0066E6;">Select &rarr;</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#DC2626; padding:20px;">Failed to load medical systems. Please refresh.</div>';
+    }
+  }
+
+  function selectMedicalSystem(sys) {
+    bookingState.medical_system = sys;
+    document.querySelectorAll('.ms-card').forEach(c => c.classList.remove('selected'));
+    const selectedEl = document.getElementById(`sysCard_${sys.code}`);
+    if (selectedEl) selectedEl.classList.add('selected');
+
+    document.getElementById('btnContinueStep1').removeAttribute('disabled');
+    showToast(`Selected: ${sys.name}`, 'info');
+
+    // Auto update banner in Step 2
+    document.getElementById('badgeSelectedSystemStep2').textContent = `System: ${sys.name}`;
+  }
+
+  // ==============================================
+  // STEP 2: LOCATION
+  // ==============================================
+  async function loadStates() {
+    const select = document.getElementById('selectState');
+    try {
+      const res = await fetch('/api/states');
+      const json = await res.json();
+      const states = json.data || [];
+
+      select.innerHTML = '<option value="">Select State or UT...</option>';
+      states.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        if (s === 'Kerala') opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      // Default load Kerala districts
+      onStateChanged();
     } catch(e) {
       console.error(e);
     }
   }
 
-  function renderDoctors(docs) {
-    const grid = document.getElementById('doctorsGrid');
-    grid.innerHTML = '';
+  async function onStateChanged() {
+    const state = document.getElementById('selectState').value;
+    const districtSelect = document.getElementById('selectDistrict');
+    const citySelect = document.getElementById('selectCity');
 
-    docs.forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'abdm-table-card doc-card';
-      card.setAttribute('data-name', d.name.toLowerCase());
-      card.setAttribute('data-dept', d.department || '');
-      card.setAttribute('data-loc', d.facility_name || '');
-      card.style.padding = '20px';
-      card.style.display = 'flex';
-      card.style.flexDirection = 'column';
-      card.style.justifyContent = 'space-between';
+    bookingState.location.state = state;
+    bookingState.location.district = '';
+    document.getElementById('btnContinueStep2').setAttribute('disabled', 'true');
 
-      card.innerHTML = `
-        <div>
-          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-            <div style="width:44px; height:44px; border-radius:50%; background:#EAF4FF; color:#0066E6; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </div>
-            <div>
-              <div style="font-family:var(--font-heading); font-size:15px; font-weight:700; color:#12345B;">${d.name}</div>
-              <div style="font-size:12.5px; color:#5F7187;">${d.department} &bull; ${d.specialization || ''}</div>
-            </div>
-          </div>
-          
-          <div style="background:#F8FAFC; border-radius:6px; padding:10px; font-size:12px; color:#475569; margin-bottom:16px;">
-            <div>🏥 <strong>Facility:</strong> ${d.facility_name || 'Govt District Hospital'}</div>
-            <div style="margin-top:4px;">⏱️ <strong>Est. Wait:</strong> 15-20 mins &bull; Fee: ₹${d.fees || 200}</div>
-          </div>
-        </div>
-
-        <button class="abdm-btn-primary" style="width:100%; justify-content:center;" onclick="selectDoctor('${d._id}', '${d.name}', '${d.department}', '${d.facility_name || 'KPHC Thalassery'}')">
-          Select &amp; View Tokens
-        </button>
-      `;
-      grid.appendChild(card);
-    });
-  }
-
-  function filterClinicCards() {
-    const q = document.getElementById('clinicSearchInput').value.toLowerCase();
-    const dept = document.getElementById('deptFilter').value;
-    const loc = document.getElementById('locFilter').value;
-
-    const cards = document.querySelectorAll('.doc-card');
-    cards.forEach(c => {
-      const name = c.getAttribute('data-name');
-      const cDept = c.getAttribute('data-dept');
-      const cLoc = c.getAttribute('data-loc');
-
-      const matchesQ = name.includes(q) || cDept.toLowerCase().includes(q) || cLoc.toLowerCase().includes(q);
-      const matchesDept = (dept === 'All' || cDept === dept);
-      const matchesLoc = (loc === 'All' || cLoc.includes(loc));
-
-      c.style.display = (matchesQ && matchesDept && matchesLoc) ? 'flex' : 'none';
-    });
-  }
-
-  function selectDoctor(id, name, dept, facility) {
-    selectedDoctor = { id, name, dept, facility };
-    document.getElementById('selectedDocName').textContent = name;
-    document.getElementById('selectedDocDetails').textContent = `${dept} • ${facility}`;
-
-    document.getElementById('clinicFilterRow').style.display = 'none';
-    document.getElementById('step1Container').style.display = 'none';
-    document.getElementById('step2Container').style.display = 'block';
-
-    loadAvailability();
-  }
-
-  function backToStep1() {
-    document.getElementById('clinicFilterRow').style.display = 'flex';
-    document.getElementById('step1Container').style.display = 'block';
-    document.getElementById('step2Container').style.display = 'none';
-  }
-
-  async function loadAvailability() {
-    const date = document.getElementById('bookingDateInput').value;
-    const grid = document.getElementById('ticketsGrid');
-    grid.innerHTML = '<div style="grid-column:1/-1; padding:20px; text-align:center; color:#5F7187;">Loading live token slots...</div>';
-
-    try {
-      const res = await fetch(`/api/booking/availability?doctor_id=${selectedDoctor.id}&date=${date}`);
-      const data = await res.json();
-      
-      let slots = [];
-      if (data.success && data.data.length) {
-        slots = data.data;
-      } else {
-        // Standard 12 slots fallback
-        for (let i = 1; i <= 12; i++) {
-          slots.push({
-            ticket_id: i,
-            slot: `${9 + Math.floor(i/2)}:${(i%2)*30 === 0 ? '00' : '30'} AM`,
-            status: i === 1 || i === 3 ? 'booked' : 'available',
-            token: i === 1 ? 'A-021' : (i === 3 ? 'A-023' : null)
-          });
-        }
-      }
-      renderTickets(slots);
-    } catch(e) {
-      renderTickets([]);
-    }
-  }
-
-  function renderTickets(slots) {
-    const grid = document.getElementById('ticketsGrid');
-    grid.innerHTML = '';
-
-    slots.forEach((s, idx) => {
-      const isAvailable = s.status === 'available';
-      const ticket = document.createElement('div');
-      ticket.style.cssText = `
-        background: ${isAvailable ? '#FFFFFF' : '#F1F5F9'};
-        border: 1.5px solid ${isAvailable ? '#16A05D' : '#CBD5E1'};
-        border-radius: 10px;
-        padding: 14px 10px;
-        text-align: center;
-        cursor: ${isAvailable ? 'pointer' : 'not-allowed'};
-        opacity: ${isAvailable ? '1' : '0.6'};
-        transition: all 0.15s ease;
-      `;
-
-      ticket.innerHTML = `
-        <div style="font-size:11px; font-weight:700; color:${isAvailable ? '#16A05D' : '#64748B'}; text-transform:uppercase;">
-          Token #${s.ticket_id}
-        </div>
-        <div style="font-family:monospace; font-size:16px; font-weight:800; color:#12345B; margin:4px 0;">
-          ${s.token || ('T-' + String(s.ticket_id).padStart(2, '0'))}
-        </div>
-        <div style="font-size:11.5px; color:#5F7187;">${s.slot}</div>
-      `;
-
-      if (isAvailable) {
-        ticket.onclick = () => {
-          document.querySelectorAll('#ticketsGrid > div').forEach(d => d.style.borderColor = '#16A05D');
-          ticket.style.borderColor = '#0066E6';
-          ticket.style.boxShadow = '0 0 0 3px rgba(0, 102, 230, 0.2)';
-          selectedSlot = s;
-          document.getElementById('selectedSlotInfo').style.display = 'flex';
-          document.getElementById('confirmSlotDetails').textContent = `Token #${s.ticket_id} (${s.slot})`;
-        };
-      }
-
-      grid.appendChild(ticket);
-    });
-  }
-
-  async function confirmBooking() {
-    if (!selectedSlot || !selectedDoctor) {
-      showToast('Please select an available token slot', 'error');
+    if (!state) {
+      districtSelect.innerHTML = '<option value="">Choose State First...</option>';
+      districtSelect.setAttribute('disabled', 'true');
+      citySelect.innerHTML = '<option value="All">All Cities</option>';
+      citySelect.setAttribute('disabled', 'true');
       return;
     }
 
-    const date = document.getElementById('bookingDateInput').value;
+    try {
+      const res = await fetch(`/api/districts?state=${encodeURIComponent(state)}`);
+      const json = await res.json();
+      const districts = json.data || [];
+
+      districtSelect.innerHTML = '<option value="">Select District...</option>';
+      districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        if (state === 'Kerala' && d === 'Kannur') opt.selected = true;
+        districtSelect.appendChild(opt);
+      });
+
+      districtSelect.removeAttribute('disabled');
+
+      if (state === 'Kerala') {
+        onDistrictChanged();
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  async function onDistrictChanged() {
+    const state = document.getElementById('selectState').value;
+    const district = document.getElementById('selectDistrict').value;
+    const citySelect = document.getElementById('selectCity');
+
+    bookingState.location.district = district;
+
+    if (!district) {
+      document.getElementById('btnContinueStep2').setAttribute('disabled', 'true');
+      citySelect.innerHTML = '<option value="All">All Cities</option>';
+      citySelect.setAttribute('disabled', 'true');
+      return;
+    }
+
+    document.getElementById('btnContinueStep2').removeAttribute('disabled');
+
+    try {
+      const res = await fetch(`/api/cities?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`);
+      const json = await res.json();
+      const cities = json.data || [];
+
+      citySelect.innerHTML = '<option value="All">All Cities in District</option>';
+      cities.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        citySelect.appendChild(opt);
+      });
+      citySelect.removeAttribute('disabled');
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  // ==============================================
+  // STEP 3: DISCOVER FACILITIES
+  // ==============================================
+  function onFacilitySearchInput() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      loadFacilities();
+    }, 400); // 400ms debouncing as requested
+  }
+
+  async function loadFacilities() {
+    const grid = document.getElementById('facilitiesGrid');
+    grid.innerHTML = '<div style="text-align:center; padding:30px; color:#5F7187; grid-column:span 3;">Searching facilities across India...</div>';
+
+    const sysCode = bookingState.medical_system ? bookingState.medical_system.code : '';
+    const state = bookingState.location.state;
+    const district = bookingState.location.district;
+    const city = document.getElementById('selectCity') ? document.getElementById('selectCity').value : 'All';
+    const type = document.getElementById('facilityTypeFilter') ? document.getElementById('facilityTypeFilter').value : 'All';
+    const search = document.getElementById('facilitySearchInput') ? document.getElementById('facilitySearchInput').value.trim() : '';
+    const sort = document.getElementById('facilitySortFilter') ? document.getElementById('facilitySortFilter').value : 'name';
+
+    let url = `/api/facilities?medical_system=${encodeURIComponent(sysCode)}&state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&sort=${sort}`;
+    if (city && city !== 'All') url += `&city=${encodeURIComponent(city)}`;
+    if (type && type !== 'All') url += `&facility_type=${encodeURIComponent(type)}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      const facilities = json.data || [];
+
+      if (facilities.length === 0) {
+        grid.innerHTML = `
+          <div style="text-align:center; padding:48px 20px; color:#5F7187; grid-column:span 3; background:#FFFFFF; border:1px dashed #CBD5E1; border-radius:var(--radius-lg);">
+            <div style="font-size:36px; margin-bottom:12px;">🏥</div>
+            <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:#12345B;">No Healthcare Facilities Found</div>
+            <p style="font-size:13px; color:#5F7187; max-width:440px; margin:6px auto 16px auto;">
+              No facilities for ${bookingState.medical_system.name} matched your filter in ${district}, ${state}.
+            </p>
+            <button class="abdm-btn-secondary" onclick="document.getElementById('facilitySearchInput').value=''; loadFacilities();">
+              Clear Search Filter
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = '';
+      facilities.forEach(fac => {
+        const card = document.createElement('div');
+        card.className = 'fac-card';
+
+        const deptPills = (fac.departments || ['General Medicine']).slice(0, 4).map(d => 
+          `<span style="background:#F1F5F9; color:#334155; font-size:11px; padding:2px 8px; border-radius:4px;">${d}</span>`
+        ).join(' ');
+
+        const isVerified = (fac.verification_status || '').includes('Verified');
+        const badgeHtml = isVerified 
+          ? '<span class="abdm-badge badge-success" style="font-size:11px;">Verified ABDM Facility</span>'
+          : '<span class="abdm-badge badge-outline" style="font-size:11px;">Demo Facility</span>';
+
+        card.innerHTML = `
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="abdm-badge badge-primary" style="font-size:11px;">${fac.medical_system || bookingState.medical_system.name}</span>
+              ${badgeHtml}
+            </div>
+
+            <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:800; color:#12345B; margin-bottom:4px;">
+              ${fac.name}
+            </h3>
+            <div style="font-size:12px; color:#0066E6; font-weight:600; margin-bottom:8px;">
+              ${fac.facility_type || 'Healthcare Facility'}
+            </div>
+
+            <p style="font-size:12.5px; color:#5F7187; line-height:1.45; margin-bottom:12px;">
+              📍 ${fac.address || ''}, ${fac.district || ''}, ${fac.state || ''} ${fac.pincode ? 'PIN: ' + fac.pincode : ''}
+            </p>
+
+            <div style="margin-bottom:14px;">
+              <div style="font-size:11px; font-weight:700; color:#5F7187; margin-bottom:4px; text-transform:uppercase;">Specialties:</div>
+              <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                ${deptPills}
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #F1F5F9; padding-top:12px; margin-top:8px;">
+            <div style="font-size:12px; color:#16A05D; font-weight:600; display:flex; align-items:center; gap:5px;">
+              <span style="width:7px; height:7px; border-radius:50%; background:#16A05D; display:inline-block;"></span>
+              Available Today
+            </div>
+            <button class="abdm-btn-primary" onclick="selectFacility('${fac._id}', '${encodeURIComponent(fac.name)}')" style="padding:6px 14px; font-size:12.5px;">
+              Select Hospital &rarr;
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#DC2626; padding:20px; grid-column:span 3;">Error loading facilities.</div>';
+    }
+  }
+
+  async function selectFacility(id, encName) {
+    try {
+      const res = await fetch(`/api/facilities/${id}`);
+      const json = await res.json();
+      bookingState.facility = json.data;
+    } catch(e) {
+      bookingState.facility = { _id: id, name: decodeURIComponent(encName) };
+    }
+
+    document.getElementById('facilityNameBannerStep4').textContent = bookingState.facility.name;
+    document.getElementById('facilityDetailsBannerStep4').textContent = `${bookingState.facility.district || bookingState.location.district}, ${bookingState.facility.state || bookingState.location.state} • ${bookingState.facility.medical_system || bookingState.medical_system.name}`;
+
+    goToStep(4);
+  }
+
+  // ==============================================
+  // STEP 4: FACILITY DEPARTMENTS
+  // ==============================================
+  async function loadFacilityDepartments() {
+    const grid = document.getElementById('departmentsGrid');
+    grid.innerHTML = '<div style="text-align:center; padding:30px; color:#5F7187; grid-column:span 3;">Loading facility departments...</div>';
+
+    try {
+      const res = await fetch(`/api/facilities/${bookingState.facility._id}/departments`);
+      const json = await res.json();
+      const departments = (json.data && json.data.departments) ? json.data.departments : ['General Medicine'];
+
+      grid.innerHTML = '';
+      departments.forEach(dept => {
+        const card = document.createElement('div');
+        card.className = 'dept-card';
+        card.id = `deptCard_${dept.replace(/\s+/g, '_')}`;
+        card.onclick = () => selectDepartment(dept);
+
+        card.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:8px; background:#EAF4FF; color:#0066E6; display:flex; align-items:center; justify-content:center; font-size:16px;">
+              🩺
+            </div>
+            <div>
+              <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; color:#12345B;">${dept}</div>
+              <div style="font-size:11.5px; color:#5F7187;">OPD Consultation Available</div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Auto select first department if not chosen
+      if (departments.length > 0) {
+        selectDepartment(departments[0]);
+      }
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#DC2626; padding:20px; grid-column:span 3;">Error loading departments.</div>';
+    }
+  }
+
+  function selectDepartment(dept) {
+    bookingState.department = dept;
+    document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('selected'));
+    const el = document.getElementById(`deptCard_${dept.replace(/\s+/g, '_')}`);
+    if (el) el.classList.add('selected');
+
+    document.getElementById('btnContinueStep4').removeAttribute('disabled');
+  }
+
+  // ==============================================
+  // STEP 5: SPECIALIST DOCTOR SELECTION
+  // ==============================================
+  async function loadDepartmentDoctors() {
+    const grid = document.getElementById('doctorsGrid');
+    grid.innerHTML = '<div style="text-align:center; padding:30px; color:#5F7187; grid-column:span 3;">Finding doctors in department...</div>';
+
+    document.getElementById('summaryFacilityStep5').textContent = bookingState.facility.name;
+    document.getElementById('summaryDeptStep5').textContent = bookingState.department;
+
+    try {
+      const res = await fetch(`/api/facilities/${bookingState.facility._id}/departments/${encodeURIComponent(bookingState.department)}/doctors`);
+      const json = await res.json();
+      let doctors = json.data || [];
+
+      if (doctors.length === 0) {
+        // Fallback to all doctors in this facility
+        const fallbackRes = await fetch(`/api/booking/doctors?clinic_id=${bookingState.facility._id}`);
+        const fbJson = await fallbackRes.json();
+        doctors = fbJson.data || [];
+      }
+
+      if (doctors.length === 0) {
+        grid.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:#5F7187; grid-column:span 3; background:#FFFFFF; border:1px dashed #CBD5E1; border-radius:var(--radius-lg);">
+            <div style="font-size:32px; margin-bottom:8px;">👨‍⚕️</div>
+            <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; color:#12345B;">No Specialist Doctors Available</div>
+            <p style="font-size:13px; color:#5F7187; margin:6px 0 14px 0;">No on-duty doctors found in ${bookingState.department} at this hospital.</p>
+            <button class="abdm-btn-secondary" onclick="goToStep(4)">Choose Another Department</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = '';
+      doctors.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doc-card';
+
+        const initial = (doc.name || 'Dr').replace('Dr. ', '').charAt(0) || 'D';
+        const isVerified = (doc.verification_status || '').includes('Verified');
+
+        card.innerHTML = `
+          <div>
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+              <div style="width:52px; height:52px; border-radius:50%; background:#EAF4FF; color:#0066E6; font-size:20px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                ${initial}
+              </div>
+              <div>
+                <h3 style="font-family:var(--font-heading); font-size:15.5px; font-weight:800; color:#12345B; margin-bottom:2px;">
+                  ${doc.name}
+                </h3>
+                <div style="font-size:12px; color:#0066E6; font-weight:600;">
+                  ${doc.qualification || 'MBBS'}
+                </div>
+                <div style="font-size:11.5px; color:#5F7187;">
+                  ${doc.specialization || doc.department} &bull; ${doc.experience || '8 years'} exp
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-size:12px; display:flex; justify-content:space-between;">
+              <span style="color:#5F7187;">Consultation Fee:</span>
+              <span style="font-weight:700; color:#12345B;">₹${doc.fees || '200'} (Govt Subsidized)</span>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid #F1F5F9; padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:12px; color:#16A05D; font-weight:600;">
+              ● Available Today
+            </div>
+            <button class="abdm-btn-primary" onclick="selectDoctor('${doc._id}', '${encodeURIComponent(doc.name)}', '${encodeURIComponent(doc.qualification || '')}')" style="padding:6px 14px; font-size:12.5px;">
+              Select Doctor &rarr;
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#DC2626; padding:20px; grid-column:span 3;">Error loading doctors.</div>';
+    }
+  }
+
+  function selectDoctor(id, encName, encQual) {
+    bookingState.doctor = {
+      id: id,
+      name: decodeURIComponent(encName),
+      qualification: decodeURIComponent(encQual)
+    };
+    goToStep(6);
+  }
+
+  // ==============================================
+  // STEP 6: AI CASE TAKING
+  // ==============================================
+  function initStep6Context() {
+    document.getElementById('aiContextDoc').textContent = bookingState.doctor.name;
+    document.getElementById('aiContextDept').textContent = bookingState.department;
+    document.getElementById('aiContextFac').textContent = bookingState.facility.name;
+    document.getElementById('aiContextSys').textContent = bookingState.medical_system.name;
+  }
+
+  function simulateVoiceInput() {
+    const lang = document.getElementById('aiLanguageSelect').value;
+    const samples = {
+      English: "I have had a worsening dry cough, low-grade fever, and chest heaviness for the past 3 days.",
+      Malayalam: "കഴിഞ്ഞ 3 ദിവസമായി എനിക്ക് കടുത്ത ചുമയും നേരിയ പനിയും ക്ഷീണവും അനുഭവപ്പെടുന്നുണ്ട്.",
+      Hindi: "मुझे पिछले तीन दिनों से लगातार खांसी, हल्का बुखार और बहुत थकान महसूस हो रही है।"
+    };
+    document.getElementById('chiefComplaintInput').value = samples[lang] || samples.English;
+    showToast(`Voice transcript inserted (${lang})`, 'info');
+  }
+
+  async function analyzeComplaintAndProceed() {
+    const complaint = document.getElementById('chiefComplaintInput').value.trim();
+    const whyNow = document.getElementById('whyConsultingInput').value.trim();
+    const lang = document.getElementById('aiLanguageSelect').value;
+
+    if (!complaint) {
+      showToast('Please describe your medical symptoms to proceed', 'error');
+      document.getElementById('chiefComplaintInput').focus();
+      return;
+    }
+
+    bookingState.ai_case.complaint = complaint;
+    bookingState.ai_case.why_consulting_now = whyNow || 'Persistent symptoms interfering with daily routine.';
+    bookingState.ai_case.language = lang;
+
+    const btn = document.getElementById('btnAnalyzeComplaint');
+    btn.setAttribute('disabled', 'true');
+    btn.innerHTML = 'Analyzing Symptoms via Clinical AI...';
+
+    try {
+      const res = await fetch('/api/ai/analyze-complaint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          complaint: complaint,
+          language: lang,
+          medical_system: bookingState.medical_system.name,
+          facility_name: bookingState.facility.name,
+          department: bookingState.department,
+          doctor_name: bookingState.doctor.name,
+          why_consulting_now: bookingState.ai_case.why_consulting_now
+        })
+      });
+
+      const json = await res.json();
+      const data = json.data || {};
+      bookingState.ai_case.session_id = data.session_id;
+      bookingState.ai_case.questions = data.questions || [];
+
+      // Render the two questions in Step 7
+      renderTwoQuestions(data.questions);
+
+      // Trigger summary generation
+      await triggerSummaryGeneration();
+
+      goToStep(7);
+    } catch(e) {
+      console.error(e);
+      goToStep(7);
+    } finally {
+      btn.removeAttribute('disabled');
+      btn.innerHTML = 'Analyze Symptoms &amp; Generate Clinical Questions &rarr;';
+    }
+  }
+
+  // ==============================================
+  // STEP 7 & 8: QUESTIONS & SUMMARY
+  // ==============================================
+  function renderTwoQuestions(questions) {
+    if (!questions || questions.length < 2) return;
+
+    // Q1
+    document.getElementById('q1Text').textContent = `1. ${questions[0].question}`;
+    const q1Opts = document.getElementById('q1Options');
+    q1Opts.innerHTML = '';
+    questions[0].options.forEach((opt, idx) => {
+      const label = document.createElement('label');
+      label.style.cssText = 'display:flex; align-items:center; gap:8px; font-size:13px; color:#334155; cursor:pointer;';
+      label.innerHTML = `
+        <input type="radio" name="q1Ans" value="${opt}" ${idx === 1 ? 'checked' : ''} onchange="onAnswerSelected(1, '${opt.replace(/'/g, "\\'")}')">
+        <span>${opt}</span>
+      `;
+      q1Opts.appendChild(label);
+      if (idx === 1) bookingState.ai_case.answers['q1'] = opt;
+    });
+
+    // Q2
+    document.getElementById('q2Text').textContent = `2. ${questions[1].question}`;
+    const q2Opts = document.getElementById('q2Options');
+    q2Opts.innerHTML = '';
+    questions[1].options.forEach((opt, idx) => {
+      const label = document.createElement('label');
+      label.style.cssText = 'display:flex; align-items:center; gap:8px; font-size:13px; color:#334155; cursor:pointer;';
+      label.innerHTML = `
+        <input type="radio" name="q2Ans" value="${opt}" ${idx === 0 ? 'checked' : ''} onchange="onAnswerSelected(2, '${opt.replace(/'/g, "\\'")}')">
+        <span>${opt}</span>
+      `;
+      q2Opts.appendChild(label);
+      if (idx === 0) bookingState.ai_case.answers['q2'] = opt;
+    });
+  }
+
+  async function onAnswerSelected(qNum, val) {
+    bookingState.ai_case.answers[`q${qNum}`] = val;
+    await triggerSummaryGeneration();
+  }
+
+  async function triggerSummaryGeneration() {
+    try {
+      const res = await fetch('/api/ai/generate-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          complaint: bookingState.ai_case.complaint,
+          why_consulting_now: bookingState.ai_case.why_consulting_now,
+          answers: bookingState.ai_case.answers,
+          session_id: bookingState.ai_case.session_id,
+          medical_system: bookingState.medical_system.name,
+          facility_name: bookingState.facility.name,
+          department: bookingState.department,
+          doctor_name: bookingState.doctor.name
+        })
+      });
+
+      const json = await res.json();
+      const summary = json.data || {};
+
+      document.getElementById('summaryComplaintText').textContent = `"${summary.chief_complaint}"`;
+      document.getElementById('summaryWhyNowText').textContent = summary.why_consulting_now;
+
+      const priority = summary.triage_priority || 'Priority';
+      bookingState.triage.priority = priority;
+      bookingState.triage.reason = summary.triage_reason || '';
+      bookingState.triage.color = summary.triage_color || '#D97706';
+
+      const badge = document.getElementById('triagePriorityBadge');
+      badge.textContent = priority;
+      badge.className = `abdm-badge ${priority === 'Routine' ? 'badge-success' : (priority === 'Priority' ? 'badge-warning' : 'badge-critical')}`;
+
+      document.getElementById('triageLevelText').textContent = priority;
+      document.getElementById('triageReasonText').textContent = summary.triage_reason || '';
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  // ==============================================
+  // STEP 9: AVAILABLE TOKENS
+  // ==============================================
+  async function loadDoctorTokens() {
+    const grid = document.getElementById('tokensSlotsGrid');
+    grid.innerHTML = '<div style="text-align:center; padding:20px; color:#5F7187; grid-column:span 6;">Checking token availability...</div>';
+
+    document.getElementById('tokenDocNameBanner').textContent = bookingState.doctor.name;
+    document.getElementById('tokenFacNameBanner').textContent = bookingState.facility.name;
+
+    const date = document.getElementById('tokenDateInput').value;
+    const priority = bookingState.triage.priority;
+
+    document.getElementById('tokenAcuityDisplay').textContent = priority;
+    const acuityBadge = document.getElementById('tokenAcuityBadge');
+    acuityBadge.textContent = priority;
+    acuityBadge.className = `abdm-badge ${priority === 'Routine' ? 'badge-success' : (priority === 'Priority' ? 'badge-warning' : 'badge-critical')}`;
+
+    try {
+      const res = await fetch(`/api/booking/tokens?doctor_id=${bookingState.doctor.id}&date=${date}&priority=${priority}`);
+      const json = await res.json();
+      const tokens = json.data || [];
+
+      grid.innerHTML = '';
+      tokens.forEach((t, i) => {
+        const isAvail = t.status === 'available';
+        const tile = document.createElement('div');
+        tile.className = `token-tile ${isAvail ? '' : 'disabled'}`;
+        tile.id = `tokenSlot_${i + 1}`;
+
+        const tokenLabel = t.token || `Token #${t.ticket_id || (i + 1)}`;
+        tile.innerHTML = `
+          <div style="font-size:11px; font-weight:700; color:${isAvail ? '#16A05D' : '#94A3B8'};">
+            #${t.ticket_id || (i + 1)}
+          </div>
+          <div style="font-family:monospace; font-size:15px; font-weight:800; color:#12345B; margin:2px 0;">
+            ${t.token || ('T-' + String(i + 21).padStart(2, '0'))}
+          </div>
+          <div style="font-size:11px; color:#5F7187;">${t.slot}</div>
+        `;
+
+        if (isAvail) {
+          tile.onclick = () => selectTokenSlot(t, tile);
+        }
+
+        grid.appendChild(tile);
+      });
+    } catch(e) {
+      grid.innerHTML = '<div style="color:#DC2626; padding:20px; grid-column:span 6;">Error fetching token slots.</div>';
+    }
+  }
+
+  function selectTokenSlot(slotObj, tileEl) {
+    bookingState.slot = slotObj;
+    document.querySelectorAll('.token-tile').forEach(t => t.classList.remove('selected'));
+    tileEl.classList.add('selected');
+
+    const alertBox = document.getElementById('selectedSlotAlert');
+    alertBox.style.display = 'flex';
+    document.getElementById('selectedSlotText').textContent = `Selected: Token #${slotObj.ticket_id} (${slotObj.slot}) • ${bookingState.triage.priority} Consultation`;
+  }
+
+  // ==============================================
+  // STEP 10: CONFIRM AND BOOK TOKEN
+  // ==============================================
+  async function confirmAndBookToken() {
+    if (!bookingState.slot) {
+      showToast('Please select a token slot', 'error');
+      return;
+    }
+
+    const date = document.getElementById('tokenDateInput').value;
+
+    const payload = {
+      doctor_id: bookingState.doctor.id,
+      doctor_name: bookingState.doctor.name,
+      facility_id: bookingState.facility._id,
+      facility_name: bookingState.facility.name,
+      department: bookingState.department,
+      medical_system: bookingState.medical_system.name,
+      date: date,
+      slot: bookingState.slot.slot,
+      priority: bookingState.triage.priority,
+      ai_case_id: bookingState.ai_case.session_id || ''
+    };
 
     try {
       const token = localStorage.getItem('token');
@@ -376,26 +1797,137 @@
       const res = await fetch('/api/booking/create', {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({
-          doctor_id: selectedDoctor.id,
-          date: date,
-          slot: selectedSlot.slot
-        })
+        body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-      const tokenNumber = (data.data && data.data.token_number) ? data.data.token_number : 'A-026';
+      const json = await res.json();
+      if (!res.ok) {
+        showToast(json.message || 'Booking slot error. Please try another slot.', 'error');
+        return;
+      }
 
-      document.getElementById('confirmedTokenNum').textContent = tokenNumber;
-      document.getElementById('confirmedClinic').textContent = selectedDoctor.facility;
-      document.getElementById('confirmedDept').textContent = selectedDoctor.dept;
+      const bookedData = json.data || {};
+      bookingState.confirmed_appointment = bookedData;
+
+      const tokenNumber = bookedData.token_number || 'A-026';
+      document.getElementById('confirmedTokenNumber').textContent = tokenNumber;
+      document.getElementById('confirmedFacilityName').textContent = bookingState.facility.name;
+      document.getElementById('confirmedMedicalSystem').textContent = bookingState.medical_system.name;
+      document.getElementById('confirmedDepartment').textContent = bookingState.department;
+      document.getElementById('confirmedDoctorName').textContent = bookingState.doctor.name;
       document.getElementById('confirmedDate').textContent = date;
+      document.getElementById('confirmedSlot').textContent = bookingState.slot.slot;
+      document.getElementById('confirmedPriorityBadge').textContent = `${bookedData.priority || bookingState.triage.priority} Consultation`;
 
-      document.getElementById('tokenSuccessModal').classList.add('active');
-      showToast(`Token ${tokenNumber} booked successfully!`, 'success');
+      // Render Inline QR SVG
+      renderAppointmentQr(tokenNumber, bookingState.facility.name, date);
+
+      showToast(`Token ${tokenNumber} confirmed successfully!`, 'success');
+      goToStep(10);
     } catch(e) {
-      document.getElementById('confirmedTokenNum').textContent = 'A-026';
-      document.getElementById('tokenSuccessModal').classList.add('active');
+      console.error(e);
+      showToast('Connection error booking token. Please retry.', 'error');
+    }
+  }
+
+  function renderAppointmentQr(tokenNum, facName, date) {
+    const qrBox = document.getElementById('confirmedQrBox');
+    qrBox.innerHTML = `
+      <svg viewBox="0 0 100 100" width="82" height="82">
+        <rect width="100" height="100" fill="#FFFFFF"/>
+        <!-- Corner Markers -->
+        <rect x="5" y="5" width="26" height="26" fill="#003B73"/>
+        <rect x="9" y="9" width="18" height="18" fill="#FFFFFF"/>
+        <rect x="13" y="13" width="10" height="10" fill="#003B73"/>
+        <rect x="69" y="5" width="26" height="26" fill="#003B73"/>
+        <rect x="73" y="9" width="18" height="18" fill="#FFFFFF"/>
+        <rect x="77" y="13" width="10" height="10" fill="#003B73"/>
+        <rect x="5" y="69" width="26" height="26" fill="#003B73"/>
+        <rect x="9" y="73" width="18" height="18" fill="#FFFFFF"/>
+        <rect x="13" y="77" width="10" height="10" fill="#003B73"/>
+        <!-- Data Grid Simulation -->
+        <rect x="36" y="10" width="6" height="6" fill="#003B73"/>
+        <rect x="46" y="10" width="6" height="6" fill="#003B73"/>
+        <rect x="56" y="10" width="6" height="6" fill="#003B73"/>
+        <rect x="36" y="24" width="6" height="6" fill="#003B73"/>
+        <rect x="46" y="36" width="8" height="8" fill="#0066E6"/>
+        <rect x="10" y="44" width="6" height="6" fill="#003B73"/>
+        <rect x="24" y="44" width="6" height="6" fill="#003B73"/>
+        <rect x="36" y="48" width="6" height="6" fill="#003B73"/>
+        <rect x="56" y="48" width="6" height="6" fill="#003B73"/>
+        <rect x="70" y="48" width="6" height="6" fill="#003B73"/>
+        <rect x="84" y="48" width="6" height="6" fill="#003B73"/>
+        <rect x="36" y="68" width="6" height="6" fill="#003B73"/>
+        <rect x="48" y="76" width="6" height="6" fill="#003B73"/>
+        <rect x="60" y="76" width="6" height="6" fill="#003B73"/>
+        <rect x="76" y="76" width="6" height="6" fill="#003B73"/>
+      </svg>
+    `;
+  }
+
+  // ==============================================
+  // STEP 11: LIVE QUEUE INTEGRATION
+  // ==============================================
+  function initLiveQueueView() {
+    const userToken = (bookingState.confirmed_appointment && bookingState.confirmed_appointment.token_number) || 'A-026';
+    document.getElementById('liveUserTokenDisplay').textContent = userToken;
+    document.getElementById('liveTokenSubText').textContent = `${bookingState.doctor ? bookingState.doctor.name : 'Dr. Meera Nair'} • ${bookingState.facility ? bookingState.facility.name : 'OPD'}`;
+    document.getElementById('liveQueueFacilityCaption').textContent = `${bookingState.facility ? bookingState.facility.name : 'CareBridge Clinic'} • ${bookingState.department || 'General Medicine'}`;
+
+    // Render Queue Rows
+    const tbody = document.getElementById('liveQueueTableRows');
+    tbody.innerHTML = `
+      <!-- Row 1: Serving -->
+      <tr style="background:#F0FDF4;">
+        <td><strong>#1</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; font-size:15px; color:#16A05D;">A-021</span></td>
+        <td>Ramesh K.</td>
+        <td><span class="abdm-badge badge-success">Routine</span></td>
+        <td>Now Serving</td>
+        <td><span class="abdm-badge badge-success">In Consultation</span></td>
+      </tr>
+
+      <!-- Row 2 -->
+      <tr>
+        <td><strong>#2</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; font-size:15px; color:#D97706;">A-022</span></td>
+        <td>Fatima M.</td>
+        <td><span class="abdm-badge badge-warning">Priority</span></td>
+        <td>10:05 AM</td>
+        <td><span class="abdm-badge badge-warning">Next in Line</span></td>
+      </tr>
+
+      <!-- Row 3: User Token Highlighted -->
+      <tr style="background:#EFF6FF; border:2px solid #0066E6;">
+        <td><strong>#3 (YOU)</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; font-size:16px; color:#0066E6;">${userToken}</span></td>
+        <td><strong class="patient-auth-name">${(window.authenticatedUser && window.authenticatedUser.name) || 'Sajil Binu'}</strong></td>
+        <td><span class="abdm-badge ${bookingState.triage.priority === 'Routine' ? 'badge-success' : 'badge-warning'}">${bookingState.triage.priority}</span></td>
+        <td>10:20 AM</td>
+        <td><span class="abdm-badge" style="background:#DBEAFE; color:#1D4ED8;">Waiting</span></td>
+      </tr>
+
+      <!-- Row 4 -->
+      <tr>
+        <td><strong>#4</strong></td>
+        <td><span style="font-family:monospace; font-weight:800; font-size:15px; color:#DC2626;">A-028</span></td>
+        <td>Mohammad K.</td>
+        <td><span class="abdm-badge badge-critical">Urgent</span></td>
+        <td>10:35 AM</td>
+        <td><span class="abdm-badge" style="background:#FEE2E2; color:#DC2626;">Acuity Fast-track</span></td>
+      </tr>
+    `;
+
+    // Connect to Socket.IO for queue updates if available
+    try {
+      if (typeof io !== 'undefined') {
+        const socket = io();
+        socket.on('queue_update', (data) => {
+          showToast(`Live Queue updated for ${data.facility_name || 'Clinic'}`, 'info');
+        });
+      }
+    } catch(e) {
+      console.log('Socket.IO notice:', e);
     }
   }
 </script>

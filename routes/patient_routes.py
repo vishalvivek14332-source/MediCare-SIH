@@ -1,12 +1,15 @@
 import os
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, Response
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from database.db import mongo
 from models.health_record import HealthDocument, LinkedFacility, SharedRecord
 from models.patient import Patient
 from utils.helpers import success_response, error_response
+from utils.qr_generator import get_patient_qr_payload, generate_qr_svg, generate_qr_png_bytes, generate_qr_data_url
 from datetime import datetime
 from bson.objectid import ObjectId
+import json
 
 patient_bp = Blueprint('patient', __name__)
 
@@ -16,11 +19,20 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @patient_bp.route('/profile', methods=['GET'])
+@jwt_required(optional=True)
 def get_profile():
-    # In demo mode or with token, return Sajil Binu / Alex Mathew profile
-    patient = mongo.db.patients.find_one({"email": "sajilbinu@example.com"})
+    patient = None
+    identity_raw = get_jwt_identity()
+    if identity_raw:
+        try:
+            identity = json.loads(identity_raw) if isinstance(identity_raw, str) else identity_raw
+            if isinstance(identity, dict) and identity.get('role') == 'patient' and identity.get('id'):
+                patient = mongo.db.patients.find_one({"_id": ObjectId(identity['id'])})
+        except Exception:
+            patient = None
+
     if not patient:
-        patient = mongo.db.patients.find_one({})
+        patient = mongo.db.patients.find_one({"email": "sajilbinu@example.com"}) or mongo.db.patients.find_one({})
     if not patient:
         return error_response("Patient not found", status=404)
     
@@ -29,17 +41,33 @@ def get_profile():
     return success_response(data=patient)
 
 @patient_bp.route('/profile', methods=['PUT'])
+@jwt_required(optional=True)
 def update_profile():
     data = request.get_json() or {}
-    email = data.get('email', 'sajilbinu@example.com')
+    identity_raw = get_jwt_identity()
+    patient = None
+    if identity_raw:
+        try:
+            identity = json.loads(identity_raw) if isinstance(identity_raw, str) else identity_raw
+            if isinstance(identity, dict) and identity.get('role') == 'patient' and identity.get('id'):
+                patient = mongo.db.patients.find_one({"_id": ObjectId(identity['id'])})
+        except Exception:
+            pass
+
+    email = data.get('email') or (patient.get('email') if patient else 'sajilbinu@example.com')
     
     update_fields = {}
-    for key in ['phone', 'address', 'language_preference', 'emergency_contact', 'occupation']:
-        if key in data:
+    for key in ['name', 'phone', 'address', 'language_preference', 'emergency_contact', 'occupation']:
+        if key in data and data[key] is not None:
             update_fields[key] = data[key]
             
-    mongo.db.patients.update_one({"email": email}, {"$set": update_fields})
-    return success_response(message="Profile updated successfully")
+    if update_fields:
+        mongo.db.patients.update_one({"email": email}, {"$set": update_fields})
+    
+    updated = mongo.db.patients.find_one({"email": email}) or {}
+    if '_id' in updated: updated['_id'] = str(updated['_id'])
+    if 'password' in updated: del updated['password']
+    return success_response(data=updated, message="Profile updated successfully")
 
 @patient_bp.route('/health-records', methods=['GET'])
 def get_health_records():
@@ -195,3 +223,53 @@ def get_timeline():
         {"date": "10 Jan 2022", "title": "COVID-19 Vaccination (Precaution Dose)", "category": "Vaccination", "facility": "CoWIN / Community Health Centre", "summary": "Covishield Dose 3 batch #44091 verified."}
     ]
     return success_response(data=events)
+
+@patient_bp.route('/qr', methods=['GET'])
+@jwt_required(optional=True)
+def get_qr_code():
+    """
+    Generates authentic ABDM scannable QR Code for the patient.
+    Supports ?format=svg, ?format=png, ?format=json, and ?download=1
+    """
+    patient = None
+    identity_raw = get_jwt_identity()
+    if identity_raw:
+        try:
+            identity = json.loads(identity_raw) if isinstance(identity_raw, str) else identity_raw
+            if isinstance(identity, dict) and identity.get('role') == 'patient' and identity.get('id'):
+                patient = mongo.db.patients.find_one({"_id": ObjectId(identity['id'])})
+        except Exception:
+            patient = None
+
+    if not patient:
+        email = request.args.get('email', 'sajilbinu@example.com')
+        patient = mongo.db.patients.find_one({"email": email})
+    if not patient:
+        patient = mongo.db.patients.find_one({}) or {}
+    
+    fmt = request.args.get('format', 'svg').lower()
+    download = request.args.get('download', '0') == '1'
+    payload = get_patient_qr_payload(patient)
+
+    if fmt == 'png':
+        png_bytes = generate_qr_png_bytes(payload)
+        response = Response(png_bytes, mimetype='image/png')
+        if download:
+            response.headers['Content-Disposition'] = f'attachment; filename="ABHA_QR_{payload.get("hidn", "card")}.png"'
+        return response
+    elif fmt == 'json':
+        data_url = generate_qr_data_url(payload)
+        svg_content = generate_qr_svg(payload)
+        return success_response(data={
+            "qr_data_url": data_url,
+            "svg": svg_content,
+            "payload": payload
+        })
+    else:
+        # Default SVG format
+        svg_content = generate_qr_svg(payload)
+        response = Response(svg_content, mimetype='image/svg+xml')
+        if download:
+            response.headers['Content-Disposition'] = f'attachment; filename="ABHA_QR_{payload.get("hidn", "card")}.svg"'
+        return response
+

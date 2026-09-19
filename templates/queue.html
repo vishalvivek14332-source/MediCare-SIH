@@ -131,7 +131,7 @@
       <tr style="background:#EFF6FF; border-left:4px solid #0066E6;">
         <td><strong>#6</strong></td>
         <td><span style="font-family:monospace; font-weight:900; color:#0066E6; font-size:16px;">A-026 (You)</span></td>
-        <td><strong>Alex Mathew / Sajil Binu</strong></td>
+        <td><strong class="patient-auth-name">{{ current_user.name if current_user else 'Sajil Binu' }}</strong></td>
         <td><span class="abdm-badge badge-warning">Priority</span></td>
         <td><strong>10:25 AM</strong></td>
         <td><span class="abdm-badge" style="background:#DBEAFE; color:#1D4ED8; font-weight:700;">Your Turn Approaching</span></td>

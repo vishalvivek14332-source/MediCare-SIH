@@ -1,6 +1,504 @@
 {% extends 'base.html' %}
 
-{% block title %}Digital Health ID Card - CareBridge Digital Health Mission{% endblock %}
+{% block title %}Digital Health ID Card (ABHA) - CareBridge Digital Health Mission{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Official ABHA Card Styling */
+  .abha-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 28px 0 40px;
+  }
+
+  .abha-card {
+    width: 100%;
+    max-width: 620px;
+    background: #FFFFFF;
+    border: 2px solid #003B73;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px -6px rgba(0, 59, 115, 0.18), 0 6px 16px rgba(0,0,0,0.06);
+    position: relative;
+    font-family: var(--font-body);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .abha-card:hover {
+    box-shadow: 0 20px 44px -8px rgba(0, 59, 115, 0.24), 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  /* Tricolor top strip */
+  .abha-tricolor-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #FF9933 0%, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #138808 66.6%, #138808 100%);
+  }
+
+  /* Card Header */
+  .abha-card-header {
+    background: #003B73;
+    color: #FFFFFF;
+    padding: 14px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .abha-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .abha-emblem-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .abha-header-titles h2 {
+    font-family: var(--font-heading);
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    margin: 0;
+    color: #FFFFFF;
+    text-transform: uppercase;
+  }
+
+  .abha-header-titles span {
+    font-size: 10px;
+    color: #93C5FD;
+    letter-spacing: 0.4px;
+    display: block;
+    margin-top: 1px;
+    font-weight: 500;
+  }
+
+  .abha-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #16A05D;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .abha-status-tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Card Body */
+  .abha-card-body {
+    padding: 22px 24px;
+    background: #FAFCFE;
+    display: grid;
+    grid-template-columns: 96px 1fr 140px;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Background ABDM Watermark */
+  .abha-card-body::after {
+    content: '';
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 180px;
+    height: 180px;
+    background-image: radial-gradient(circle, rgba(0, 59, 115, 0.03) 20%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Left: Photo */
+  .abha-photo-box {
+    text-align: center;
+  }
+
+  .abha-photo-avatar {
+    width: 90px;
+    height: 106px;
+    background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+    border: 2px solid #93C5FD;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #1E40AF;
+    font-weight: 800;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .abha-photo-avatar .initial {
+    font-size: 38px;
+    line-height: 1;
+  }
+
+  .abha-photo-badge {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 59, 115, 0.9);
+    color: #FFFFFF;
+    font-size: 8.5px;
+    padding: 3px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Center: Demographics */
+  .abha-demographics {
+    min-width: 0;
+  }
+
+  .abha-field-name {
+    margin-bottom: 12px;
+  }
+
+  .abha-field-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .abha-patient-name {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+
+  .abha-grid-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .abha-grid-item strong {
+    display: block;
+    color: #1E293B;
+    font-weight: 700;
+    font-size: 12.5px;
+    margin-top: 1px;
+  }
+
+  .abha-number-highlight {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    color: #0066E6 !important;
+    letter-spacing: 0.5px;
+  }
+
+  .abha-sub-details {
+    font-size: 11px;
+    color: #64748B;
+    padding-top: 8px;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Right: Official Scannable QR Code */
+  .abha-qr-section {
+    text-align: center;
+  }
+
+  .abha-qr-frame {
+    width: 126px;
+    height: 126px;
+    background: #FFFFFF;
+    padding: 6px;
+    border: 2px solid #CBD5E1;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 59, 115, 0.08);
+    margin: 0 auto;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .abha-qr-frame:hover {
+    border-color: #0066E6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 102, 230, 0.2);
+  }
+
+  .abha-qr-frame svg, 
+  .abha-qr-frame img {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    object-fit: contain;
+  }
+
+  .abha-qr-caption {
+    font-size: 9.5px;
+    color: #475569;
+    font-weight: 600;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .abha-qr-caption svg {
+    color: #0066E6;
+  }
+
+  .abha-qr-hint {
+    font-size: 9px;
+    color: #0066E6;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2px;
+    text-decoration: underline;
+  }
+
+  /* Card Footer */
+  .abha-card-footer {
+    background: #F8FAFC;
+    padding: 10px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #475569;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .abha-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .abha-action-link {
+    color: #0066E6;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .abha-action-link:hover {
+    color: #004BB5;
+    text-decoration: underline;
+  }
+
+  /* Verification Info Banner */
+  .abha-compliance-banner {
+    max-width: 620px;
+    margin: 0 auto 32px;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 12px;
+    color: #1E3A8A;
+  }
+
+  /* QR Details Modal */
+  .qr-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .qr-modal-overlay.active {
+    display: flex;
+  }
+
+  .qr-modal-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: modalIn 0.2s ease-out;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .qr-modal-header {
+    background: #003B73;
+    color: #FFFFFF;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .qr-modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .qr-modal-body {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .qr-enlarged-wrapper {
+    width: 210px;
+    height: 210px;
+    margin: 0 auto 16px;
+    padding: 10px;
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 59, 115, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-enlarged-wrapper svg,
+  .qr-enlarged-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  .qr-payload-table {
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    border-collapse: collapse;
+    margin-top: 14px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #E2E8F0;
+  }
+
+  .qr-payload-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #E2E8F0;
+  }
+
+  .qr-payload-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .qr-payload-table td.label {
+    color: #64748B;
+    font-weight: 600;
+    width: 38%;
+  }
+
+  .qr-payload-table td.val {
+    color: #0F172A;
+    font-weight: 700;
+    font-family: monospace;
+  }
+
+  /* Print Stylesheet for Physical ABHA Card */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .abdm-breadcrumb,
+    .abdm-page-header,
+    .abdm-compliance-banner,
+    .abdm-layout aside,
+    header,
+    footer,
+    #toastContainer {
+      display: none !important;
+    }
+    .abha-card-container, 
+    .abha-card-container * {
+      visibility: visible;
+    }
+    .abha-card-container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .abha-card {
+      box-shadow: none;
+      border: 2px solid #003B73 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .abha-card-body {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .abha-grid-details {
+      grid-template-columns: 1fr;
+    }
+    .abha-sub-details {
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
@@ -9,113 +507,315 @@
   <span class="sep">&gt;</span>
   <a href="/profile">Profile</a>
   <span class="sep">&gt;</span>
-  <span class="current">Health ID Card</span>
+  <span class="current">Digital Health ID (ABHA)</span>
 </div>
 
 <!-- Header -->
 <div class="abdm-page-header">
   <div>
     <h1 class="abdm-page-title">Digital Health ID Card (ABHA)</h1>
-    <p class="abdm-page-subtitle">Your unique digital health identity under CareBridge Digital Health Mission.</p>
+    <p class="abdm-page-subtitle">Your Ayushman Bharat Health Account with verified National Health Authority (ABDM) scannable QR identity.</p>
   </div>
-  <div style="display:flex; gap:12px;">
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <button class="abdm-btn-secondary" onclick="openQrModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      Inspect Scannable QR
+    </button>
     <button class="abdm-btn-secondary" onclick="window.print()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-      Print / Download Card
+      Print Card
     </button>
-    <a href="/linked-facilities" class="abdm-btn-primary">
-      Manage Linked Facilities
+    <a href="/api/patient/qr?format=png&download=1" class="abdm-btn-primary" download>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Download QR (PNG)
     </a>
   </div>
 </div>
 
 <!-- Center Card Canvas -->
-<div style="display:flex; justify-content:center; margin:32px 0;">
+<div class="abha-card-container">
   
-  <!-- Digital Health ID Card Mockup (Official Format) -->
-  <div style="width:100%; max-width:520px; background:#FFFFFF; border:2px solid #003B73; border-radius:16px; overflow:hidden; box-shadow:var(--shadow-lg);">
+  <!-- Official ABHA Card -->
+  <div class="abha-card" id="abhaPhysicalCard">
     
+    <!-- Tricolor Flag Band -->
+    <div class="abha-tricolor-bar"></div>
+
     <!-- Top Card Header Band -->
-    <div style="background:#003B73; color:#FFFFFF; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div style="width:32px; height:32px; border-radius:6px; background:#FFFFFF; display:flex; align-items:center; justify-content:center;">
-          <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
-            <circle cx="50" cy="50" r="45" fill="#0066E6"/>
-            <rect x="44" y="20" width="12" height="60" rx="3" fill="#FFFFFF"/>
-            <rect x="20" y="44" width="60" height="12" rx="3" fill="#FFFFFF"/>
+    <div class="abha-card-header">
+      <div class="abha-header-brand">
+        <div class="abha-emblem-badge">
+          <!-- Ashoka / ABDM Cross Emblem -->
+          <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="46" fill="#003B73"/>
+            <circle cx="50" cy="50" r="41" fill="#FFFFFF"/>
+            <circle cx="50" cy="50" r="37" fill="#0066E6"/>
+            <rect x="44" y="22" width="12" height="56" rx="3" fill="#FFFFFF"/>
+            <rect x="22" y="44" width="56" height="12" rx="3" fill="#FFFFFF"/>
           </svg>
         </div>
-        <div>
-          <div style="font-family:var(--font-heading); font-size:13px; font-weight:800; letter-spacing:0.5px;">CAREBRIDGE DIGITAL HEALTH MISSION</div>
-          <div style="font-size:10px; color:#93C5FD;">NATIONAL HEALTH ID CARD &bull; GOVT OF INDIA</div>
+        <div class="abha-header-titles">
+          <h2>CareBridge Digital Health Mission</h2>
+          <span>NATIONAL HEALTH ID &bull; AYUSHMAN BHARAT (ABDM) &bull; GOVT OF INDIA</span>
         </div>
       </div>
-      <span style="font-size:11px; font-weight:700; background:#16A05D; color:#FFFFFF; padding:3px 8px; border-radius:12px;">ACTIVE</span>
+      <span class="abha-status-tag">ACTIVE</span>
     </div>
 
     <!-- Card Body -->
-    <div style="padding:24px 28px; display:grid; grid-template-columns:120px 1fr; gap:24px; align-items:center; background:#FBFDFF;">
+    <div class="abha-card-body">
       
-      <!-- Left: Photo & QR -->
-      <div style="text-align:center;">
-        <div style="width:90px; height:100px; background:#DBEAFE; border:2px solid #93C5FD; border-radius:8px; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:#1E40AF; font-size:36px; font-weight:800;">
-          S
+      <!-- Left: Photo / Profile Avatar -->
+      <div class="abha-photo-box">
+        <div class="abha-photo-avatar">
+          <span class="initial" id="cardAvatarInitial">{{ (patient.name or 'S')[0] }}</span>
+          <div class="abha-photo-badge">VERIFIED</div>
         </div>
-        
-        <!-- QR Code -->
-        <div style="width:80px; height:80px; margin:0 auto; background:#FFFFFF; padding:4px; border:1px solid #CBD5E1; border-radius:6px;">
-          <svg viewBox="0 0 100 100" fill="#12345B" style="width:100%; height:100%;">
-            <rect x="5" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
-            <rect x="13" y="13" width="14" height="14"/>
-            <rect x="65" y="5" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
-            <rect x="73" y="13" width="14" height="14"/>
-            <rect x="5" y="65" width="30" height="30" fill="none" stroke="#12345B" stroke-width="6"/>
-            <rect x="13" y="73" width="14" height="14"/>
-            <rect x="45" y="45" width="12" height="12"/>
-          </svg>
+        <div style="font-size:10px; color:#64748B; font-weight:700; margin-top:6px;">ABDM ID</div>
+      </div>
+
+      <!-- Center: Official Demographic Data -->
+      <div class="abha-demographics">
+        <div class="abha-field-name">
+          <div class="abha-field-label">Name</div>
+          <div class="abha-patient-name" id="cardFullName">{{ patient.name or 'Sajil Binu' }}</div>
+        </div>
+
+        <div class="abha-grid-details">
+          <div class="abha-grid-item">
+            <span class="abha-field-label">ABHA Number</span>
+            <strong class="abha-number-highlight" id="cardAbhaNumber">{{ qr_payload.hidn if qr_payload else '91-2026-4589-1234' }}</strong>
+          </div>
+          <div class="abha-grid-item">
+            <span class="abha-field-label">ABHA Address / Health ID</span>
+            <strong id="cardAbhaAddress">{{ qr_payload.hid if qr_payload else 'CB-2026-001245@abdm' }}</strong>
+          </div>
+          <div class="abha-grid-item">
+            <span class="abha-field-label">Gender / Blood Group</span>
+            <strong id="cardGenderBlood">{{ patient.gender or 'Male' }} / {{ patient.blood_group or 'O+' }}</strong>
+          </div>
+          <div class="abha-grid-item">
+            <span class="abha-field-label">Date of Birth</span>
+            <strong id="cardDob">{{ patient.dob or '12 Mar 2002' }}</strong>
+          </div>
+        </div>
+
+        <div class="abha-sub-details">
+          <span><strong>Mobile:</strong> <span id="cardMobile">{{ patient.phone or '+91 98765 43210' }}</span></span>
+          <span>&bull;</span>
+          <span><strong>State:</strong> <span id="cardState">{{ patient.state or 'Kerala' }}</span></span>
         </div>
       </div>
 
-      <!-- Right: Demographic Data -->
-      <div>
-        <div style="margin-bottom:12px;">
-          <div style="font-size:11px; color:#5F7187; text-transform:uppercase;">Full Name</div>
-          <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">Sajil Binu / Alex Mathew</div>
+      <!-- Right: Scannable High-Definition ABDM QR Code -->
+      <div class="abha-qr-section">
+        <div class="abha-qr-frame" onclick="openQrModal()" title="Click to enlarge and inspect ABDM QR payload">
+          {% if qr_svg %}
+            {{ qr_svg | safe }}
+          {% else %}
+            <img src="/api/patient/qr?format=svg" alt="ABHA QR Code" id="cardQrImg">
+          {% endif %}
         </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; font-size:12.5px;">
-          <div>
-            <span style="color:#5F7187; display:block; font-size:11px;">ABHA Number</span>
-            <strong style="font-family:monospace; color:#0066E6;">91-XXXX-XXXX-1234</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187; display:block; font-size:11px;">Health ID / ABHA Address</span>
-            <strong style="color:#12345B;">CB-2026-001245</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187; display:block; font-size:11px;">Date of Birth</span>
-            <strong style="color:#12345B;">12 Mar 2002</strong>
-          </div>
-          <div>
-            <span style="color:#5F7187; display:block; font-size:11px;">Gender / Blood Group</span>
-            <strong style="color:#12345B;">Male / O+</strong>
-          </div>
+        <div class="abha-qr-caption">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          ABDM Scannable
         </div>
-
-        <div style="font-size:11px; color:#5F7187; padding-top:8px; border-top:1px solid #E2E8F0;">
-          Mobile: +91 98765 43210 &bull; State: Kerala
-        </div>
+        <div class="abha-qr-hint" onclick="openQrModal()">Click to Enlarge</div>
       </div>
 
     </div>
 
     <!-- Bottom Card Footer Band -->
-    <div style="background:#F1F5F9; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#475569; border-top:1px solid #E2E8F0;">
-      <span>Linked Facilities: <strong>3</strong> &bull; Active Shares: <strong>1</strong></span>
-      <span style="color:#0066E6; font-weight:600; cursor:pointer;" onclick="navigator.clipboard.writeText('CB-2026-001245'); showToast('Copied Health ID')">📋 Copy ID</span>
+    <div class="abha-card-footer">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-weight:700; color:#003B73;">Helpline: 14477</span>
+        <span style="color:#CBD5E1;">&bull;</span>
+        <span>abdm.gov.in</span>
+      </div>
+      <div class="abha-footer-actions">
+        <span class="abha-action-link" onclick="copyAbhaNumber()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy Number
+        </span>
+        <span style="color:#CBD5E1;">&bull;</span>
+        <span class="abha-action-link" onclick="copyAbhaAddress()">
+          📋 Copy Address
+        </span>
+      </div>
     </div>
 
   </div>
 
 </div>
+
+<!-- Compliance Info Banner -->
+<div class="abha-compliance-banner">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>
+  <div>
+    <strong>Standard Scannable ABHA QR Code:</strong>
+    This QR code adheres to the National Health Authority (NHA) ABDM schema. It can be scanned directly by hospital OPD registration counters, ABDM apps, Google Lens, and mobile camera scanners to authenticate and share your digital health profile instantly.
+  </div>
+</div>
+
+<!-- QR Enlarged / Inspection Modal -->
+<div class="qr-modal-overlay" id="qrInspectionModal" onclick="closeQrModalOnOverlay(event)">
+  <div class="qr-modal-card">
+    <div class="qr-modal-header">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <h3>ABDM Scannable Health ID QR Code</h3>
+      </div>
+      <button onclick="closeQrModal()" style="background:none; border:none; color:#FFFFFF; font-size:18px; cursor:pointer; font-weight:bold;">&times;</button>
+    </div>
+    
+    <div class="qr-modal-body">
+      <!-- High-res QR -->
+      <div class="qr-enlarged-wrapper">
+        {% if qr_svg %}
+          {{ qr_svg | safe }}
+        {% else %}
+          <img src="/api/patient/qr?format=svg" alt="ABHA QR Code" style="width:100%; height:100%;">
+        {% endif %}
+      </div>
+
+      <div style="font-size:12px; color:#16A05D; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Ready to Scan with Camera or ABDM Scanner
+      </div>
+      <p style="font-size:11.5px; color:#64748B; margin:6px 0 16px;">Point any smartphone camera or ABDM scanner at the screen to read your verified credentials.</p>
+
+      <!-- Decoded fields table -->
+      <table class="qr-payload-table">
+        <tbody>
+          <tr>
+            <td class="label">ABHA Number</td>
+            <td class="val" id="modalHidn">{{ qr_payload.hidn if qr_payload else '91-2026-4589-1234' }}</td>
+          </tr>
+          <tr>
+            <td class="label">ABHA Address</td>
+            <td class="val" id="modalHid">{{ qr_payload.hid if qr_payload else 'CB-2026-001245@abdm' }}</td>
+          </tr>
+          <tr>
+            <td class="label">Full Name</td>
+            <td class="val" id="modalName">{{ qr_payload.name if qr_payload else 'Sajil Binu' }}</td>
+          </tr>
+          <tr>
+            <td class="label">Gender / DOB</td>
+            <td class="val" id="modalGenderDob">{{ qr_payload.gender if qr_payload else 'Male' }} / {{ qr_payload.dob if qr_payload else '12 Mar 2002' }}</td>
+          </tr>
+          <tr>
+            <td class="label">Mobile</td>
+            <td class="val" id="modalMobile">{{ qr_payload.mobile if qr_payload else '+91 98765 43210' }}</td>
+          </tr>
+          <tr>
+            <td class="label">Issuer Authority</td>
+            <td class="val" style="color:#0066E6;">National Health Authority - ABDM</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Modal Actions -->
+      <div style="display:flex; gap:10px; margin-top:20px; justify-content:center; flex-wrap:wrap;">
+        <a href="/api/patient/qr?format=png&download=1" class="abdm-btn-primary" download style="font-size:12.5px; padding:8px 16px;">
+          Download PNG
+        </a>
+        <a href="/api/patient/qr?format=svg&download=1" class="abdm-btn-secondary" download style="font-size:12.5px; padding:8px 16px;">
+          Download SVG
+        </a>
+        <button class="abdm-btn-secondary" onclick="copyQrJson()" style="font-size:12.5px; padding:8px 16px;">
+          Copy JSON Payload
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const qrPayload = {{ (qr_payload_json or '{}') | safe }};
+
+  function copyAbhaNumber() {
+    const num = document.getElementById('cardAbhaNumber').textContent.trim();
+    navigator.clipboard.writeText(num);
+    showToast(`Copied ABHA Number: ${num}`, 'success');
+  }
+
+  function copyAbhaAddress() {
+    const addr = document.getElementById('cardAbhaAddress').textContent.trim();
+    navigator.clipboard.writeText(addr);
+    showToast(`Copied ABHA Address: ${addr}`, 'success');
+  }
+
+  function copyQrJson() {
+    const raw = JSON.stringify(qrPayload, null, 2);
+    navigator.clipboard.writeText(raw);
+    showToast('Copied ABDM QR Code JSON payload to clipboard!', 'success');
+  }
+
+  function openQrModal() {
+    document.getElementById('qrInspectionModal').classList.add('active');
+  }
+
+  function closeQrModal() {
+    document.getElementById('qrInspectionModal').classList.remove('active');
+  }
+
+  function closeQrModalOnOverlay(e) {
+    if (e.target.id === 'qrInspectionModal') {
+      closeQrModal();
+    }
+  }
+
+  // Sync profile if custom name exists in localStorage
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('/api/patient/profile');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data) {
+          const p = json.data;
+          if (p.name) {
+            document.getElementById('cardFullName').textContent = p.name;
+            document.getElementById('cardAvatarInitial').textContent = p.name.charAt(0).toUpperCase();
+            if (document.getElementById('modalName')) {
+              document.getElementById('modalName').textContent = p.name;
+            }
+          }
+          if (p.phone) {
+            document.getElementById('cardMobile').textContent = p.phone;
+          }
+          if (p.state) {
+            document.getElementById('cardState').textContent = p.state;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Profile fetch note:', e);
+    }
+  });
+</script>
 {% endblock %}

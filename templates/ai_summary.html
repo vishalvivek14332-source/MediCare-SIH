@@ -107,7 +107,7 @@
     <!-- Patient Info -->
     <div>
       <div style="font-size:11.5px; font-weight:700; color:#5F7187; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Patient Demographics</div>
-      <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">Sajil Binu / Alex Mathew</div>
+      <div style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;" class="patient-auth-name">{{ current_user.name if current_user else 'Sajil Binu' }}</div>
       <div style="font-size:13px; color:#5F7187; margin-top:2px;">Age: 24 Yrs &bull; Gender: Male &bull; Health ID: CB-2026-001245</div>
     </div>
 
