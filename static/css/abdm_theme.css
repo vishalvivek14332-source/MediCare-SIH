@@ -139,52 +139,86 @@ body {
 .abdm-top-header .header-auth-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-left: 1px solid #E2E8F0;
-  padding-left: 20px;
+  gap: 12px;
+  border-left: 1.5px solid #E2E8F0;
+  padding-left: 22px;
+  margin-left: 4px;
 }
 
 .abdm-top-header .header-auth-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 16px;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 9px;
   font-size: 13.5px;
   font-weight: 600;
   font-family: var(--font-body, 'Inter', sans-serif);
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
+  user-select: none;
 }
 
 .abdm-top-header .header-login-btn {
   background: #FFFFFF;
-  color: #003B73;
-  border: 1.5px solid #D9E5F2;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: #0F294A;
+  border: 1.5px solid #CBD5E1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.abdm-top-header .header-login-btn svg {
+  color: #0066E6;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .abdm-top-header .header-login-btn:hover {
-  background: #F0F6FF;
+  background: #F8FAFC;
   border-color: #0066E6;
   color: #0066E6;
-  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 102, 230, 0.12);
+  transform: translateY(-1.5px);
+}
+
+.abdm-top-header .header-login-btn:hover svg {
+  transform: translateX(2px);
+}
+
+.abdm-top-header .header-login-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .abdm-top-header .header-signup-btn {
-  background: linear-gradient(135deg, #0066E6 0%, #0052B8 100%);
+  background: linear-gradient(135deg, #0066E6 0%, #004DB3 100%);
   color: #FFFFFF;
-  border: 1.5px solid transparent;
-  box-shadow: 0 2px 6px rgba(0, 102, 230, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 102, 230, 0.28), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.abdm-top-header .header-signup-btn svg {
+  color: #FFFFFF;
+  transition: transform 0.2s ease;
 }
 
 .abdm-top-header .header-signup-btn:hover {
-  background: linear-gradient(135deg, #0056CC 0%, #004099 100%);
+  background: linear-gradient(135deg, #0056CC 0%, #003F99 100%);
   color: #FFFFFF;
-  box-shadow: 0 4px 10px rgba(0, 102, 230, 0.35);
-  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(0, 102, 230, 0.38), 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1.5px);
+}
+
+.abdm-top-header .header-signup-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.abdm-top-header .header-signup-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 102, 230, 0.2);
 }
 
 .nav-caret {
