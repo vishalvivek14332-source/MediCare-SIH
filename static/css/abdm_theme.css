@@ -90,10 +90,14 @@ body {
   gap: 16px;
 }
 
-.abdm-top-header .brand-left .emblem-img {
+.abdm-top-header .brand-left .emblem-img,
+.blurred-emblem {
   height: 74px;
   width: auto;
   object-fit: contain;
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  user-select: none;
 }
 
 .abdm-top-header .brand-left .ministry-img {
