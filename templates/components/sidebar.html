@@ -63,20 +63,8 @@
       </a>
     </li>
 
-    {% if active_page in ['ai_case_taking', 'booking'] %}
     <li>
-      <a href="/ai-case-taking" class="{% if active_page == 'ai_case_taking' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"></path>
-          <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"></path>
-          <circle cx="20" cy="10" r="2"></circle>
-        </svg>
-        <span>AI Case Taking</span>
-      </a>
-    </li>
-
-    <li>
-      <a href="/booking" class="{% if active_page == 'booking' %}active{% endif %}">
+      <a href="/booking" class="{% if active_page in ['booking', 'ai_case_taking'] %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
           <path d="M13 5v2"></path>
@@ -86,7 +74,6 @@
         <span>Clinic Token / Booking</span>
       </a>
     </li>
-    {% endif %}
 
     <li>
       <a href="/profile" class="{% if active_page == 'profile' %}active{% endif %}">

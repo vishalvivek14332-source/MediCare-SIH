@@ -375,7 +375,7 @@
     <!-- Active Context Bar -->
     <div style="background:linear-gradient(135deg, #002B5C 0%, #003B73 100%); color:#FFFFFF; border-radius:var(--radius-lg); padding:16px 20px; margin-bottom:22px; display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <div style="font-size:12px; text-transform:uppercase; color:#93C5FD; font-weight:700;">Clinical Consultation Target</div>
+        <div style="font-size:12px; text-transform:uppercase; color:#93C5FD; font-weight:700;" id="aiTargetLabel">Clinical Consultation Target</div>
         <div style="font-size:16px; font-weight:800; margin:2px 0;">
           <span id="aiContextDoc">Dr. Meera Nair</span> &bull; <span id="aiContextDept">General Medicine</span>
         </div>
@@ -383,7 +383,7 @@
           <span id="aiContextFac">KPHC Thalassery</span> &bull; <span id="aiContextSys">Modern Medicine</span>
         </div>
       </div>
-      <button class="abdm-btn-secondary" onclick="goToStep(5)" style="background:rgba(255,255,255,0.15); color:#FFFFFF; border-color:rgba(255,255,255,0.3); font-size:12px;">
+      <button class="abdm-btn-secondary" id="btnChangeDoctor" onclick="goToStep(5)" style="background:rgba(255,255,255,0.15); color:#FFFFFF; border-color:rgba(255,255,255,0.3); font-size:12px;">
         Change Doctor
       </button>
     </div>
@@ -391,18 +391,18 @@
     <div class="abdm-table-card" style="padding:24px; margin-bottom:24px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
         <div>
-          <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+          <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;" id="step6Title">
             Step 6: AI-Assisted Clinical Case Intake
           </h2>
-          <p style="font-size:13px; color:#5F7187;">
+          <p style="font-size:13px; color:#5F7187;" id="step6Desc">
             Describe your current symptoms. Our clinical AI pre-intake assistant organizes your concern for the doctor's consultation brief.
           </p>
         </div>
         
         <!-- Language selector -->
         <div style="display:flex; align-items:center; gap:8px;">
-          <label style="font-size:12px; font-weight:600; color:#5F7187;">Language:</label>
-          <select id="aiLanguageSelect" class="abdm-select" style="padding:4px 10px; font-size:12px;">
+          <label style="font-size:12px; font-weight:600; color:#5F7187;" id="aiLanguageLabel">Language:</label>
+          <select id="aiLanguageSelect" class="abdm-select" style="padding:4px 10px; font-size:12px;" onchange="onLanguageChanged(this.value)">
             <option value="English">English</option>
             <option value="Malayalam">മലയാളം (Malayalam)</option>
             <option value="Hindi">हिन्दी (Hindi)</option>
@@ -412,14 +412,14 @@
 
       <!-- Chief Complaint Textarea with Microphone -->
       <div style="margin-bottom:18px;">
-        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;">
+        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;" id="chiefComplaintLabel">
           What symptoms or medical concern brings you here today? <span style="color:#DC2626;">*</span>
         </label>
         <div style="position:relative;">
           <textarea id="chiefComplaintInput" class="abdm-form-textarea" rows="4" style="padding-right:48px;" placeholder="Example: Persistent dry cough and mild fever for 3 days with throat irritation, feeling fatigued..."></textarea>
           
           <!-- Mic button -->
-          <button type="button" onclick="simulateVoiceInput()" title="Dictate symptoms via microphone" style="position:absolute; right:12px; bottom:14px; width:34px; height:34px; border-radius:50%; background:#EAF4FF; border:1px solid #BFDBFE; color:#0066E6; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <button type="button" id="aiMicBtn" onclick="handleVoiceToggle('chiefComplaintInput')" title="Dictate symptoms via microphone" style="position:absolute; right:12px; bottom:14px; width:34px; height:34px; border-radius:50%; background:#EAF4FF; border:1px solid #BFDBFE; color:#0066E6; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
               <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -428,34 +428,44 @@
             </svg>
           </button>
         </div>
-        <div style="font-size:11.5px; color:#5F7187; margin-top:4px;">
-          💡 Tip: Click the microphone button to auto-fill sample symptom audio transcript.
+        <div style="font-size:11.5px; color:#5F7187; margin-top:4px;" id="micTipText">
+          💡 Tip: Click the microphone button to dictate symptoms.
         </div>
       </div>
 
-      <!-- Why consulting now -->
+      <!-- Why consulting now with Microphone -->
       <div style="margin-bottom:18px;">
-        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;">
+        <label style="display:block; font-size:13.5px; font-weight:700; color:#12345B; margin-bottom:8px;" id="whyConsultingLabel">
           Why are you consulting now? (What prompted you to seek medical attention today?)
         </label>
-        <input type="text" id="whyConsultingInput" class="abdm-form-input" placeholder="e.g. Symptoms have worsened over the last 24 hours and OTC medication did not resolve fever...">
+        <div style="position:relative;">
+          <input type="text" id="whyConsultingInput" class="abdm-form-input" style="padding-right:48px;" placeholder="e.g. Symptoms have worsened over the last 24 hours and OTC medication did not resolve fever...">
+          <button type="button" id="aiWhyMicBtn" onclick="handleVoiceToggle('whyConsultingInput')" title="Dictate reason via microphone" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:#EAF4FF; border:1px solid #BFDBFE; color:#0066E6; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Longitudinal Context Preview -->
       <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px; margin-top:16px;">
-        <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase; margin-bottom:6px;">
+        <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase; margin-bottom:6px;" id="historySectionTitle">
           Longitudinal Medical History Included for Clinician
         </div>
-        <div style="font-size:12.5px; color:#334155; line-height:1.6;">
-          &bull; <strong>Known Allergies:</strong> No Known Drug Allergies (NKDA) &bull; Mild pollen rhinitis<br>
-          &bull; <strong>Current Medications:</strong> Paracetamol 650mg SOS as reported<br>
-          &bull; <strong>Linked Records:</strong> CBC Blood Test (12 Sep 2025), Chest X-Ray (21 Aug 2025 - Clear)
+        <div style="font-size:12.5px; color:#334155; line-height:1.6;" id="historyContent">
+          <span id="histAllergies">&bull; <strong>Known Allergies:</strong> No Known Drug Allergies (NKDA) &bull; Mild pollen rhinitis</span><br>
+          <span id="histMeds">&bull; <strong>Current Medications:</strong> Paracetamol 650mg SOS as reported</span><br>
+          <span id="histRecords">&bull; <strong>Linked Records:</strong> CBC Blood Test (12 Sep 2025), Chest X-Ray (21 Aug 2025 - Clear)</span>
         </div>
       </div>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <button class="abdm-btn-secondary" onclick="goToStep(5)">
+      <button class="abdm-btn-secondary" id="btnBackToDoctor" onclick="goToStep(5)">
         &larr; Back to Doctor
       </button>
       <button class="abdm-btn-primary" id="btnAnalyzeComplaint" onclick="analyzeComplaintAndProceed()" style="padding:10px 24px;">
@@ -471,10 +481,10 @@
     <!-- Box 1: Two Context-Aware Clinical Questions -->
     <div class="abdm-table-card" style="padding:24px; margin-bottom:22px;">
       <div style="border-bottom:1px solid #E2E8F0; padding-bottom:12px; margin-bottom:18px;">
-        <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;">
+        <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B;" id="step7Title">
           Step 7: Context-Aware Clinical Follow-up (2 Questions)
         </h2>
-        <p style="font-size:13px; color:#5F7187;">
+        <p style="font-size:13px; color:#5F7187;" id="step7Desc">
           Our medical reasoning system generated exactly two specific follow-up questions for your reported concern.
         </p>
       </div>
@@ -502,7 +512,7 @@
     <div class="abdm-table-card" style="padding:24px; margin-bottom:22px;">
       <div style="border-bottom:1px solid #E2E8F0; padding-bottom:12px; margin-bottom:18px;">
         <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:800; color:#12345B; display:flex; align-items:center; justify-content:space-between;">
-          <span>Step 8: AI-Assisted Case Summary &amp; Triage Priority</span>
+          <span id="step8Title">Step 8: AI-Assisted Case Summary &amp; Triage Priority</span>
           <span id="triagePriorityBadge" class="abdm-badge badge-warning" style="font-size:14px; padding:6px 14px;">Priority</span>
         </h2>
       </div>
@@ -510,12 +520,12 @@
       <!-- Synthesized Intake Preview -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px;">
-          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;">Synthesized Complaint</div>
+          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;" id="summaryComplaintLabel">Synthesized Complaint</div>
           <div id="summaryComplaintText" style="font-size:13.5px; color:#12345B; margin-top:4px; line-height:1.5;"></div>
         </div>
 
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:14px;">
-          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;">Reason for Consulting Now</div>
+          <div style="font-size:12px; font-weight:700; color:#5F7187; text-transform:uppercase;" id="summaryWhyNowLabel">Reason for Consulting Now</div>
           <div id="summaryWhyNowText" style="font-size:13.5px; color:#12345B; margin-top:4px; line-height:1.5;"></div>
         </div>
       </div>
@@ -524,7 +534,7 @@
       <div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:8px; padding:16px; margin-bottom:18px;">
         <div style="font-size:13px; font-weight:800; color:#92400E; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-          Preliminary Clinical Triage Recommendation: <span id="triageLevelText" style="text-decoration:underline;">Priority</span>
+          <span id="triageRecLabel">Preliminary Clinical Triage Recommendation:</span> <span id="triageLevelText" style="text-decoration:underline;">Priority</span>
         </div>
         <div id="triageReasonText" style="font-size:12.5px; color:#78350F; line-height:1.5;">
           Patient-reported symptoms indicate acute sub-acute progression requiring outpatient clinical evaluation.
@@ -532,16 +542,16 @@
       </div>
 
       <!-- MANDATORY CLINICAL DISCLAIMERS -->
-      <div style="background:#F8FAFC; border-left:4px solid #0066E6; border-radius:4px; padding:12px 16px; font-size:12px; color:#334155; line-height:1.5;">
+      <div style="background:#F8FAFC; border-left:4px solid #0066E6; border-radius:4px; padding:12px 16px; font-size:12px; color:#334155; line-height:1.5;" id="clinicalDisclaimerText">
         <strong>Clinical Disclaimer:</strong> AI-assisted case summary — clinician review required. Preliminary triage recommendation only. Final clinical assessment and treatment diagnosis must be performed by a qualified healthcare professional.
       </div>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <button class="abdm-btn-secondary" onclick="goToStep(6)">
+      <button class="abdm-btn-secondary" id="btnEditSymptoms" onclick="goToStep(6)">
         &larr; Edit Symptoms
       </button>
-      <button class="abdm-btn-primary" onclick="goToStep(9)" style="padding:10px 24px;">
+      <button class="abdm-btn-primary" id="btnConfirmTokens" onclick="goToStep(9)" style="padding:10px 24px;">
         Confirm &amp; View Available Tokens &rarr;
       </button>
     </div>
@@ -1065,6 +1075,21 @@
       return;
     }
 
+    // If leaving Step 6, save inputs to bookingState and stop active voice recording
+    if (bookingState.step === 6) {
+      if (typeof stopVoiceRecording === 'function' && isSpeechRecording) {
+        stopVoiceRecording(true);
+      }
+      const cIn = document.getElementById('chiefComplaintInput');
+      if (cIn && cIn.value) {
+        bookingState.ai_case.complaint = cIn.value;
+      }
+      const wIn = document.getElementById('whyConsultingInput');
+      if (wIn && wIn.value) {
+        bookingState.ai_case.why_consulting_now = wIn.value;
+      }
+    }
+
     // Hide all step views
     for (let i = 1; i <= 11; i++) {
       const v = document.getElementById(`stepView${i}`);
@@ -1109,6 +1134,8 @@
       loadDepartmentDoctors();
     } else if (stepNumber === 6) {
       initStep6Context();
+    } else if (stepNumber === 7) {
+      applyStep7And8Translations(bookingState.ai_case.language || bookingState.language || 'English');
     } else if (stepNumber === 9) {
       loadDoctorTokens();
     } else if (stepNumber === 11) {
@@ -1547,44 +1574,586 @@
   }
 
   // ==============================================
-  // STEP 6: AI CASE TAKING
   // ==============================================
-  function initStep6Context() {
-    document.getElementById('aiContextDoc').textContent = bookingState.doctor.name;
-    document.getElementById('aiContextDept').textContent = bookingState.department;
-    document.getElementById('aiContextFac').textContent = bookingState.facility.name;
-    document.getElementById('aiContextSys').textContent = bookingState.medical_system.name;
+  // STEP 6: AI CASE TAKING & CENTRALIZED TRANSLATIONS
+  // ==============================================
+  const CASE_INTAKE_TRANSLATIONS = {
+    English: {
+      langCode: 'en-IN',
+      shortCode: 'en',
+      targetLabel: 'Clinical Consultation Target',
+      changeDoctor: 'Change Doctor',
+      step6Title: 'Step 6: AI-Assisted Clinical Case Intake',
+      step6Desc: "Describe your current symptoms. Our clinical AI pre-intake assistant organizes your concern for the doctor's consultation brief.",
+      languageLabel: 'Language:',
+      symptomsLabel: 'What symptoms or medical concern brings you here today?',
+      symptomsPlaceholder: 'Example: Persistent dry cough and mild fever for 3 days with throat irritation, feeling fatigued...',
+      micTip: '💡 Tip: Click the microphone button to dictate symptoms.',
+      micListening: 'Listening... Speak clearly into your microphone',
+      micDefault: 'Dictate symptoms via microphone',
+      micWhyDefault: 'Dictate reason via microphone',
+      micStop: 'Stop listening',
+      micProcessing: 'Processing speech...',
+      micUnavailable: 'Voice input unavailable',
+      micNotSupported: 'Voice input is not supported in this browser. Please use Chrome or Edge, or enter your response using text.',
+      whyConsultingLabel: 'Why are you consulting now? (What prompted you to seek medical attention today?)',
+      whyConsultingPlaceholder: 'e.g. Symptoms have worsened over the last 24 hours and OTC medication did not resolve fever...',
+      historyTitle: 'Longitudinal Medical History Included for Clinician',
+      allergiesLabel: 'Known Allergies:',
+      allergiesValue: 'No Known Drug Allergies (NKDA) • Mild pollen rhinitis',
+      medicationsLabel: 'Current Medications:',
+      medicationsValue: 'Paracetamol 650mg SOS as reported',
+      recordsLabel: 'Linked Records:',
+      recordsValue: 'CBC Blood Test (12 Sep 2025), Chest X-Ray (21 Aug 2025 - Clear)',
+      backToDoctor: '← Back to Doctor',
+      btnAnalyze: 'Analyze Symptoms & Generate Clinical Questions →',
+      btnAnalyzing: 'Analyzing Symptoms via Clinical AI...',
+      step7Title: 'Step 7: Context-Aware Clinical Follow-up (2 Questions)',
+      step7Desc: 'Our medical reasoning system generated exactly two specific follow-up questions for your reported concern.',
+      step8Title: 'Step 8: AI-Assisted Case Summary & Triage Priority',
+      summaryComplaintLabel: 'Synthesized Complaint',
+      summaryWhyNowLabel: 'Reason for Consulting Now',
+      triageRecLabel: 'Preliminary Clinical Triage Recommendation:',
+      clinicalDisclaimer: '<strong>Clinical Disclaimer:</strong> AI-assisted case summary — clinician review required. Preliminary triage recommendation only. Final clinical assessment and treatment diagnosis must be performed by a qualified healthcare professional.',
+      editSymptoms: '← Edit Symptoms',
+      confirmTokens: 'Confirm & View Available Tokens →',
+      toastEnterSymptoms: 'Please describe your medical symptoms to proceed',
+      toastTranscriptAdded: 'Voice transcript recorded'
+    },
+    Malayalam: {
+      langCode: 'ml-IN',
+      shortCode: 'ml',
+      targetLabel: 'ക്ലിനിക്കൽ കൺസൾട്ടേഷൻ ലക്ഷ്യം',
+      changeDoctor: 'ഡോക്ടറെ മാറ്റുക',
+      step6Title: 'ഘട്ടം 6: എഐ സഹായത്തോടെയുള്ള ക്ലിനിക്കൽ കേസ് ഇൻടേക്ക്',
+      step6Desc: 'നിങ്ങളുടെ ഇപ്പോഴത്തെ ലക്ഷണങ്ങൾ വിവരിക്കുക. ഞങ്ങളുടെ ക്ലിനിക്കൽ എഐ അസിസ്റ്റന്റ് ഡോക്ടറുടെ കൺസൾട്ടേഷനായി വിവരങ്ങൾ ക്രമീകരിക്കും.',
+      languageLabel: 'ഭാഷ:',
+      symptomsLabel: 'ഇന്ന് എന്തൊക്കെ ലക്ഷണങ്ങളോ ആരോഗ്യ പ്രശ്നങ്ങളോ ആണ് നിങ്ങളെ ഇവിടെ എത്തിച്ചത്?',
+      symptomsPlaceholder: 'ഉദാഹരണം: 3 ദിവസമായി തുടർച്ചയായ വരണ്ട ചുമ, നേരിയ പനി, തൊണ്ടവേദന, കടുത്ത ക്ഷീണം അനുഭവപ്പെടുന്നു...',
+      micTip: '💡 ടിപ്പ്: ലക്ഷണങ്ങൾ സംസാരിച്ചു രേഖപ്പെടുത്താൻ മൈക്രോഫോൺ ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.',
+      micListening: 'ശ്രദ്ധിക്കുന്നു... മൈക്രോഫോണിലേക്ക് വ്യക്തമായി സംസാരിക്കുക',
+      micDefault: 'മൈക്രോഫോൺ വഴി ലക്ഷണങ്ങൾ പറയുക',
+      micWhyDefault: 'മൈക്രോഫോൺ വഴി കാരണം പറയുക',
+      micStop: 'റെക്കോർഡിംഗ് നിർത്തുക',
+      micProcessing: 'പ്രോസസ്സ് ചെയ്യുന്നു...',
+      micUnavailable: 'വോയ്‌സ് ഇൻപുട്ട് ലഭ്യമല്ല',
+      micNotSupported: 'ഈ ബ്രൗസറിൽ വോയ്‌സ് ഇൻപുട്ട് ലഭ്യമല്ല. ദയവായി Chrome അല്ലെങ്കിൽ Edge ഉപയോഗിക്കുക, അല്ലെങ്കിൽ എഴുതി ചേർക്കുക.',
+      whyConsultingLabel: 'എന്തുകൊണ്ടാണ് ഇപ്പോൾ കൺസൾട്ട് ചെയ്യുന്നത്? (ഇന്ന് തന്നെ ഡോക്ടറെ കാണാൻ പ്രേരിപ്പിച്ചത് എന്താണ്?)',
+      whyConsultingPlaceholder: 'ഉദാ: കഴിഞ്ഞ 24 മണിക്കൂറായി ലക്ഷണങ്ങൾ കൂടിവന്നു, സാധാരണ മരുന്നുകൾ കഴിച്ചിട്ടും പനി കുറഞ്ഞില്ല...',
+      historyTitle: 'ഡോക്ടർക്കായി ഉൾപ്പെടുത്തിയ മുൻകാല മെഡിക്കൽ വിവരങ്ങൾ',
+      allergiesLabel: 'അറിയപ്പെടുന്ന അലർജികൾ:',
+      allergiesValue: 'പ്രത്യേക മരുന്ന് അലർജികളില്ല (NKDA) • നേരിയ പൂമ്പൊടി അലർജി',
+      medicationsLabel: 'ഇപ്പോൾ കഴിക്കുന്ന മരുന്നുകൾ:',
+      medicationsValue: 'പാരസെറ്റമോൾ 650mg ആവശ്യമെങ്കിൽ മാത്രം (SOS)',
+      recordsLabel: 'ബന്ധിപ്പിച്ച രേഖകൾ:',
+      recordsValue: 'സിബിസി രക്തപരിശോധന (12 സെപ്റ്റംബർ 2025), നെഞ്ച് എക്സ്-റേ (21 ഓഗസ്റ്റ് 2025 - നോർമൽ)',
+      backToDoctor: '← ഡോക്ടറിലേക്ക് മടങ്ങുക',
+      btnAnalyze: 'ലക്ഷണങ്ങൾ വിശകലനം ചെയ്ത് ചോദ്യങ്ങൾ തയ്യാറാക്കുക →',
+      btnAnalyzing: 'ക്ലിനിക്കൽ എഐ ലക്ഷണങ്ങൾ വിശകലനം ചെയ്യുന്നു...',
+      step7Title: 'ഘട്ടം 7: ക്ലിനിക്കൽ തുടർചോദ്യങ്ങൾ (2 ചോദ്യങ്ങൾ)',
+      step7Desc: 'നിങ്ങൾ രേഖപ്പെടുത്തിയ ലക്ഷണങ്ങൾ അടിസ്ഥാനമാക്കി ഞങ്ങളുടെ മെഡിക്കൽ സിസ്റ്റം തയ്യാറാക്കിയ രണ്ട് തുടർചോദ്യങ്ങൾ.',
+      step8Title: 'ഘട്ടം 8: എഐ കേസ് സംഗ്രഹവും ട്രിയാജ് മുൻഗണനയും',
+      summaryComplaintLabel: 'തയ്യാറാക്കിയ ലക്ഷണ വിവരണം',
+      summaryWhyNowLabel: 'ഇപ്പോൾ കാണാനുള്ള കാരണം',
+      triageRecLabel: 'പ്രാഥമിക ക്ലിനിക്കൽ ട്രിയാജ് നിർദ്ദേശം:',
+      clinicalDisclaimer: '<strong>ക്ലിനിക്കൽ മുന്നറിയിപ്പ്:</strong> എഐ തയ്യാറാക്കിയ വിവരണം — ഡോക്ടറുടെ പരിശോധന അനിവാര്യമാണ്. പ്രാഥമിക ട്രിയാജ് നിർദ്ദേശം മാത്രമാണിത്. അന്തിമ രോഗനിർണയവും ചികിത്സയും യോഗ്യതയുള്ള ഡോക്ടർ നടത്തേണ്ടതാണ്.',
+      editSymptoms: '← ലക്ഷണങ്ങൾ തിരുത്തുക',
+      confirmTokens: 'സ്ഥിരീകരിച്ച് ടോക്കണുകൾ കാണുക →',
+      toastEnterSymptoms: 'ദയവായി നിങ്ങളുടെ ലക്ഷണങ്ങൾ രേഖപ്പെടുത്തുക',
+      toastTranscriptAdded: 'വോയ്‌സ് ട്രാൻസ്ക്രിപ്റ്റ് രേഖപ്പെടുത്തി (Malayalam)'
+    },
+    Hindi: {
+      langCode: 'hi-IN',
+      shortCode: 'hi',
+      targetLabel: 'क्लिनिकल परामर्श लक्ष्य',
+      changeDoctor: 'डॉक्टर बदलें',
+      step6Title: 'चरण 6: एआई-सहायक क्लिनिकल केस इनटेक',
+      step6Desc: 'अपने वर्तमान लक्षणों का वर्णन करें। हमारा क्लिनिकल एआई सहायक डॉक्टर के परामर्श विवरण के लिए आपकी समस्या को व्यवस्थित करता है।',
+      languageLabel: 'भाषा:',
+      symptomsLabel: 'आज कौन से लक्षण या चिकित्सीय समस्या आपको यहां लाई है?',
+      symptomsPlaceholder: 'उदाहरण: 3 दिनों से लगातार सूखी खांसी, हल्का बुखार, गले में खराश और अत्यधिक थकान महसूस होना...',
+      micTip: '💡 सुझाव: लक्षणों को बोलकर दर्ज करने के लिए माइक्रोफ़ोन बटन पर क्लिक करें।',
+      micListening: 'सुन रहे हैं... कृपया माइक्रोफ़ोन में स्पष्ट रूप से बोलें',
+      micDefault: 'माइक्रोफ़ोन के माध्यम से लक्षण बोलें',
+      micWhyDefault: 'माइक्रोफ़ोन के माध्यम से कारण बोलें',
+      micStop: 'रिकॉर्डिंग रोकें',
+      micProcessing: 'प्रोसेसिंग हो रही है...',
+      micUnavailable: 'वॉइस इनपुट उपलब्ध नहीं है',
+      micNotSupported: 'इस ब्राउज़र में वॉइस इनपुट समर्थित नहीं है। कृपया Chrome या Edge का उपयोग करें, या टेक्स्ट दर्ज करें।',
+      whyConsultingLabel: 'आप अभी परामर्श क्यों ले रहे हैं? (आज आपको चिकित्सीय सलाह लेने के लिए किस बात ने प्रेरित किया?)',
+      whyConsultingPlaceholder: 'उदा: पिछले 24 घंटों में लक्षण बिगड़ गए हैं और सामान्य दवा से बुखार ठीक नहीं हुआ...',
+      historyTitle: 'चिकित्सक के लिए शामिल दीर्घकालिक चिकित्सीय इतिहास',
+      allergiesLabel: 'ज्ञात एलर्जी:',
+      allergiesValue: 'कोई ज्ञात दवा एलर्जी नहीं (NKDA) • हल्की पराग एलर्जी',
+      medicationsLabel: 'वर्तमान दवाएं:',
+      medicationsValue: 'पैरासिटामोल 650mg आवश्यकतानुसार (SOS)',
+      recordsLabel: 'लिंक किए गए रिकॉर्ड:',
+      recordsValue: 'सीबीसी रक्त परीक्षण (12 सितंबर 2025), छाती का एक्स-रे (21 अगस्त 2025 - सामान्य)',
+      backToDoctor: '← डॉक्टर पर वापस जाएं',
+      btnAnalyze: 'लक्षणों का विश्लेषण करें और प्रश्न तैयार करें →',
+      btnAnalyzing: 'क्लिनिकल एआई द्वारा लक्षणों का विश्लेषण किया जा रहा है...',
+      step7Title: 'चरण 7: प्रासंगिक क्लिनिकल अनुवर्ती प्रश्न (2 प्रश्न)',
+      step7Desc: 'आपकी रिपोर्ट की गई समस्या के लिए हमारे मेडिकल सिस्टम ने ठीक दो विशिष्ट अनुवर्ती प्रश्न तैयार किए हैं।',
+      step8Title: 'चरण 8: एआई केस सारांश एवं ट्राइएज प्राथमिकता',
+      summaryComplaintLabel: 'संश्लेषित शिकायत',
+      summaryWhyNowLabel: 'अभी परामर्श का कारण',
+      triageRecLabel: 'प्रारंभिक क्लिनिकल ट्राइएज सिफारिश:',
+      clinicalDisclaimer: '<strong>क्लिनिकल अस्वीकरण:</strong> एआई-सहायता प्राप्त केस सारांश — चिकित्सक द्वारा समीक्षा आवश्यक है। केवल प्रारंभिक ट्राइएज सिफारिश। अंतिम नैदानिक मूल्यांकन और उपचार योग्य चिकित्सक द्वारा किया जाना चाहिए।',
+      editSymptoms: '← लक्षण संपादित करें',
+      confirmTokens: 'पुष्टि करें और टोकन देखें →',
+      toastEnterSymptoms: 'आगे बढ़ने के लिए कृपया अपने लक्षणों का वर्णन करें',
+      toastTranscriptAdded: 'वॉयस ट्रांसक्रिप्ट दर्ज की गई (Hindi)'
+    }
+  };
+
+  // ==============================================
+  // SPEECH RECOGNITION (WEB SPEECH API) ENGINE
+  // ==============================================
+  const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const VOICE_LANG_MAP = {
+    'English': 'en-IN',
+    'Malayalam': 'ml-IN',
+    'Hindi': 'hi-IN',
+    'en': 'en-IN',
+    'ml': 'ml-IN',
+    'hi': 'hi-IN'
+  };
+
+  let speechRecInstance = null;
+  let isSpeechRecording = false;
+  let activeTargetFieldId = null;
+  let baseTextBeforeRecording = '';
+  let currentSessionCommitted = '';
+  let errorResetTimer = null;
+
+  function getSelectedVoiceLang() {
+    const langSelect = document.getElementById('aiLanguageSelect');
+    const selectedKey = (langSelect && langSelect.value) || bookingState.ai_case.language || bookingState.language || 'English';
+    return VOICE_LANG_MAP[selectedKey] || 'en-IN';
   }
 
-  function simulateVoiceInput() {
-    const lang = document.getElementById('aiLanguageSelect').value;
-    const samples = {
-      English: "I have had a worsening dry cough, low-grade fever, and chest heaviness for the past 3 days.",
-      Malayalam: "കഴിഞ്ഞ 3 ദിവസമായി എനിക്ക് കടുത്ത ചുമയും നേരിയ പനിയും ക്ഷീണവും അനുഭവപ്പെടുന്നുണ്ട്.",
-      Hindi: "मुझे पिछले तीन दिनों से लगातार खांसी, हल्का बुखार और बहुत थकान महसूस हो रही है।"
-    };
-    document.getElementById('chiefComplaintInput').value = samples[lang] || samples.English;
-    showToast(`Voice transcript inserted (${lang})`, 'info');
+  function getActiveCaseTranslations() {
+    const langSelect = document.getElementById('aiLanguageSelect');
+    const selectedKey = (langSelect && langSelect.value) || bookingState.ai_case.language || bookingState.language || 'English';
+    return CASE_INTAKE_TRANSLATIONS[selectedKey] || CASE_INTAKE_TRANSLATIONS.English;
+  }
+
+  function setMicrophoneUIState(state, customMessage, targetFieldId) {
+    const t = getActiveCaseTranslations();
+    const micBtn1 = document.getElementById('aiMicBtn');
+    const micBtn2 = document.getElementById('aiWhyMicBtn');
+    const tipEl = document.getElementById('micTipText');
+
+    if (errorResetTimer) {
+      clearTimeout(errorResetTimer);
+      errorResetTimer = null;
+    }
+
+    const micNormalSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>`;
+    const micWhyNormalSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>`;
+    const activeSquareSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>`;
+
+    if (state === 'LISTENING') {
+      const activeBtn = targetFieldId === 'whyConsultingInput' ? micBtn2 : micBtn1;
+      const inactiveBtn = targetFieldId === 'whyConsultingInput' ? micBtn1 : micBtn2;
+
+      if (activeBtn) {
+        activeBtn.style.background = '#FEE2E2';
+        activeBtn.style.borderColor = '#DC2626';
+        activeBtn.style.color = '#DC2626';
+        activeBtn.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.2)';
+        activeBtn.title = t.micStop || 'Stop listening';
+        activeBtn.innerHTML = activeSquareSvg;
+      }
+      if (inactiveBtn) {
+        inactiveBtn.style.background = '#EAF4FF';
+        inactiveBtn.style.borderColor = '#BFDBFE';
+        inactiveBtn.style.color = '#0066E6';
+        inactiveBtn.style.boxShadow = 'none';
+        inactiveBtn.innerHTML = inactiveBtn === micBtn2 ? micWhyNormalSvg : micNormalSvg;
+      }
+      if (tipEl) {
+        tipEl.innerHTML = `<span style="color:#DC2626; font-weight:700;">🔴 ${t.micListening || 'Listening...'}</span>`;
+      }
+    } else if (state === 'PROCESSING') {
+      const activeBtn = targetFieldId === 'whyConsultingInput' ? micBtn2 : micBtn1;
+      if (activeBtn) {
+        activeBtn.style.background = '#FEF3C7';
+        activeBtn.style.borderColor = '#F59E0B';
+        activeBtn.style.color = '#B45309';
+        activeBtn.style.boxShadow = 'none';
+        activeBtn.title = t.micProcessing || 'Processing...';
+      }
+      if (tipEl) {
+        tipEl.innerHTML = `<span style="color:#B45309; font-weight:600;">⏳ ${t.micProcessing || 'Processing...'}</span>`;
+      }
+    } else if (state === 'ERROR') {
+      const activeBtn = targetFieldId === 'whyConsultingInput' ? micBtn2 : micBtn1;
+      if (activeBtn) {
+        activeBtn.style.background = '#FEE2E2';
+        activeBtn.style.borderColor = '#DC2626';
+        activeBtn.style.color = '#DC2626';
+        activeBtn.style.boxShadow = 'none';
+        activeBtn.title = customMessage || t.micUnavailable || 'Voice input unavailable';
+      }
+      if (tipEl) {
+        tipEl.innerHTML = `<span style="color:#DC2626; font-weight:600;">⚠️ ${customMessage || t.micUnavailable || 'Voice input unavailable'}</span>`;
+      }
+      errorResetTimer = setTimeout(() => {
+        setMicrophoneUIState('IDLE');
+      }, 4000);
+    } else {
+      // IDLE
+      if (micBtn1) {
+        micBtn1.style.background = '#EAF4FF';
+        micBtn1.style.borderColor = '#BFDBFE';
+        micBtn1.style.color = '#0066E6';
+        micBtn1.style.boxShadow = 'none';
+        micBtn1.title = t.micDefault || 'Dictate symptoms via microphone';
+        micBtn1.innerHTML = micNormalSvg;
+      }
+      if (micBtn2) {
+        micBtn2.style.background = '#EAF4FF';
+        micBtn2.style.borderColor = '#BFDBFE';
+        micBtn2.style.color = '#0066E6';
+        micBtn2.style.boxShadow = 'none';
+        micBtn2.title = t.micWhyDefault || 'Dictate reason via microphone';
+        micBtn2.innerHTML = micWhyNormalSvg;
+      }
+      if (tipEl) {
+        tipEl.innerHTML = `${t.micTip || '💡 Tip: Click the microphone button to dictate symptoms.'}`;
+      }
+    }
+  }
+
+  function getOrCreateSpeechRecognition() {
+    if (!SpeechRecognitionAPI) return null;
+    if (!speechRecInstance) {
+      speechRecInstance = new SpeechRecognitionAPI();
+      speechRecInstance.continuous = true;
+      speechRecInstance.interimResults = true;
+
+      speechRecInstance.onstart = () => {
+        isSpeechRecording = true;
+        setMicrophoneUIState('LISTENING', null, activeTargetFieldId);
+      };
+
+      speechRecInstance.onresult = (event) => {
+        if (!activeTargetFieldId) return;
+        const targetEl = document.getElementById(activeTargetFieldId);
+        if (!targetEl) return;
+
+        let interimSpeech = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const res = event.results[i];
+          const textPart = res[0].transcript;
+          if (res.isFinal) {
+            currentSessionCommitted += (currentSessionCommitted ? ' ' : '') + textPart.trim();
+          } else {
+            interimSpeech += textPart;
+          }
+        }
+
+        const combinedSpoken = [currentSessionCommitted, interimSpeech.trim()].filter(Boolean).join(' ');
+        let displayVal = baseTextBeforeRecording;
+        if (combinedSpoken) {
+          displayVal = baseTextBeforeRecording ? `${baseTextBeforeRecording} ${combinedSpoken}` : combinedSpoken;
+        }
+        targetEl.value = displayVal;
+      };
+
+      speechRecInstance.onerror = (event) => {
+        console.warn('SpeechRecognition error:', event.error);
+        const errorMessages = {
+          'not-allowed': 'Microphone permission was denied. Please allow microphone access in your browser settings or enter your response manually.',
+          'no-speech': 'No speech was detected. Please try again.',
+          'audio-capture': 'No microphone was detected. Please ensure a microphone is connected.',
+          'network': 'Speech recognition is temporarily unavailable. Please try again or enter text manually.',
+          'aborted': 'Voice input was stopped.',
+          'service-not-allowed': 'Voice recognition is not available.'
+        };
+        const errorMsg = errorMessages[event.error] || 'Voice recognition error occurred. Please try again or enter text manually.';
+        
+        if (event.error !== 'aborted') {
+          showToast(errorMsg, event.error === 'not-allowed' ? 'warning' : 'error');
+          setMicrophoneUIState('ERROR', errorMsg, activeTargetFieldId);
+        }
+        stopVoiceRecording(false);
+      };
+
+      speechRecInstance.onend = () => {
+        finalizeVoiceRecording();
+      };
+    }
+    return speechRecInstance;
+  }
+
+  function handleVoiceToggle(targetFieldId) {
+    if (!targetFieldId) targetFieldId = 'chiefComplaintInput';
+
+    if (!SpeechRecognitionAPI) {
+      const notSupportedMsg = "Voice input is not supported in this browser. Please use Chrome or Edge, or enter your response using text.";
+      showToast(notSupportedMsg, "error");
+      setMicrophoneUIState('ERROR', notSupportedMsg, targetFieldId);
+      return;
+    }
+
+    if (isSpeechRecording) {
+      if (activeTargetFieldId === targetFieldId) {
+        // Toggle OFF if clicking the active microphone
+        stopVoiceRecording(true);
+        return;
+      } else {
+        // Switch recording field: stop previous and start new field
+        stopVoiceRecording(true);
+        setTimeout(() => {
+          startVoiceRecording(targetFieldId);
+        }, 150);
+        return;
+      }
+    }
+
+    startVoiceRecording(targetFieldId);
+  }
+
+  function startVoiceRecording(targetFieldId) {
+    const rec = getOrCreateSpeechRecognition();
+    if (!rec) return;
+
+    const targetEl = document.getElementById(targetFieldId);
+    if (!targetEl) return;
+
+    activeTargetFieldId = targetFieldId;
+    baseTextBeforeRecording = targetEl.value ? targetEl.value.trim() : '';
+    currentSessionCommitted = '';
+
+    const langCode = getSelectedVoiceLang();
+    rec.lang = langCode;
+
+    try {
+      rec.start();
+    } catch(err) {
+      console.warn('SpeechRecognition start failed:', err);
+      if (err.name === 'InvalidStateError') {
+        try { rec.stop(); } catch(e) {}
+        setTimeout(() => {
+          try {
+            rec.start();
+          } catch(err2) {
+            setMicrophoneUIState('ERROR', 'Unable to start microphone.', targetFieldId);
+          }
+        }, 150);
+      } else {
+        setMicrophoneUIState('ERROR', 'Unable to start microphone.', targetFieldId);
+      }
+    }
+  }
+
+  function stopVoiceRecording(callStop = true) {
+    if (speechRecInstance && isSpeechRecording) {
+      try {
+        if (callStop) {
+          speechRecInstance.stop();
+        } else {
+          speechRecInstance.abort();
+        }
+      } catch(e) {}
+    }
+    finalizeVoiceRecording();
+  }
+
+  function finalizeVoiceRecording() {
+    if (activeTargetFieldId) {
+      const targetEl = document.getElementById(activeTargetFieldId);
+      if (targetEl) {
+        let finalVal = baseTextBeforeRecording;
+        if (currentSessionCommitted.trim()) {
+          finalVal = baseTextBeforeRecording ? `${baseTextBeforeRecording} ${currentSessionCommitted.trim()}` : currentSessionCommitted.trim();
+        }
+        targetEl.value = finalVal;
+        
+        if (activeTargetFieldId === 'chiefComplaintInput') {
+          bookingState.ai_case.complaint = finalVal;
+        } else if (activeTargetFieldId === 'whyConsultingInput') {
+          bookingState.ai_case.why_consulting_now = finalVal;
+        }
+      }
+    }
+
+    isSpeechRecording = false;
+    setMicrophoneUIState('IDLE');
+    activeTargetFieldId = null;
+    currentSessionCommitted = '';
+  }
+
+  function applyCaseIntakeTranslations(lang) {
+    const t = CASE_INTAKE_TRANSLATIONS[lang] || CASE_INTAKE_TRANSLATIONS.English;
+
+    const targetLabel = document.getElementById('aiTargetLabel');
+    if (targetLabel) targetLabel.textContent = t.targetLabel;
+
+    const btnChangeDoc = document.getElementById('btnChangeDoctor');
+    if (btnChangeDoc) btnChangeDoc.textContent = t.changeDoctor;
+
+    const titleEl = document.getElementById('step6Title');
+    if (titleEl) titleEl.textContent = t.step6Title;
+
+    const descEl = document.getElementById('step6Desc');
+    if (descEl) descEl.textContent = t.step6Desc;
+
+    const langLabel = document.getElementById('aiLanguageLabel');
+    if (langLabel) langLabel.textContent = t.languageLabel;
+
+    const complaintLabel = document.getElementById('chiefComplaintLabel');
+    if (complaintLabel) complaintLabel.innerHTML = `${t.symptomsLabel} <span style="color:#DC2626;">*</span>`;
+
+    const complaintInput = document.getElementById('chiefComplaintInput');
+    if (complaintInput) complaintInput.placeholder = t.symptomsPlaceholder;
+
+    const micTip = document.getElementById('micTipText');
+    if (micTip) {
+      micTip.innerHTML = isSpeechRecording ? `<span style="color:#DC2626; font-weight:700;">🔴 ${t.micListening}</span>` : t.micTip;
+    }
+
+    const micBtn = document.getElementById('aiMicBtn');
+    if (micBtn && !isSpeechRecording) micBtn.title = t.micDefault;
+
+    const micWhyBtn = document.getElementById('aiWhyMicBtn');
+    if (micWhyBtn && !isSpeechRecording) micWhyBtn.title = t.micWhyDefault;
+
+    const whyLabel = document.getElementById('whyConsultingLabel');
+    if (whyLabel) whyLabel.textContent = t.whyConsultingLabel;
+
+    const whyInput = document.getElementById('whyConsultingInput');
+    if (whyInput) whyInput.placeholder = t.whyConsultingPlaceholder;
+
+    const histTitle = document.getElementById('historySectionTitle');
+    if (histTitle) histTitle.textContent = t.historyTitle;
+
+    const histAllergies = document.getElementById('histAllergies');
+    if (histAllergies) histAllergies.innerHTML = `&bull; <strong>${t.allergiesLabel}</strong> ${t.allergiesValue}`;
+
+    const histMeds = document.getElementById('histMeds');
+    if (histMeds) histMeds.innerHTML = `&bull; <strong>${t.medicationsLabel}</strong> ${t.medicationsValue}`;
+
+    const histRecords = document.getElementById('histRecords');
+    if (histRecords) histRecords.innerHTML = `&bull; <strong>${t.recordsLabel}</strong> ${t.recordsValue}`;
+
+    const btnBack = document.getElementById('btnBackToDoctor');
+    if (btnBack) btnBack.innerHTML = `&larr; ${t.backToDoctor.replace('← ', '')}`;
+
+    const btnAnalyze = document.getElementById('btnAnalyzeComplaint');
+    if (btnAnalyze && !btnAnalyze.disabled) {
+      btnAnalyze.innerHTML = `${t.btnAnalyze}`;
+    }
+  }
+
+  function applyStep7And8Translations(lang) {
+    const t = CASE_INTAKE_TRANSLATIONS[lang] || CASE_INTAKE_TRANSLATIONS.English;
+
+    const step7Title = document.getElementById('step7Title');
+    if (step7Title) step7Title.textContent = t.step7Title;
+
+    const step7Desc = document.getElementById('step7Desc');
+    if (step7Desc) step7Desc.textContent = t.step7Desc;
+
+    const step8Title = document.getElementById('step8Title');
+    if (step8Title) step8Title.textContent = t.step8Title;
+
+    const summaryComplaintLabel = document.getElementById('summaryComplaintLabel');
+    if (summaryComplaintLabel) summaryComplaintLabel.textContent = t.summaryComplaintLabel;
+
+    const summaryWhyNowLabel = document.getElementById('summaryWhyNowLabel');
+    if (summaryWhyNowLabel) summaryWhyNowLabel.textContent = t.summaryWhyNowLabel;
+
+    const triageRecLabel = document.getElementById('triageRecLabel');
+    if (triageRecLabel) triageRecLabel.textContent = t.triageRecLabel;
+
+    const clinicalDisclaimerText = document.getElementById('clinicalDisclaimerText');
+    if (clinicalDisclaimerText) clinicalDisclaimerText.innerHTML = t.clinicalDisclaimer;
+
+    const btnEditSymptoms = document.getElementById('btnEditSymptoms');
+    if (btnEditSymptoms) btnEditSymptoms.innerHTML = `&larr; ${t.editSymptoms.replace('← ', '')}`;
+
+    const btnConfirmTokens = document.getElementById('btnConfirmTokens');
+    if (btnConfirmTokens) btnConfirmTokens.innerHTML = `${t.confirmTokens}`;
+  }
+
+  function onLanguageChanged(newLang) {
+    if (isSpeechRecording) {
+      stopVoiceRecording(true);
+    }
+
+    bookingState.ai_case.language = newLang;
+    bookingState.language = newLang;
+
+    applyCaseIntakeTranslations(newLang);
+    applyStep7And8Translations(newLang);
+
+    if (speechRecInstance) {
+      speechRecInstance.lang = VOICE_LANG_MAP[newLang] || 'en-IN';
+    }
+  }
+
+  function initStep6Context() {
+    document.getElementById('aiContextDoc').textContent = bookingState.doctor ? bookingState.doctor.name : 'Dr. Meera Nair';
+    document.getElementById('aiContextDept').textContent = bookingState.department || 'General Medicine';
+    document.getElementById('aiContextFac').textContent = bookingState.facility ? bookingState.facility.name : 'KPHC Thalassery';
+    document.getElementById('aiContextSys').textContent = bookingState.medical_system ? bookingState.medical_system.name : 'Modern Medicine';
+
+    const currentLang = bookingState.ai_case.language || bookingState.language || 'English';
+    const langSelect = document.getElementById('aiLanguageSelect');
+    if (langSelect) {
+      langSelect.value = currentLang;
+    }
+
+    // Restore text if previously entered
+    const cInput = document.getElementById('chiefComplaintInput');
+    if (cInput && bookingState.ai_case.complaint && !cInput.value) {
+      cInput.value = bookingState.ai_case.complaint;
+    }
+    const wInput = document.getElementById('whyConsultingInput');
+    if (wInput && bookingState.ai_case.why_consulting_now && !wInput.value) {
+      wInput.value = bookingState.ai_case.why_consulting_now;
+    }
+
+    setMicrophoneUIState('IDLE');
+    applyCaseIntakeTranslations(currentLang);
+    if (speechRecInstance) {
+      speechRecInstance.lang = VOICE_LANG_MAP[currentLang] || 'en-IN';
+    }
   }
 
   async function analyzeComplaintAndProceed() {
+    if (typeof stopVoiceRecording === 'function' && isSpeechRecording) {
+      stopVoiceRecording(true);
+    }
     const complaint = document.getElementById('chiefComplaintInput').value.trim();
     const whyNow = document.getElementById('whyConsultingInput').value.trim();
-    const lang = document.getElementById('aiLanguageSelect').value;
+    const lang = (document.getElementById('aiLanguageSelect') && document.getElementById('aiLanguageSelect').value) || bookingState.ai_case.language || 'English';
+    const t = CASE_INTAKE_TRANSLATIONS[lang] || CASE_INTAKE_TRANSLATIONS.English;
 
     if (!complaint) {
-      showToast('Please describe your medical symptoms to proceed', 'error');
+      showToast(t.toastEnterSymptoms, 'error');
       document.getElementById('chiefComplaintInput').focus();
       return;
     }
 
+    const defaultWhyNow = {
+      English: 'Persistent symptoms interfering with daily routine.',
+      Malayalam: 'ദൈനംദിന കാര്യങ്ങൾക്ക് തടസ്സമാകുന്ന രീതിയിൽ ലക്ഷണങ്ങൾ തുടരുന്നു.',
+      Hindi: 'दैनिक दिनचर्या में बाधा डालने वाले लगातार लक्षण।'
+    };
+
     bookingState.ai_case.complaint = complaint;
-    bookingState.ai_case.why_consulting_now = whyNow || 'Persistent symptoms interfering with daily routine.';
+    bookingState.ai_case.why_consulting_now = whyNow || (defaultWhyNow[lang] || defaultWhyNow.English);
     bookingState.ai_case.language = lang;
+    bookingState.language = lang;
 
     const btn = document.getElementById('btnAnalyzeComplaint');
     btn.setAttribute('disabled', 'true');
-    btn.innerHTML = 'Analyzing Symptoms via Clinical AI...';
+    btn.innerHTML = t.btnAnalyzing;
 
     try {
       const res = await fetch('/api/ai/analyze-complaint', {
@@ -1593,6 +2162,8 @@
         body: JSON.stringify({
           complaint: complaint,
           language: lang,
+          language_name: lang,
+          short_language: t.shortCode,
           medical_system: bookingState.medical_system.name,
           facility_name: bookingState.facility.name,
           department: bookingState.department,
@@ -1618,7 +2189,7 @@
       goToStep(7);
     } finally {
       btn.removeAttribute('disabled');
-      btn.innerHTML = 'Analyze Symptoms &amp; Generate Clinical Questions &rarr;';
+      btn.innerHTML = `${t.btnAnalyze}`;
     }
   }
 
