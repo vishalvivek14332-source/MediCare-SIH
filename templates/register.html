@@ -1,112 +1,490 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Register - Clinic Booking System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - MediCare Portals</title>
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}?v=6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #F0F7FF 0%, #E2E8F0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 24px;
+      margin: 0;
+    }
+
+    .register-container {
+      width: 100%;
+      max-width: 520px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 20px 40px -10px rgba(0, 43, 92, 0.12);
+      padding: 36px 32px;
+      position: relative;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-logo-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0066E6 0%, #002B5C 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      margin: 0 auto 12px;
+      box-shadow: 0 6px 16px rgba(0, 102, 230, 0.3);
+    }
+
+    .brand-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #002B5C;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Role Tabs */
+    .role-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: #F1F5F9;
+      padding: 5px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+
+    .role-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 6px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .role-tab-btn.active {
+      background: #FFFFFF;
+      color: #0066E6;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #12345B;
+      margin-bottom: 5px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #CBD5E1;
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.15s ease;
+      background: #F8FAFD;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: #0066E6;
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(135deg, #0066E6 0%, #004CB3 100%);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.25);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #0052BF 0%, #003B8C 100%);
+      transform: translateY(-1px);
+    }
+
+    .alert-box {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert-error {
+      background: #FEE2E2;
+      border: 1px solid #F87171;
+      color: #991B1B;
+    }
+
+    .alert-success {
+      background: #DCFCE7;
+      border: 1px solid #86EFAC;
+      color: #166534;
+    }
+
+    .admin-restricted-box {
+      background: #FFFBEB;
+      border: 1.5px dashed #F59E0B;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #64748B;
+    }
+
+    .auth-footer a {
+      color: #0066E6;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748B;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .back-home:hover {
+      color: #0066E6;
+    }
+  </style>
 </head>
-<body class="antialiased bg-gradient-to-br from-indigo-50 to-blue-100 min-h-screen flex items-center justify-center p-4 py-12">
+<body>
 
-    <div class="glass max-w-lg w-full p-8 rounded-3xl shadow-xl fade-in-up" id="registerCard">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-slate-900">Create Account</h2>
-            <p class="text-slate-500 mt-2">Join us to book your appointments</p>
-        </div>
-
-        <form id="registerForm" class="space-y-5">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                <input type="text" id="name" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Age</label>
-                    <input type="number" id="age" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Gender</label>
-                    <select id="gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
-                <input type="email" id="email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
-                <input type="tel" id="phone" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                <input type="password" id="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
-                <input type="password" id="confirmPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            
-            <div id="errorMsg" class="text-red-500 text-sm hidden"></div>
-            
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-200 transition transform hover:-translate-y-0.5 mt-2">
-                Register
-            </button>
-        </form>
-        
-        <p class="text-center text-slate-600 mt-6">
-            Already have an account? <a href="/login" class="text-blue-600 font-semibold hover:underline">Sign In</a>
-        </p>
+  <div class="register-container">
+    <div class="brand-header">
+      <div class="brand-logo-box">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2v20M2 12h20"></path>
+        </svg>
+      </div>
+      <h1 class="brand-name">MediCare</h1>
+      <p class="brand-sub" id="regTitleSub">Create your Patient Account</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script>
-        gsap.from("#registerCard", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" });
+    <!-- Role Selection Tabs -->
+    <div class="role-tabs">
+      <button type="button" class="role-tab-btn active" id="tabPatient" onclick="switchRegRole('patient')">Patient</button>
+      <button type="button" class="role-tab-btn" id="tabDoctor" onclick="switchRegRole('doctor')">Doctor</button>
+      <button type="button" class="role-tab-btn" id="tabHospital" onclick="switchRegRole('hospital')">Hospital</button>
+    </div>
 
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const age = document.getElementById('age').value;
-            const gender = document.getElementById('gender').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorMsg = document.getElementById('errorMsg');
-            
-            errorMsg.classList.add('hidden');
-            
-            if (password !== confirmPassword) {
-                errorMsg.textContent = "Passwords do not match";
-                errorMsg.classList.remove('hidden');
-                gsap.fromTo(errorMsg, {x: -10}, {x: 0, duration: 0.2, ease: "bounce.out"});
-                return;
-            }
-            
-            try {
-                const res = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name, age, gender, email, phone, password})
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    window.location.href = '/login';
-                } else {
-                    errorMsg.textContent = data.message;
-                    errorMsg.classList.remove('hidden');
-                    gsap.fromTo(errorMsg, {x: -10}, {x: 0, duration: 0.2, ease: "bounce.out"});
-                }
-            } catch (err) {
-                errorMsg.textContent = "Network error occurred";
-                errorMsg.classList.remove('hidden');
-            }
+    <div class="alert-box alert-error" id="errorAlert"></div>
+    <div class="alert-box alert-success" id="successAlert"></div>
+
+    <!-- Admin Restricted Notice (if role=main_admin is visited) -->
+    <div class="admin-restricted-box" id="adminRestrictedNotice" style="display:none;">
+      <div style="font-size:28px; margin-bottom:10px;">🔒</div>
+      <h3 style="font-size:16px; font-weight:800; color:#92400E; margin-bottom:8px;">Main Admin Registration Restricted</h3>
+      <p style="font-size:13px; color:#78350F; line-height:1.5; margin-bottom:16px;">
+        Main Administrator accounts are strictly provisioned by platform administrators. Public registration for this role is disabled.
+      </p>
+      <a href="/login?role=main_admin" class="btn-submit" style="display:inline-block; text-decoration:none; padding:10px 20px;">
+        Go to Admin Login &rarr;
+      </a>
+    </div>
+
+    <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+      <input type="hidden" id="selectedRole" value="patient">
+
+      <!-- Common Name -->
+      <div class="form-group">
+        <label class="form-label" id="nameLabel">Full Name</label>
+        <input type="text" id="nameInput" class="form-input" required placeholder="e.g. Rahul Sharma">
+      </div>
+
+      <!-- Patient Specific Fields -->
+      <div id="patientFields">
+        <div class="form-row form-group">
+          <div>
+            <label class="form-label">Age</label>
+            <input type="number" id="ageInput" class="form-input" placeholder="28" min="1" max="120" value="28">
+          </div>
+          <div>
+            <label class="form-label">Gender</label>
+            <select id="genderInput" class="form-select">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Specific Fields -->
+      <div id="doctorFields" style="display:none;">
+        <div class="form-row form-group">
+          <div>
+            <label class="form-label">Clinical Department</label>
+            <select id="docDeptInput" class="form-select">
+              <option value="General Medicine">General Medicine</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Pediatrics">Pediatrics</option>
+              <option value="Orthopedics">Orthopedics</option>
+              <option value="Dermatology">Dermatology</option>
+              <option value="ENT">ENT</option>
+              <option value="Kayachikitsa (Internal Medicine)">Kayachikitsa (Ayurveda)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Specialization</label>
+            <input type="text" id="docSpecInput" class="form-input" placeholder="e.g. Senior Consultant">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Consultation Fee (₹)</label>
+          <input type="number" id="docFeesInput" class="form-input" placeholder="350" value="350">
+        </div>
+      </div>
+
+      <!-- Hospital Specific Fields -->
+      <div id="hospitalFields" style="display:none;">
+        <div class="form-row form-group">
+          <div>
+            <label class="form-label">Facility Type</label>
+            <select id="facTypeInput" class="form-select">
+              <option value="Hospital">General Hospital</option>
+              <option value="Community Health Centre">Community Health Centre</option>
+              <option value="Specialty Clinic">Specialty Clinic</option>
+              <option value="Ayush Centre">Ayush Hospital / Centre</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">District &amp; State</label>
+            <input type="text" id="facLocationInput" class="form-input" placeholder="Kannur, Kerala" value="Kannur, Kerala">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="emailInput" class="form-input" required placeholder="contact@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" id="phoneInput" class="form-input" required placeholder="+91 98765 43210">
+      </div>
+
+      <!-- Password -->
+      <div class="form-row form-group">
+        <div>
+          <label class="form-label">Password</label>
+          <input type="password" id="passwordInput" class="form-input" required placeholder="••••••••" minlength="6">
+        </div>
+        <div>
+          <label class="form-label">Confirm Password</label>
+          <input type="password" id="confirmPasswordInput" class="form-input" required placeholder="••••••••" minlength="6">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        Create Patient Account &rarr;
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="/login?role=patient" id="loginLink">Sign In here</a>
+    </div>
+  </div>
+
+  <a href="/" class="back-home">
+    &larr; Back to MediCare Public Home
+  </a>
+
+  <script>
+    function switchRegRole(roleKey) {
+      if (roleKey === 'main_admin' || roleKey === 'admin') {
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('adminRestrictedNotice').style.display = 'block';
+        document.getElementById('regTitleSub').textContent = 'Administrator Portal';
+        return;
+      }
+
+      document.getElementById('registerForm').style.display = 'block';
+      document.getElementById('adminRestrictedNotice').style.display = 'none';
+      document.getElementById('selectedRole').value = roleKey;
+
+      ['patient', 'doctor', 'hospital'].forEach(r => {
+        const tab = document.getElementById('tab' + r.charAt(0).toUpperCase() + r.slice(1));
+        if (tab) {
+          if (r === roleKey) tab.classList.add('active');
+          else tab.classList.remove('active');
+        }
+      });
+
+      document.getElementById('patientFields').style.display = roleKey === 'patient' ? 'block' : 'none';
+      document.getElementById('doctorFields').style.display = roleKey === 'doctor' ? 'block' : 'none';
+      document.getElementById('hospitalFields').style.display = roleKey === 'hospital' ? 'block' : 'none';
+
+      const nameLabel = document.getElementById('nameLabel');
+      const nameInput = document.getElementById('nameInput');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const regTitleSub = document.getElementById('regTitleSub');
+      const loginLink = document.getElementById('loginLink');
+
+      loginLink.href = `/login?role=${roleKey}`;
+
+      if (roleKey === 'patient') {
+        nameLabel.textContent = 'Full Name';
+        nameInput.placeholder = 'e.g. Rahul Sharma';
+        btnSubmit.textContent = 'Create Patient Account →';
+        regTitleSub.textContent = 'Create your Patient Account';
+      } else if (roleKey === 'doctor') {
+        nameLabel.textContent = 'Doctor Full Name';
+        nameInput.placeholder = 'e.g. Dr. Anand Verma';
+        btnSubmit.textContent = 'Register Doctor Profile →';
+        regTitleSub.textContent = 'Register Doctor Consultation Profile';
+      } else if (roleKey === 'hospital') {
+        nameLabel.textContent = 'Hospital / Facility Name';
+        nameInput.placeholder = 'e.g. Lifecare Multi-Specialty Hospital';
+        btnSubmit.textContent = 'Register Healthcare Facility →';
+        regTitleSub.textContent = 'Register Hospital / Healthcare Facility';
+      }
+    }
+
+    // Auto-detect role from URL query param
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedRole = urlParams.get('role');
+      if (requestedRole) {
+        switchRegRole(requestedRole);
+      }
+    });
+
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const role = document.getElementById('selectedRole').value;
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const phone = document.getElementById('phoneInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+      const errEl = document.getElementById('errorAlert');
+      const succEl = document.getElementById('successAlert');
+      const btn = document.getElementById('btnSubmit');
+
+      errEl.style.display = 'none';
+      succEl.style.display = 'none';
+
+      if (password !== confirmPassword) {
+        errEl.textContent = 'Passwords do not match. Please verify.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Registering account...';
+
+      const payload = { role, name, email, phone, password };
+
+      if (role === 'patient') {
+        payload.age = parseInt(document.getElementById('ageInput').value) || 28;
+        payload.gender = document.getElementById('genderInput').value;
+      } else if (role === 'doctor') {
+        payload.department = document.getElementById('docDeptInput').value;
+        payload.specialization = document.getElementById('docSpecInput').value || 'Consultant Specialist';
+        payload.fees = parseInt(document.getElementById('docFeesInput').value) || 350;
+      } else if (role === 'hospital') {
+        payload.facility_type = document.getElementById('facTypeInput').value;
+        payload.address = document.getElementById('facLocationInput').value;
+      }
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-    </script>
+
+        const data = await res.json();
+
+        if (data.success) {
+          succEl.textContent = 'Account created successfully! Redirecting to sign in...';
+          succEl.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = `/login?role=${role}`;
+          }, 1200);
+        } else {
+          errEl.textContent = data.message || 'Registration failed. Please check inputs.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Try Again';
+        }
+      } catch (err) {
+        errEl.textContent = 'Network communication error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Try Again';
+      }
+    }
+  </script>
 </body>
 </html>

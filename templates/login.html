@@ -1,91 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Clinic Booking System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - MediCare Portals</title>
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}?v=6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #F0F7FF 0%, #E2E8F0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      margin: 0;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 460px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 20px 40px -10px rgba(0, 43, 92, 0.12);
+      padding: 36px 32px;
+      position: relative;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-logo-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0066E6 0%, #002B5C 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      margin: 0 auto 12px;
+      box-shadow: 0 6px 16px rgba(0, 102, 230, 0.3);
+    }
+
+    .brand-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #002B5C;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Role Tabs */
+    .role-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: #F1F5F9;
+      padding: 5px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+
+    .role-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .role-tab-btn.active {
+      background: #FFFFFF;
+      color: #0066E6;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #12345B;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 9px;
+      border: 1.5px solid #CBD5E1;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.15s ease;
+      background: #F8FAFD;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      border-color: #0066E6;
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(135deg, #0066E6 0%, #004CB3 100%);
+      color: #FFFFFF;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.25);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #0052BF 0%, #003B8C 100%);
+      transform: translateY(-1px);
+    }
+
+    .error-alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #FEE2E2;
+      border: 1px solid #F87171;
+      color: #991B1B;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .quick-creds {
+      background: #F8FAFC;
+      border: 1px dashed #CBD5E1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #475569;
+    }
+
+    .quick-creds-badge {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #E2E8F0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .cred-pill {
+      display: inline-block;
+      cursor: pointer;
+      background: #EFF6FF;
+      color: #0066E6;
+      border: 1px solid #BFDBFE;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin: 2px 2px;
+      text-decoration: underline;
+    }
+
+    .cred-pill:hover {
+      background: #DBEAFE;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748B;
+    }
+
+    .auth-footer a {
+      color: #0066E6;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748B;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .back-home:hover {
+      color: #0066E6;
+    }
+  </style>
 </head>
-<body class="antialiased bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div class="glass max-w-md w-full p-8 rounded-3xl shadow-xl fade-in-up" id="loginCard">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-slate-900">Welcome Back</h2>
-            <p class="text-slate-500 mt-2">Login to manage your appointments</p>
-        </div>
-
-        <form id="loginForm" class="space-y-6">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Login As</label>
-                <select id="role" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition bg-white/50">
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="main_admin">Main Admin (Network)</option>
-                    <option value="clinic_admin">Clinic Admin</option>
-                </select>
-            </div>
-            
-            <div id="errorMsg" class="text-red-500 text-sm hidden"></div>
-            
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-200 transition transform hover:-translate-y-0.5">
-                Sign In
-            </button>
-        </form>
-        
-        <p class="text-center text-slate-600 mt-6">
-            Don't have an account? <a href="/register" class="text-blue-600 font-semibold hover:underline">Register</a>
-        </p>
+  <div class="login-container">
+    <div class="brand-header">
+      <div class="brand-logo-box">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2v20M2 12h20"></path>
+        </svg>
+      </div>
+      <h1 class="brand-name">MediCare</h1>
+      <p class="brand-sub" id="roleTitleSub">Sign in to your Patient Portal</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script>
-        gsap.from("#loginCard", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" });
+    <!-- Role Selection Tabs -->
+    <div class="role-tabs">
+      <button type="button" class="role-tab-btn active" id="tabPatient" onclick="switchRole('patient')">Patient</button>
+      <button type="button" class="role-tab-btn" id="tabDoctor" onclick="switchRole('doctor')">Doctor</button>
+      <button type="button" class="role-tab-btn" id="tabHospital" onclick="switchRole('hospital')">Hospital</button>
+      <button type="button" class="role-tab-btn" id="tabAdmin" onclick="switchRole('main_admin')">Admin</button>
+    </div>
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-            const errorMsg = document.getElementById('errorMsg');
-            
-            errorMsg.classList.add('hidden');
-            
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email, password, role})
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    localStorage.setItem('token', data.data.access_token);
-                    localStorage.setItem('role', role);
-                    localStorage.setItem('name', data.data.name);
-                    
-                    if (role === 'patient') window.location.href = '/';
-                    else if (role === 'doctor') window.location.href = '/doctor';
-                    else if (role === 'main_admin') window.location.href = '/admin';
-                    else if (role === 'clinic_admin') window.location.href = '/clinic_dashboard';
-                } else {
-                    errorMsg.textContent = data.message;
-                    errorMsg.classList.remove('hidden');
-                    gsap.fromTo(errorMsg, {x: -10}, {x: 0, duration: 0.2, ease: "bounce.out"});
-                }
-            } catch (err) {
-                errorMsg.textContent = "Network error occurred";
-                errorMsg.classList.remove('hidden');
-            }
+    <div class="error-alert" id="errorAlert"></div>
+
+    <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+      <input type="hidden" id="selectedRole" value="patient">
+
+      <div class="form-group">
+        <label class="form-label" id="emailLabel">Email Address</label>
+        <input type="email" id="emailInput" class="form-input" required placeholder="name@example.com" value="sajilbinu@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="passwordInput" class="form-input" required placeholder="••••••••" value="password123">
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        Sign In as Patient &rarr;
+      </button>
+    </form>
+
+    <!-- Quick Credentials Helper -->
+    <div class="quick-creds" id="quickCredsSection">
+      <span class="quick-creds-badge">Quick Demo Fill</span>
+      <div id="quickCredsText">
+        Click to auto-fill: <span class="cred-pill" onclick="fillCreds('sajilbinu@example.com', 'password123')">Sajil Binu (Patient)</span>
+      </div>
+    </div>
+
+    <div class="auth-footer" id="signupFooter">
+      Don't have an account? <a href="/register?role=patient" id="signupLink">Register here</a>
+    </div>
+  </div>
+
+  <a href="/" class="back-home">
+    &larr; Back to MediCare Public Home
+  </a>
+
+  <script>
+    const roleConfig = {
+      patient: {
+        title: 'Sign in to your Patient Portal',
+        emailPlaceholder: 'patient@example.com',
+        submitText: 'Sign In as Patient →',
+        signupUrl: '/register?role=patient',
+        showSignup: true,
+        demoEmail: 'sajilbinu@example.com',
+        demoPass: 'password123',
+        demoLabel: 'Sajil Binu (Patient)'
+      },
+      doctor: {
+        title: 'Sign in to Doctor Consultation Console',
+        emailPlaceholder: 'doctor@example.com',
+        submitText: 'Sign In as Doctor →',
+        signupUrl: '/register?role=doctor',
+        showSignup: true,
+        demoEmail: 'shonna@gmail.com',
+        demoPass: 'password123',
+        demoLabel: 'Dr. John Shonna (Doctor)'
+      },
+      hospital: {
+        title: 'Sign in to Hospital / Facility Management',
+        emailPlaceholder: 'hospital@example.com',
+        submitText: 'Sign In as Hospital →',
+        signupUrl: '/register?role=hospital',
+        showSignup: true,
+        demoEmail: 'vishal@gmail.com',
+        demoPass: 'password123',
+        demoLabel: 'Vcare Hospital (Facility)'
+      },
+      main_admin: {
+        title: 'Sign in to Main Platform Administration',
+        emailPlaceholder: 'admin@network.com',
+        submitText: 'Sign In as Main Admin →',
+        signupUrl: null,
+        showSignup: false,
+        demoEmail: 'admin@network.com',
+        demoPass: 'admin123',
+        demoLabel: 'Platform Main Admin'
+      }
+    };
+
+    function switchRole(roleKey) {
+      if (roleKey === 'admin') roleKey = 'main_admin';
+      if (roleKey === 'clinic_admin') roleKey = 'hospital';
+
+      document.getElementById('selectedRole').value = roleKey;
+
+      ['patient', 'doctor', 'hospital', 'main_admin'].forEach(r => {
+        const tab = document.getElementById('tab' + (r === 'main_admin' ? 'Admin' : r.charAt(0).toUpperCase() + r.slice(1)));
+        if (tab) {
+          if (r === roleKey) tab.classList.add('active');
+          else tab.classList.remove('active');
+        }
+      });
+
+      const cfg = roleConfig[roleKey] || roleConfig.patient;
+      document.getElementById('roleTitleSub').textContent = cfg.title;
+      document.getElementById('emailInput').placeholder = cfg.emailPlaceholder;
+      document.getElementById('btnSubmit').textContent = cfg.submitText;
+
+      const signupFooter = document.getElementById('signupFooter');
+      const signupLink = document.getElementById('signupLink');
+      if (cfg.showSignup) {
+        signupFooter.style.display = 'block';
+        signupLink.href = cfg.signupUrl;
+      } else {
+        signupFooter.style.display = 'none';
+      }
+
+      document.getElementById('emailInput').value = cfg.demoEmail;
+      document.getElementById('passwordInput').value = cfg.demoPass;
+
+      const quickCredsText = document.getElementById('quickCredsText');
+      quickCredsText.innerHTML = `Click to auto-fill: <span class="cred-pill" onclick="fillCreds('${cfg.demoEmail}', '${cfg.demoPass}')">${cfg.demoLabel}</span>`;
+    }
+
+    function fillCreds(e, p) {
+      document.getElementById('emailInput').value = e;
+      document.getElementById('passwordInput').value = p;
+    }
+
+    // Auto-detect role from URL query param
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedRole = urlParams.get('role');
+      if (requestedRole && (roleConfig[requestedRole] || requestedRole === 'admin' || requestedRole === 'clinic_admin')) {
+        switchRole(requestedRole);
+      }
+    });
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const role = document.getElementById('selectedRole').value;
+      const errEl = document.getElementById('errorAlert');
+      const btn = document.getElementById('btnSubmit');
+
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Verifying credentials...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role })
         });
-    </script>
+
+        const data = await res.json();
+
+        if (data.success && data.data && data.data.access_token) {
+          localStorage.setItem('token', data.data.access_token);
+          localStorage.setItem('role', data.data.role || role);
+          localStorage.setItem('name', data.data.name || 'User');
+
+          // Redirect to appropriate dashboard
+          const dest = data.data.redirect_url || (
+            role === 'doctor' ? '/doctor' :
+            (role === 'hospital' || role === 'clinic_admin') ? '/clinic_dashboard' :
+            role === 'main_admin' ? '/admin' : '/dashboard'
+          );
+          window.location.href = dest;
+        } else {
+          errEl.textContent = data.message || 'Invalid credentials. Please verify your details.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = roleConfig[role].submitText;
+        }
+      } catch (err) {
+        errEl.textContent = 'Network communication error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = roleConfig[role].submitText;
+      }
+    }
+  </script>
 </body>
 </html>

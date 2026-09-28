@@ -1,310 +1,1192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic Booking System</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare - AI-Powered Clinical History Taking, Triage & OPD Management</title>
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Base ABDM Theme CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}?v=6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    :root {
+      --med-blue: #0066E6;
+      --med-navy: #002B5C;
+      --med-deep: #12345B;
+      --med-dark: #0B192C;
+      --med-light: #F0F7FF;
+      --med-border: #E2E8F0;
+      --med-accent: #00D2D3;
+      --med-green: #16A05D;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F8FAFD;
+      color: #1E293B;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, .brand-font {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Public Header */
+    .pub-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 20px -2px rgba(0, 43, 92, 0.05);
+    }
+
+    .pub-nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pub-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .pub-logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0066E6 0%, #002B5C 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.3);
+    }
+
+    .pub-brand-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #002B5C;
+      letter-spacing: -0.5px;
+    }
+
+    .pub-brand-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      color: #5F7187;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pub-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .pub-nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      transition: color 0.15s ease;
+    }
+
+    .pub-nav-links a:hover {
+      color: #0066E6;
+    }
+
+    .pub-auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-pub-outline {
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: 1.5px solid #0066E6;
+      background: transparent;
+      color: #0066E6;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-pub-outline:hover {
+      background: #F0F7FF;
+      transform: translateY(-1px);
+    }
+
+    .btn-pub-primary {
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #0066E6 0%, #004CB3 100%);
+      color: #FFFFFF;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0, 102, 230, 0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-pub-primary:hover {
+      background: linear-gradient(135deg, #0052BF 0%, #003B8C 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 102, 230, 0.35);
+    }
+
+    /* Hero Section */
+    .pub-hero {
+      position: relative;
+      padding: 70px 24px 80px;
+      background: linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%);
+      overflow: hidden;
+    }
+
+    .pub-hero-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #EAF4FF;
+      border: 1px solid #BFDBFE;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0066E6;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: 46px;
+      font-weight: 800;
+      color: #0B192C;
+      line-height: 1.18;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #0066E6 0%, #0099FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 17px;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 580px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding-top: 24px;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .hero-metric-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: #002B5C;
+    }
+
+    .hero-metric-lbl {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    /* Hero Visual Card */
+    .hero-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      padding: 28px;
+      box-shadow: 0 20px 40px -10px rgba(0, 43, 92, 0.12);
+      position: relative;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+
+    .hero-workflow-pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
+    }
+
+    .hero-preview-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 10px;
+    }
+
+    .preview-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #0066E6;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Role Selection Section */
+    .pub-roles-section {
+      padding: 90px 24px;
+      background: #FFFFFF;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 56px;
+    }
+
+    .section-badge {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #0066E6;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: #0B192C;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .section-desc {
+      font-size: 16px;
+      color: #64748B;
+      line-height: 1.6;
+    }
+
+    .roles-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .role-card {
+      background: #F8FAFD;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .role-card:hover {
+      background: #FFFFFF;
+      border-color: #0066E6;
+      box-shadow: 0 16px 36px -6px rgba(0, 102, 230, 0.14);
+      transform: translateY(-4px);
+    }
+
+    .role-icon-box {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      transition: transform 0.2s ease;
+    }
+
+    .role-card:hover .role-icon-box {
+      transform: scale(1.08);
+    }
+
+    .role-card.patient .role-icon-box {
+      background: #EFF6FF;
+      color: #0066E6;
+      border: 1px solid #BFDBFE;
+    }
+
+    .role-card.doctor .role-icon-box {
+      background: #F0FDF4;
+      color: #16A05D;
+      border: 1px solid #BBF7D0;
+    }
+
+    .role-card.hospital .role-icon-box {
+      background: #FAF5FF;
+      color: #8B5CF6;
+      border: 1px solid #E9D5FF;
+    }
+
+    .role-card.admin .role-icon-box {
+      background: #FFFBEB;
+      color: #D97706;
+      border: 1px solid #FDE68A;
+    }
+
+    .role-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0B192C;
+      margin-bottom: 10px;
+    }
+
+    .role-desc {
+      font-size: 13.5px;
+      color: #5F7187;
+      line-height: 1.55;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .role-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-role-login {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-role-login.patient {
+      background: #0066E6;
+      color: #FFFFFF;
+      border: none;
+    }
+    .btn-role-login.patient:hover {
+      background: #0052BF;
+    }
+
+    .btn-role-login.doctor {
+      background: #16A05D;
+      color: #FFFFFF;
+      border: none;
+    }
+    .btn-role-login.doctor:hover {
+      background: #12804A;
+    }
+
+    .btn-role-login.hospital {
+      background: #8B5CF6;
+      color: #FFFFFF;
+      border: none;
+    }
+    .btn-role-login.hospital:hover {
+      background: #7C3AED;
+    }
+
+    .btn-role-login.admin {
+      background: #1E293B;
+      color: #FFFFFF;
+      border: none;
+    }
+    .btn-role-login.admin:hover {
+      background: #0F172A;
+    }
+
+    .btn-role-signup {
+      width: 100%;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-role-signup:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+
+    .admin-restricted-notice {
+      font-size: 11.5px;
+      color: #64748B;
+      text-align: center;
+      padding: 8px 6px;
+      background: #F1F5F9;
+      border-radius: 6px;
+      border: 1px dashed #CBD5E1;
+    }
+
+    /* Features Section */
+    .pub-features-section {
+      padding: 90px 24px;
+      background: #F8FAFD;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .features-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      padding: 26px;
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -4px rgba(0, 43, 92, 0.08);
+      border-color: #BFDBFE;
+    }
+
+    .feature-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: #EFF6FF;
+      color: #0066E6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0B192C;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13.5px;
+      color: #5F7187;
+      line-height: 1.55;
+    }
+
+    /* Workflow Journey */
+    .pub-workflow-section {
+      padding: 90px 24px;
+      background: #FFFFFF;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .workflow-timeline {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+
+    .wf-step-card {
+      background: #F8FAFD;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+    }
+
+    .wf-badge-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #002B5C;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .wf-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0B192C;
+      margin-bottom: 6px;
+    }
+
+    .wf-desc {
+      font-size: 12.5px;
+      color: #5F7187;
+      line-height: 1.5;
+    }
+
+    /* Public Footer */
+    .pub-footer {
+      background: #0B192C;
+      color: #E2E8F0;
+      padding: 70px 24px 30px;
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+
+    .footer-brand-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand-desc {
+      font-size: 13.5px;
+      color: #94A3B8;
+      line-height: 1.6;
+      max-width: 380px;
+      margin-bottom: 20px;
+    }
+
+    .footer-heading {
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 18px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 13.5px;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: #38BDF8;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: #64748B;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .pub-hero-container {
+        grid-template-columns: 1fr;
+      }
+      .roles-grid, .features-grid, .workflow-timeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .footer-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .roles-grid, .features-grid, .workflow-timeline {
+        grid-template-columns: 1fr;
+      }
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+      .pub-nav-links {
+        display: none;
+      }
+      .hero-title {
+        font-size: 34px;
+      }
+    }
+  </style>
 </head>
-<body class="antialiased overflow-x-hidden selection:bg-blue-200">
+<body>
 
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 glass transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex-shrink-0 flex items-center">
-                    <span class="font-bold text-3xl tracking-tight text-blue-600">MediCare<span class="text-blue-400">+</span></span>
-                </div>
-                <div class="hidden md:flex space-x-8 items-center" id="navLoginContainer">
-                    <a href="#services" class="text-gray-600 hover:text-blue-600 font-medium transition">Services</a>
-                    <a href="#discovery" class="text-gray-600 hover:text-blue-600 font-medium transition">Clinics</a>
-                    <a href="/login" class="text-blue-600 hover:text-blue-800 font-semibold transition">Login</a>
-                    <a href="/register" class="bg-blue-600 text-white px-5 py-2.5 rounded-full shadow hover:bg-blue-700 transition font-medium">Register</a>
-                </div>
-            </div>
+  <!-- Top Active Session Notification Banner (Shown only if already logged in) -->
+  <div id="authenticatedSessionBanner" style="display:none; background:linear-gradient(90deg, #002B5C 0%, #0066E6 100%); color:#FFFFFF; padding:10px 24px; font-size:13px; font-weight:600; text-align:center;">
+    <span>You have an active session logged in as <strong id="activeSessionName">User</strong> (<span id="activeSessionRole">Role</span>).</span>
+    <a href="/dashboard" id="activeDashboardLink" style="color:#FDE047; text-decoration:underline; margin-left:10px; font-weight:700;">Continue to Portal Dashboard &rarr;</a>
+    <button onclick="handleLogout()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:#FFFFFF; border-radius:4px; padding:2px 10px; font-size:12px; margin-left:14px; cursor:pointer;">Logout</button>
+  </div>
+
+  <!-- Public Header -->
+  <header class="pub-header">
+    <div class="pub-nav-container">
+      <a href="/" class="pub-brand">
+        <div class="pub-logo-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M2 12h20"></path>
+          </svg>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
-        <!-- Background Elements -->
-        <div class="absolute top-0 right-0 -z-10 opacity-30 transform translate-x-1/3 -translate-y-1/4">
-            <div class="w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+        <div>
+          <div class="pub-brand-title">MediCare</div>
+          <div class="pub-brand-subtitle">CareBridge Digital Health Mission</div>
         </div>
-        <div class="absolute bottom-0 left-0 -z-10 opacity-30 transform -translate-x-1/4 translate-y-1/4">
-            <div class="w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+      </a>
+
+      <nav>
+        <ul class="pub-nav-links">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#roles">Portals</a></li>
+          <li><a href="#services">Health Services</a></li>
+          <li><a href="#workflow">How It Works</a></li>
+          <li><a href="#security">ABDM Security</a></li>
+          <li><a href="#support">Support</a></li>
+        </ul>
+      </nav>
+
+      <div class="pub-auth-actions">
+        <a href="/login" class="btn-pub-outline">Sign In</a>
+        <a href="/register" class="btn-pub-primary">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="pub-hero" id="hero">
+    <div class="pub-hero-container">
+      <div>
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          ABDM-Integrated Clinical Healthcare Platform
         </div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full">
-            <div class="text-center max-w-4xl mx-auto hero-content">
-                <span id="heroGreeting" class="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-4 block">Welcome to the future of healthcare</span>
-                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
-                    Modern Healthcare at <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Your Fingertips</span>
-                </h1>
-                <p class="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                    Book appointments, check live queues, and manage your health records seamlessly with our modern hospital ticketing system.
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4" id="heroButtons">
-                    <a href="/register" class="bg-blue-600 text-white px-8 py-4 rounded-full shadow-lg shadow-blue-200 hover:bg-blue-700 font-semibold text-lg transition transform hover:-translate-y-1">
-                        Get Started Today
-                    </a>
-                    <a href="#services" class="bg-white text-blue-600 px-8 py-4 rounded-full shadow-lg hover:bg-gray-50 font-semibold text-lg transition glass border border-gray-200">
-                        View Our Services
-                    </a>
-                </div>
-            </div>
+        <h1 class="hero-title">
+          <span>MediCare</span><br>
+          AI-Powered Clinical History Taking, Triage &amp; Smart OPD Management
+        </h1>
+        <p class="hero-desc">
+          AI-assisted clinical case taking, digital health records, hospital discovery, outpatient token booking and real-time queue management.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#roles" class="btn-pub-primary" style="padding:14px 30px; font-size:15px;">
+            Choose Your Portal &rarr;
+          </a>
+          <a href="/login?role=patient" class="btn-pub-outline" style="padding:13px 26px; font-size:14.5px;">
+            Patient Login
+          </a>
         </div>
-    </section>
 
-    <!-- My Appointments Section (Patient Dashboard) -->
-    <section id="appointmentsSection" class="py-20 hidden relative z-10 bg-blue-50/50 border-t border-blue-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
-                <div>
-                    <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">My Appointments</h2>
-                    <p class="mt-2 text-slate-600 font-medium">Manage your upcoming visits and track your live queue status.</p>
-                </div>
-                <a href="#discovery" class="mt-6 md:mt-0 bg-white border border-blue-200 text-blue-600 px-6 py-3 rounded-full shadow hover:bg-blue-50 transition font-bold flex items-center gap-2">
-                    Book New Appointment
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="appointmentsGrid">
-                <!-- Injected via JS -->
-            </div>
+        <div class="hero-metrics">
+          <div>
+            <div class="hero-metric-val">50+</div>
+            <div class="hero-metric-lbl">Verified Facilities</div>
+          </div>
+          <div>
+            <div class="hero-metric-val">6</div>
+            <div class="hero-metric-lbl">Medical Systems</div>
+          </div>
+          <div>
+            <div class="hero-metric-val">3</div>
+            <div class="hero-metric-lbl">Intake Languages</div>
+          </div>
         </div>
-    </section>
+      </div>
 
-    <!-- Location Discovery Section -->
-    <section id="discovery" class="py-20 bg-slate-50 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">Find Nearby Clinics</h2>
-                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Allow GPS access to discover our top-rated medical facilities in your immediate vicinity, or search by your location.</p>
-                
-                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4 max-w-2xl mx-auto">
-                    <div class="flex-1 relative">
-                        <input type="text" id="searchInput" placeholder="Search by city, state, or clinic name..." class="w-full px-6 py-4 rounded-full shadow-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg">
-                        <button onclick="searchLocation()" class="absolute right-2 top-2 bottom-2 bg-blue-600 text-white px-6 rounded-full hover:bg-blue-700 transition font-semibold">Search</button>
-                    </div>
-                    <button onclick="getLocation()" class="bg-indigo-600 text-white px-8 py-4 rounded-full shadow-lg font-semibold hover:bg-indigo-700 transition transform hover:-translate-y-1 whitespace-nowrap">
-                        📍 Use GPS
-                    </button>
-                </div>
-                <p id="locStatus" class="mt-4 text-blue-600 font-medium"></p>
-            </div>
-            <div id="clinicsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Clinics injected here -->
-            </div>
+      <!-- Hero Visual Preview -->
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#5F7187; text-transform:uppercase;">Intelligent Pre-Consultation</div>
+            <div style="font-size:16px; font-weight:800; color:#12345B;">Clinical Journey Overview</div>
+          </div>
+          <div class="hero-workflow-pill">Live OPD Mission</div>
         </div>
-    </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-24 bg-white/50 backdrop-blur-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight">Our Services</h2>
-                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Comprehensive, state-of-the-art care for you and your family.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <!-- Service 1 -->
-                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Cardiology</h3>
-                    <p class="text-slate-600 leading-relaxed">Expert care for your heart with advanced diagnostics and monitoring tools.</p>
-                </div>
-                <!-- Service 2 -->
-                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Laboratory</h3>
-                    <p class="text-slate-600 leading-relaxed">Fast and accurate test results with state-of-the-art laboratory technology.</p>
-                </div>
-                <!-- Service 3 -->
-                <div class="glass p-10 rounded-3xl service-card cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-3">General Practice</h3>
-                    <p class="text-slate-600 leading-relaxed">Routine checkups and continuous personal care for everyone in the family.</p>
-                </div>
-            </div>
+        <div class="hero-preview-step">
+          <div class="preview-step-num">1</div>
+          <div>
+            <div style="font-size:13.5px; font-weight:700; color:#12345B;">Role-Based Portal Access</div>
+            <div style="font-size:12px; color:#64748B;">Dedicated authentication workflows for Patients, Doctors, Hospitals, and Admins.</div>
+          </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-3xl font-bold tracking-tight mb-4">MediCare<span class="text-blue-500">+</span></h3>
-            <p class="text-slate-400 mb-8 font-medium">Modern Healthcare at Your Fingertips</p>
-            <p class="text-slate-500 text-sm">&copy; 2026 MediCare+. All rights reserved.</p>
+        <div class="hero-preview-step">
+          <div class="preview-step-num">2</div>
+          <div>
+            <div style="font-size:13.5px; font-weight:700; color:#12345B;">Doctor &amp; Facility Discovery</div>
+            <div style="font-size:12px; color:#64748B;">Filter by Modern Medicine, Ayurveda, Homeopathy, Siddha, Unani, or Yoga.</div>
+          </div>
         </div>
-    </footer>
 
-    <!-- GSAP for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-        function getLocation() {
-            const status = document.getElementById('locStatus');
-            if (!navigator.geolocation) {
-                status.textContent = 'Geolocation is not supported by your browser';
-            } else {
-                status.textContent = 'Locating your exact position...';
-                navigator.geolocation.getCurrentPosition(success, error);
-            }
+        <div class="hero-preview-step">
+          <div class="preview-step-num">3</div>
+          <div>
+            <div style="font-size:13.5px; font-weight:700; color:#12345B;">Voice &amp; Multilingual AI Intake</div>
+            <div style="font-size:12px; color:#64748B;">Capture patient symptoms in English, Malayalam, or Hindi with live Web Speech API.</div>
+          </div>
+        </div>
+
+        <div class="hero-preview-step" style="margin-bottom:0;">
+          <div class="preview-step-num" style="background:#16A05D;">4</div>
+          <div>
+            <div style="font-size:13.5px; font-weight:700; color:#12345B;">Token Generation &amp; Live Queue</div>
+            <div style="font-size:12px; color:#64748B;">Instant token booking with live consultation tracking and waiting estimates.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Role Selection Section ("How would you like to continue?") -->
+  <section class="pub-roles-section" id="roles">
+    <div class="section-header">
+      <span class="section-badge">Portal Authentication</span>
+      <h2 class="section-title">How would you like to continue?</h2>
+      <p class="section-desc">
+        Select your role below to access your dedicated healthcare portal, consultation records, management consoles, or OPD queues.
+      </p>
+    </div>
+
+    <div class="roles-grid">
+      <!-- 1. Patient Card -->
+      <div class="role-card patient">
+        <div>
+          <div class="role-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h3 class="role-title">Patient</h3>
+          <p class="role-desc">
+            Manage your health records, consultations, appointments and healthcare journey.
+          </p>
+        </div>
+        <div class="role-actions">
+          <a href="/login?role=patient" class="btn-role-login patient">
+            Patient Login &rarr;
+          </a>
+          <a href="/register?role=patient" class="btn-role-signup">
+            Patient Sign Up
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. Doctor Card -->
+      <div class="role-card doctor">
+        <div>
+          <div class="role-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+              <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+              <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+              <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+            </svg>
+          </div>
+          <h3 class="role-title">Doctor</h3>
+          <p class="role-desc">
+            Manage OPD patients, consultations, clinical briefs and live queues.
+          </p>
+        </div>
+        <div class="role-actions">
+          <a href="/login?role=doctor" class="btn-role-login doctor">
+            Doctor Login &rarr;
+          </a>
+          <a href="/register?role=doctor" class="btn-role-signup">
+            Doctor Sign Up
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Hospital / Healthcare Facility Card -->
+      <div class="role-card hospital">
+        <div>
+          <div class="role-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+              <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path>
+              <line x1="10" y1="9" x2="14" y2="9"></line>
+              <line x1="12" y1="7" x2="12" y2="11"></line>
+            </svg>
+          </div>
+          <h3 class="role-title">Hospital / Healthcare Facility</h3>
+          <p class="role-desc">
+            Manage your facility, departments, doctors, appointments and outpatient queues.
+          </p>
+        </div>
+        <div class="role-actions">
+          <a href="/login?role=hospital" class="btn-role-login hospital">
+            Hospital Login &rarr;
+          </a>
+          <a href="/register?role=hospital" class="btn-role-signup">
+            Hospital Sign Up
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Main Admin Card -->
+      <div class="role-card admin">
+        <div>
+          <div class="role-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M9 9h6v6H9z"></path>
+              <path d="m15 9-6 6"></path>
+            </svg>
+          </div>
+          <h3 class="role-title">Main Admin</h3>
+          <p class="role-desc">
+            Manage the MediCare platform, facilities, users and system configuration.
+          </p>
+        </div>
+        <div class="role-actions">
+          <a href="/login?role=main_admin" class="btn-role-login admin">
+            Main Admin Login &rarr;
+          </a>
+          <div class="admin-restricted-notice">
+            🔒 Restricted access for platform administrators
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Health Services & Pillars Section -->
+  <section class="pub-features-section" id="services">
+    <div class="section-header">
+      <span class="section-badge">Core Capabilities</span>
+      <h2 class="section-title">Designed for Modern Digital Healthcare</h2>
+      <p class="section-desc">
+        Integrated clinical tools that simplify outpatient workflows, assist medical consultations, and respect patient privacy.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+        </div>
+        <h3 class="feature-title">Multilingual Voice Intake</h3>
+        <p class="feature-desc">
+          Capture patient symptoms in English, Malayalam, and Hindi using browser Speech Recognition with non-destructive text appending.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+        </div>
+        <h3 class="feature-title">Smart OPD Token Booking</h3>
+        <p class="feature-desc">
+          Automated slot allocation with live queue updates, estimated wait times, and direct consultation token generation.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+        </div>
+        <h3 class="feature-title">Clinical Triage &amp; Briefs</h3>
+        <p class="feature-desc">
+          Intelligent urgency triage classification (Emergency, Urgent, Priority, Routine) with physician consultation briefs.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h3 class="feature-title">ABDM Digital Records</h3>
+        <p class="feature-desc">
+          Longitudinal health record access, linked health facilities, document vaults, and consent-driven record sharing.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Journey Section -->
+  <section class="pub-workflow-section" id="workflow">
+    <div class="section-header">
+      <span class="section-badge">End-to-End Workflow</span>
+      <h2 class="section-title">The Complete OPD Healthcare Journey</h2>
+      <p class="section-desc">
+        A seamless 4-phase clinical path connecting patients, medical staff, doctors, and healthcare facilities.
+      </p>
+    </div>
+
+    <div class="workflow-timeline">
+      <div class="wf-step-card">
+        <div class="wf-badge-num">1</div>
+        <h4 class="wf-title">Role Authentication</h4>
+        <p class="wf-desc">
+          Secure, role-based authentication directing users to their dedicated dashboard (Patient, Doctor, Hospital, or Admin).
+        </p>
+      </div>
+
+      <div class="wf-step-card">
+        <div class="wf-badge-num">2</div>
+        <h4 class="wf-title">Facility &amp; Doctor Discovery</h4>
+        <p class="wf-desc">
+          Explore multi-system facilities, verified clinical departments, and specialist doctors across AYUSH &amp; Modern Medicine.
+        </p>
+      </div>
+
+      <div class="wf-step-card">
+        <div class="wf-badge-num">3</div>
+        <h4 class="wf-title">AI Case Intake &amp; Triage</h4>
+        <p class="wf-desc">
+          Voice or text input of chief complaints followed by exactly two contextual clinical questions and preliminary triage assessment.
+        </p>
+      </div>
+
+      <div class="wf-step-card">
+        <div class="wf-badge-num">4</div>
+        <h4 class="wf-title">OPD Token &amp; Live Queue</h4>
+        <p class="wf-desc">
+          Confirm your token, check real-time queue status, and enter the doctor's consultation with a prepared clinical brief.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Privacy Section -->
+  <section class="pub-features-section" id="security" style="background:#FFFFFF;">
+    <div class="section-header">
+      <span class="section-badge">ABDM Standards &amp; Privacy</span>
+      <h2 class="section-title">Your Health Data Remains Secure &amp; Private</h2>
+      <p class="section-desc">
+        Engineered according to National Digital Health Mission standards to ensure consent, confidentiality, and data sovereignty.
+      </p>
+    </div>
+
+    <div style="max-w:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;" class="max-w-7xl mx-auto">
+      <div style="background:#F8FAFD; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
+        <div style="color:#0066E6; font-size:24px; margin-bottom:12px;">🔒</div>
+        <h4 style="font-size:16px; font-weight:800; color:#12345B; margin-bottom:8px;">Zero Audio Storage</h4>
+        <p style="font-size:13px; color:#5F7187; line-height:1.5;">
+          Voice input uses client-side browser speech recognition. No raw audio is permanently stored on external servers.
+        </p>
+      </div>
+
+      <div style="background:#F8FAFD; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
+        <div style="color:#16A05D; font-size:24px; margin-bottom:12px;">🛡️</div>
+        <h4 style="font-size:16px; font-weight:800; color:#12345B; margin-bottom:8px;">Role-Based Isolation</h4>
+        <p style="font-size:13px; color:#5F7187; line-height:1.5;">
+          Strict server-side authorization boundaries guarantee patients, doctors, and hospitals only access authorized data.
+        </p>
+      </div>
+
+      <div style="background:#F8FAFD; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
+        <div style="color:#8B5CF6; font-size:24px; margin-bottom:12px;">📜</div>
+        <h4 style="font-size:16px; font-weight:800; color:#12345B; margin-bottom:8px;">Consent-Driven Sharing</h4>
+        <p style="font-size:13px; color:#5F7187; line-height:1.5;">
+          Longitudinal health records and clinical history are shared exclusively with explicit patient approval.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Public Footer -->
+  <footer class="pub-footer" id="support">
+    <div class="footer-container">
+      <div>
+        <div class="footer-brand-title">MediCare</div>
+        <p class="footer-brand-desc">
+          Part of the CareBridge Digital Health Mission. Advancing outpatient clinic management, intelligent AI clinical case taking, and ABDM longitudinal health records.
+        </p>
+        <div style="font-size:12.5px; color:#94A3B8;">
+          Emergency Hotline: <span style="color:#FDE047; font-weight:700;">108 (India)</span> &bull; ABDM Helpdesk: <span style="color:#FDE047; font-weight:700;">1800-11-4477</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Portals</h4>
+        <ul class="footer-links">
+          <li><a href="/login?role=patient">Patient Portal</a></li>
+          <li><a href="/login?role=doctor">Doctor Console</a></li>
+          <li><a href="/login?role=hospital">Hospital Management</a></li>
+          <li><a href="/login?role=main_admin">Main Admin Console</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Services</h4>
+        <ul class="footer-links">
+          <li><a href="#services">AI History Taking</a></li>
+          <li><a href="#services">Clinical Triage</a></li>
+          <li><a href="#services">OPD Token Booking</a></li>
+          <li><a href="#services">Health ID &amp; Records</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Support &amp; Standards</h4>
+        <ul class="footer-links">
+          <li><a href="#security">Privacy Policy</a></li>
+          <li><a href="#security">ABDM Compliance</a></li>
+          <li><a href="#security">Security Architecture</a></li>
+          <li><a href="#support">Helpdesk &amp; FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 MediCare Digital Health Platform. CareBridge Mission. All rights reserved.</div>
+      <div>Designed for SIH &amp; National Healthcare Digitization</div>
+    </div>
+  </footer>
+
+  <!-- Client-Side Session Detection Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      const name = localStorage.getItem('name');
+
+      // Check if user has an active authenticated session
+      if (token && role) {
+        const banner = document.getElementById('authenticatedSessionBanner');
+        const roleLabel = document.getElementById('activeSessionRole');
+        const nameLabel = document.getElementById('activeSessionName');
+        const link = document.getElementById('activeDashboardLink');
+
+        if (banner) {
+          banner.style.display = 'block';
+          if (roleLabel) roleLabel.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+          if (nameLabel) nameLabel.textContent = name || 'User';
+
+          let dashboardUrl = '/dashboard';
+          if (role === 'doctor') dashboardUrl = '/doctor';
+          else if (role === 'clinic_admin' || role === 'hospital') dashboardUrl = '/clinic_dashboard';
+          else if (role === 'main_admin') dashboardUrl = '/admin';
+
+          if (link) {
+            link.href = dashboardUrl;
+            link.textContent = `Continue to ${role.charAt(0).toUpperCase() + role.slice(1)} Dashboard →`;
+          }
         }
+      }
+    });
 
-        async function searchLocation() {
-            const query = document.getElementById('searchInput').value;
-            if (!query) return;
-            const status = document.getElementById('locStatus');
-            status.textContent = 'Searching clinics...';
-            try {
-                const res = await fetch(`/api/booking/clinics/search?query=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                renderClinics(data.data, `Found ${data.data.length} clinics matching "${query}"`);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function renderClinics(clinics, statusText) {
-            const grid = document.getElementById('clinicsGrid');
-            if(clinics.length > 0) {
-                grid.innerHTML = clinics.map(c => `
-                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 clinic-card hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
-                        <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-2xl font-bold text-gray-900">${c.name}</h3>
-                            ${c.distance_km ? `<span class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full">${c.distance_km} km</span>` : ''}
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6 leading-relaxed">${c.address}</p>
-                        
-                        <div class="border-t border-gray-100 pt-4 mt-auto">
-                            <a href="/booking?clinic_id=${c._id}" class="text-blue-600 font-bold text-sm hover:underline flex items-center justify-end">
-                                View Doctors & Book <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </a>
-                        </div>
-                    </div>
-                `).join('');
-                
-                gsap.from(".clinic-card", { y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: "power2.out" });
-                document.getElementById('locStatus').textContent = statusText;
-            } else {
-                grid.innerHTML = `<p class="col-span-3 text-center text-gray-500 py-12 font-medium text-lg">No clinics found.</p>`;
-                document.getElementById('locStatus').textContent = statusText;
-            }
-        }
-
-        async function success(position) {
-            const lat  = position.coords.latitude;
-            const lng = position.coords.longitude;
-            document.getElementById('locStatus').textContent = `Searching clinics nearby...`;
-            
-            try {
-                const res = await fetch(`/api/booking/clinics/nearby?lat=${lat}&lng=${lng}`);
-                const data = await res.json();
-                renderClinics(data.data, `Found ${data.data.length} clinics near you!`);
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        function error() {
-            document.getElementById('locStatus').textContent = 'Unable to retrieve your location. Please check your browser permissions.';
-        }
-
-        // Dashboard Authentication Logic
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        const name = localStorage.getItem('name');
-
-        function updateAuthUI() {
-            const navLoginContainer = document.getElementById('navLoginContainer');
-            const heroButtons = document.getElementById('heroButtons');
-            const apptSection = document.getElementById('appointmentsSection');
-            const heroGreeting = document.getElementById('heroGreeting');
-
-            if (token && role === 'patient') {
-                // Update Navbar
-                navLoginContainer.innerHTML = `
-                    <a href="#services" class="text-gray-600 hover:text-blue-600 font-medium transition">Services</a>
-                    <a href="#discovery" class="text-gray-600 hover:text-blue-600 font-medium transition">Clinics</a>
-                    <span class="text-slate-600 font-medium ml-4">Hi, ${name}</span>
-                    <button onclick="logout()" class="text-red-500 hover:text-red-700 font-semibold transition ml-4">Logout</button>
-                    <a href="#discovery" class="bg-blue-600 text-white px-6 py-2.5 rounded-full shadow hover:bg-blue-700 transition font-medium ml-4">Book Appointment</a>
-                `;
-
-                // Update Hero
-                heroGreeting.textContent = `Welcome back, ${name}`;
-                heroButtons.innerHTML = `
-                    <a href="#discovery" class="bg-blue-600 text-white px-8 py-4 rounded-full shadow-lg shadow-blue-200 hover:bg-blue-700 font-semibold text-lg transition transform hover:-translate-y-1">
-                        Book New Appointment
-                    </a>
-                    <a href="#appointmentsSection" class="bg-white text-blue-600 px-8 py-4 rounded-full shadow-lg hover:bg-gray-50 font-semibold text-lg transition glass border border-gray-200">
-                        View My Appointments
-                    </a>
-                `;
-
-                // Show Appointments Section and Load Data
-                apptSection.classList.remove('hidden');
-                loadAppointments();
-            }
-        }
-        
-        function logout() {
-            localStorage.clear();
-            window.location.reload();
-        }
-
-        async function loadAppointments() {
-            try {
-                const res = await fetch('/api/booking/my-appointments', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.status === 401 || res.status === 422) return logout();
-                const data = await res.json();
-                
-                const grid = document.getElementById('appointmentsGrid');
-                if (data.success && data.data.length > 0) {
-                    grid.innerHTML = data.data.map(app => `
-                        <div class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-lg shadow-blue-900/5 border border-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                            <div class="flex justify-between items-start mb-6">
-                                <div>
-                                    <h3 class="font-extrabold text-2xl text-slate-900">${app.date}</h3>
-                                    <p class="text-blue-600 font-semibold mt-1">Slot: ${app.slot}</p>
-                                </div>
-                                <span class="px-4 py-1.5 rounded-full text-xs font-bold ${
-                                    app.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                    app.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                    'bg-yellow-100 text-yellow-700'
-                                }">${app.status.toUpperCase()}</span>
-                            </div>
-                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl mb-2 text-center border border-blue-100/50 shadow-inner">
-                                <p class="text-sm text-blue-600/80 font-bold uppercase tracking-wider mb-2">Live Queue Token</p>
-                                <p class="text-6xl font-black text-blue-700 tracking-tight">${app.token_number}</p>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 font-medium text-lg bg-white/50 rounded-3xl border border-white/50">You have no upcoming appointments.</div>`;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', updateAuthUI);
-    </script>
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('name');
+      localStorage.removeItem('patient_id');
+      localStorage.removeItem('health_id');
+      document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "auth_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "auth_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.href = '/logout';
+    }
+  </script>
 </body>
 </html>

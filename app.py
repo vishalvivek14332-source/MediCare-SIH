@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
@@ -96,10 +96,52 @@ def create_app():
     def voice_transcribe_alias():
         return voice_transcribe()
 
+    def get_authenticated_user_from_request():
+        auth_token = request.cookies.get('auth_token')
+        if not auth_token and 'Authorization' in request.headers:
+            auth_header = request.headers.get('Authorization')
+            if auth_header.startswith('Bearer '):
+                auth_token = auth_header.split(' ', 1)[1]
+                
+        if auth_token:
+            try:
+                from flask_jwt_extended import decode_token
+                import json
+                decoded = decode_token(auth_token)
+                identity = decoded.get('sub')
+                data = json.loads(identity) if isinstance(identity, str) else identity
+                return data
+            except Exception:
+                return None
+        return None
+
     # Frontend routes (serving templates)
     @app.route('/')
-    @app.route('/dashboard')
     def index():
+        user = get_authenticated_user_from_request()
+        if user:
+            role = user.get('role')
+            if role == 'patient':
+                return redirect('/dashboard')
+            elif role == 'doctor':
+                return redirect('/doctor')
+            elif role in ('clinic_admin', 'hospital', 'facility'):
+                return redirect('/clinic_dashboard')
+            elif role in ('main_admin', 'admin'):
+                return redirect('/admin')
+        return render_template('index.html', active_page='home')
+
+    @app.route('/dashboard')
+    def patient_dashboard():
+        user = get_authenticated_user_from_request()
+        if user:
+            role = user.get('role')
+            if role == 'doctor':
+                return redirect('/doctor')
+            elif role in ('clinic_admin', 'hospital', 'facility'):
+                return redirect('/clinic_dashboard')
+            elif role in ('main_admin', 'admin'):
+                return redirect('/admin')
         return render_template('dashboard.html', active_page='dashboard')
 
     @app.route('/health-records')
@@ -157,6 +199,15 @@ def create_app():
 
     @app.route('/doctor')
     def doctor():
+        user = get_authenticated_user_from_request()
+        if user:
+            role = user.get('role')
+            if role == 'patient':
+                return "Forbidden: Patient cannot access Doctor console.", 403
+            elif role in ('clinic_admin', 'hospital', 'facility'):
+                return redirect('/clinic_dashboard')
+            elif role in ('main_admin', 'admin'):
+                return redirect('/admin')
         from bson.objectid import ObjectId
         appointments = list(mongo.db.appointments.find({"status": {"$in": ["pending", "confirmed", "scheduled", "completed"]}}).sort([("created_at", -1)]).limit(12))
         for a in appointments:
@@ -225,11 +276,38 @@ def create_app():
 
     @app.route('/admin')
     def admin():
-        return render_template('admin.html')
+        user = get_authenticated_user_from_request()
+        if user:
+            role = user.get('role')
+            if role == 'patient':
+                return "Forbidden: Patient cannot access Main Admin console.", 403
+            elif role == 'doctor':
+                return "Forbidden: Doctor cannot access Main Admin console.", 403
+            elif role in ('clinic_admin', 'hospital', 'facility'):
+                return "Forbidden: Hospital cannot access Main Admin console.", 403
+        return render_template('admin.html', active_page='admin')
 
     @app.route('/clinic_dashboard')
+    @app.route('/hospital')
     def clinic_dashboard():
-        return render_template('clinic_dashboard.html')
+        user = get_authenticated_user_from_request()
+        if user:
+            role = user.get('role')
+            if role == 'patient':
+                return "Forbidden: Patient cannot access Hospital management console.", 403
+            elif role == 'doctor':
+                return redirect('/doctor')
+            elif role in ('main_admin', 'admin'):
+                return redirect('/admin')
+        return render_template('clinic_dashboard.html', active_page='clinic_dashboard')
+
+    @app.route('/logout')
+    def logout():
+        resp = make_response(redirect('/'))
+        resp.delete_cookie('auth_token', path='/')
+        resp.delete_cookie('auth_role', path='/')
+        resp.delete_cookie('auth_name', path='/')
+        return resp
 
     return app
 
