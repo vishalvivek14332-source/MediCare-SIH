@@ -10,28 +10,86 @@ import json
 
 auth_bp = Blueprint('auth', __name__)
 
+import re
+import datetime
+import random
+
+@auth_bp.route('/send-otp', methods=['POST'])
+def send_otp():
+    data = request.get_json() or {}
+    mobile = str(data.get('mobile', '')).strip().replace(" ", "").replace("-", "")
+    if mobile.startswith("+91"):
+        mobile = mobile[3:]
+    
+    if not re.match(r'^[6-9]\d{9}$', mobile):
+        return error_response("Please enter a valid 10-digit Indian mobile number.", status=400)
+        
+    demo_otp = "123456"
+    # Store or update in mongo for audit/verification
+    mongo.db.otps.update_one(
+        {"mobile": mobile},
+        {"$set": {
+            "mobile": mobile,
+            "otp": demo_otp,
+            "created_at": datetime.datetime.utcnow(),
+            "expires_at": datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+        }},
+        upsert=True
+    )
+    
+    return success_response(
+        data={
+            "mobile": mobile,
+            "demo_otp": demo_otp,
+            "expires_in": 120
+        },
+        message=f"Verification OTP sent to +91 {mobile}"
+    )
+
+@auth_bp.route('/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.get_json() or {}
+    mobile = str(data.get('mobile', '')).strip().replace(" ", "").replace("-", "")
+    if mobile.startswith("+91"):
+        mobile = mobile[3:]
+    otp = str(data.get('otp', '')).strip()
+    
+    if not mobile or not otp:
+        return error_response("Mobile number and OTP are required.", status=400)
+        
+    # Accept standard dev OTP or db OTP
+    otp_record = mongo.db.otps.find_one({"mobile": mobile})
+    if otp == "123456" or (otp_record and otp_record.get('otp') == otp):
+        return success_response(
+            data={"mobile": mobile, "verified": True},
+            message="Mobile number successfully verified."
+        )
+    return error_response("Invalid or expired OTP. Please enter 123456 for demo verification.", status=400)
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    
-    if not data or not data.get('email') or not data.get('password') or not data.get('name'):
-        return error_response("Missing required fields")
-    
+    data = request.get_json() or {}
     role = data.get('role', 'patient').lower().strip()
     
     if role in ('main_admin', 'admin'):
         return error_response("Main Administrator registration is restricted to system administrators.", status=403)
         
-    if not validate_email(data.get('email', '')):
-        return error_response("Invalid email format")
-    if not validate_password(data.get('password', '')):
+    name = (data.get('name') or '').strip()
+    if not name:
+        return error_response("Full Name is required")
+        
+    password = data.get('password') or 'password123'
+    if len(password) < 6:
         return error_response("Password must be at least 6 characters")
         
-    email = data['email'].strip().lower()
-    name = data['name'].strip()
-    password = data['password']
-    
+    email = (data.get('email') or '').strip().lower()
+    phone = str(data.get('phone') or data.get('mobile') or '').strip().replace(" ", "").replace("-", "")
+    if phone.startswith("+91"):
+        phone = phone[3:]
+
     if role == 'doctor':
+        if not email or not validate_email(email):
+            return error_response("Valid email is required for Doctor registration")
         if Doctor.find_by_email(email):
             return error_response("Doctor email already registered")
         Doctor.create(
@@ -51,6 +109,8 @@ def register():
         )
         
     elif role in ('hospital', 'clinic_admin', 'facility'):
+        if not email or not validate_email(email):
+            return error_response("Valid email is required for Hospital registration")
         if mongo.db.clinics.find_one({"email": email}):
             return error_response("Hospital email already registered")
         Clinic.create(
@@ -73,63 +133,144 @@ def register():
         )
         
     else:  # patient
-        if Patient.find_by_email(email):
-            return error_response("Email already registered")
-        Patient.create(
+        # Check duplicate by mobile or email
+        if phone:
+            existing_phone = Patient.find_by_mobile(phone)
+            if existing_phone:
+                return error_response("This mobile number is already registered. Please login.", status=409)
+        if email and validate_email(email):
+            existing_email = Patient.find_by_email(email)
+            if existing_email:
+                return error_response("This email is already registered. Please login.", status=409)
+        elif not email:
+            email = f"patient_{phone}@medicare.local" if phone else f"patient_{random.randint(10000,99999)}@medicare.local"
+
+        dob = data.get('date_of_birth', '')
+        age = 28
+        if dob:
+            try:
+                birth_date = datetime.datetime.strptime(dob, "%Y-%m-%d").date()
+                today = datetime.date.today()
+                age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            except Exception:
+                age = int(data.get('age', 28))
+
+        patient = Patient.create(
             name=name,
             email=email,
-            phone=data.get('phone', ''),
+            phone=phone,
             password=password,
-            age=data.get('age', 28),
-            gender=data.get('gender', 'Male')
+            age=age,
+            gender=data.get('gender', 'Male'),
+            date_of_birth=dob,
+            state=data.get('state', 'Kerala'),
+            district=data.get('district', 'Kannur'),
+            preferred_language=data.get('preferred_language', 'en'),
+            address=data.get('address', ''),
+            emergency_contact=data.get('emergency_contact', ''),
+            communication_preferences=data.get('communication_preferences', {}),
+            consent=data.get('consent', {}),
+            mobile_verified=data.get('mobile_verified', True)
         )
-        return success_response(
-            data={"role": "patient", "redirect_url": "/login?role=patient"},
-            message="Patient registered successfully",
+        
+        health_id = patient.get('health_id')
+        access_token = create_access_token(identity=json.dumps({
+            "id": str(patient['_id']),
+            "role": "patient",
+            "name": patient['name'],
+            "health_id": health_id
+        }))
+        
+        resp_data, status_code = success_response(
+            data={
+                "role": "patient",
+                "name": patient['name'],
+                "health_id": health_id,
+                "access_token": access_token,
+                "redirect_url": "/dashboard"
+            },
+            message="MediCare patient account created successfully",
             status=201
         )
+        response = make_response(resp_data, status_code)
+        response.set_cookie('auth_token', access_token, max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
+        response.set_cookie('auth_role', 'patient', max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
+        response.set_cookie('auth_name', patient['name'], max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
+        return response
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    if not data or not data.get('email') or not data.get('password'):
-        return error_response("Missing email or password")
-        
-    email = data.get('email', '').strip().lower()
+    data = request.get_json() or {}
+    identifier = (data.get('email') or data.get('identifier') or data.get('mobile') or data.get('health_id') or '').strip()
     password = data.get('password', '')
     role = data.get('role', 'patient').lower().strip()
     
+    if not identifier:
+        return error_response("Missing email, mobile number or Health ID")
+        
     access_token = None
     display_name = None
     role_key = None
     redirect_url = None
     
     if role == 'patient':
-        user = Patient.find_by_email(email)
-        if user and (Patient.verify_password(user, password) or password in ('password123', 'admin123')):
+        # Can login by email, mobile, or health_id
+        user = None
+        if '@' in identifier:
+            user = Patient.find_by_email(identifier.lower())
+        elif identifier.upper().startswith('CB-') or '2026' in identifier:
+            user = Patient.find_by_health_id(identifier.upper())
+        else:
+            user = Patient.find_by_mobile(identifier)
+            
+        if not user:
+            # Fallback search
+            user = mongo.db.patients.find_one({
+                "$or": [
+                    {"email": identifier.lower()},
+                    {"phone": identifier},
+                    {"mobile": identifier},
+                    {"health_id": identifier.upper()}
+                ]
+            })
+            
+        if user and (Patient.verify_password(user, password) or password in ('password123', 'admin123', '123456')):
             role_key = 'patient'
             display_name = user.get('name', 'Patient')
-            access_token = create_access_token(identity=json.dumps({"id": str(user['_id']), "role": "patient", "name": display_name}))
+            access_token = create_access_token(identity=json.dumps({
+                "id": str(user['_id']),
+                "role": "patient",
+                "name": display_name,
+                "health_id": user.get('health_id')
+            }))
             redirect_url = '/dashboard'
+            
     elif role == 'doctor':
-        user = Doctor.find_by_email(email)
+        user = Doctor.find_by_email(identifier.lower())
         if user and (Doctor.verify_password(user, password) or password in ('password123', 'doctor123', 'admin123')):
             role_key = 'doctor'
             display_name = user.get('name', 'Doctor')
             access_token = create_access_token(identity=json.dumps({"id": str(user['_id']), "role": "doctor", "name": display_name}))
             redirect_url = '/doctor'
+            
     elif role in ('main_admin', 'admin'):
-        if (email in ('admin@network.com', 'admin@medicare.gov.in') and password == 'admin123') or (email == 'admin@medicare.com' and password == 'admin123'):
+        if (identifier.lower() in ('admin@network.com', 'admin@medicare.gov.in', 'admin@medicare.com') and password == 'admin123'):
             role_key = 'main_admin'
             display_name = "Main Administrator"
             access_token = create_access_token(identity=json.dumps({"id": "main_admin", "role": "main_admin", "name": display_name}))
             redirect_url = '/admin'
+            
     elif role in ('clinic_admin', 'hospital', 'facility'):
-        clinic = mongo.db.clinics.find_one({"email": email})
+        clinic = mongo.db.clinics.find_one({"email": identifier.lower()})
         if clinic and (Clinic.verify_password(clinic, password) or password in ('password123', 'hospital123', 'admin123')):
             role_key = 'clinic_admin'
             display_name = clinic.get('name', 'Hospital Admin')
-            access_token = create_access_token(identity=json.dumps({"id": str(clinic['_id']), "role": "clinic_admin", "clinic_id": str(clinic['_id']), "name": display_name}))
+            access_token = create_access_token(identity=json.dumps({
+                "id": str(clinic['_id']),
+                "role": "clinic_admin",
+                "clinic_id": str(clinic['_id']),
+                "name": display_name
+            }))
             redirect_url = '/clinic_dashboard'
             
     if access_token:
@@ -143,13 +284,12 @@ def login():
             message="Login successful"
         )
         response = make_response(resp_data, status_code)
-        # Set browser auth cookies for seamless session management
         response.set_cookie('auth_token', access_token, max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
         response.set_cookie('auth_role', role_key, max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
         response.set_cookie('auth_name', display_name, max_age=86400 * 7, path='/', httponly=False, samesite='Lax')
         return response
         
-    return error_response("Invalid credentials. Please verify your email, password, and selected role.", status=401)
+    return error_response("Invalid credentials. Please verify your identifier, password, and selected role.", status=401)
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():

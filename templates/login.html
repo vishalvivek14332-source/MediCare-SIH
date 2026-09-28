@@ -255,8 +255,8 @@
       <input type="hidden" id="selectedRole" value="patient">
 
       <div class="form-group">
-        <label class="form-label" id="emailLabel">Email Address</label>
-        <input type="email" id="emailInput" class="form-input" required placeholder="name@example.com" value="sajilbinu@example.com">
+        <label class="form-label" id="emailLabel">Email, Mobile or Health ID</label>
+        <input type="text" id="emailInput" class="form-input" required placeholder="Email, Mobile or Health ID" value="sajilbinu@example.com">
       </div>
 
       <div class="form-group">
@@ -290,7 +290,7 @@
     const roleConfig = {
       patient: {
         title: 'Sign in to your Patient Portal',
-        emailPlaceholder: 'patient@example.com',
+        emailPlaceholder: 'Email, Mobile, or Health ID (e.g. CB-2026-001245)',
         submitText: 'Sign In as Patient →',
         signupUrl: '/register?role=patient',
         showSignup: true,
