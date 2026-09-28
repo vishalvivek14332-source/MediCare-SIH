@@ -68,7 +68,7 @@
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 1240px;
+      max-width: 1200px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1.08fr;
@@ -78,32 +78,34 @@
 
     /* Left Promotional Panel */
     .promo-panel {
-      padding: 24px 20px 20px 10px;
+      padding: 10px 10px 10px 0;
       display: flex;
       flex-direction: column;
       position: relative;
+      min-height: 520px;
+      justify-content: space-between;
     }
 
     .brand-top {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 28px;
+      margin-bottom: 22px;
     }
 
     .brand-logo-img {
-      height: 48px;
+      height: 46px;
       object-fit: contain;
     }
 
     .main-hero-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 44px;
+      font-size: 42px;
       font-weight: 800;
       color: var(--navy-900);
       line-height: 1.15;
       letter-spacing: -0.8px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .main-hero-title span {
@@ -111,30 +113,39 @@
     }
 
     .main-hero-sub {
-      font-size: 15px;
+      font-size: 14.5px;
       color: var(--slate-600);
       line-height: 1.5;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
       max-width: 440px;
+    }
+
+    /* Lower row: Features on left, Illustration on right */
+    .promo-lower-row {
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      min-height: 280px;
     }
 
     /* 4 Feature Items */
     .feature-list {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      margin-bottom: 28px;
+      gap: 16px;
+      max-width: 320px;
+      z-index: 2;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .feature-icon-circle {
-      width: 46px;
-      height: 46px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -151,27 +162,28 @@
 
     .feature-content h4 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--navy-900);
       margin-bottom: 2px;
     }
 
     .feature-content p {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--slate-500);
     }
 
     /* Left Panel Illustration */
     .promo-artwork-box {
-      margin-top: 10px;
-      display: flex;
-      justify-content: flex-end;
-      position: relative;
+      position: absolute;
+      bottom: -15px;
+      right: -10px;
+      width: 270px;
+      z-index: 1;
+      pointer-events: none;
     }
 
     .promo-artwork-img {
-      max-width: 320px;
       width: 100%;
       height: auto;
       object-fit: contain;
@@ -184,7 +196,7 @@
       border-radius: 28px;
       border: 1px solid var(--slate-200);
       box-shadow: 0 20px 45px -12px rgba(0, 43, 92, 0.12);
-      padding: 38px 40px;
+      padding: 32px 34px;
       position: relative;
     }
 
@@ -193,13 +205,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       border-bottom: 1px solid var(--slate-100);
-      padding-bottom: 12px;
+      padding-bottom: 10px;
     }
 
     .role-badge-label {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       color: var(--slate-400);
       text-transform: uppercase;
@@ -217,9 +229,9 @@
     .role-pill {
       border: none;
       background: transparent;
-      padding: 5px 12px;
+      padding: 4px 12px;
       border-radius: 16px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--slate-500);
       cursor: pointer;
@@ -234,7 +246,7 @@
     }
 
     .card-header {
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
 
     .card-title {
@@ -257,12 +269,12 @@
       align-items: center;
       justify-content: space-between;
       position: relative;
-      margin: 18px 0 26px;
+      margin: 14px 0 22px;
     }
 
     .progress-track {
       position: absolute;
-      top: 17px;
+      top: 16px;
       left: 20px;
       right: 20px;
       height: 2px;
@@ -283,20 +295,20 @@
       align-items: center;
       position: relative;
       z-index: 2;
-      width: 60px;
+      width: 56px;
       cursor: default;
     }
 
     .step-circle {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: var(--slate-100);
       color: var(--slate-400);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13.5px;
+      font-size: 12.5px;
       font-weight: 700;
       border: 2px solid #FFFFFF;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -315,10 +327,10 @@
     }
 
     .step-label {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       color: var(--slate-400);
-      margin-top: 6px;
+      margin-top: 5px;
       white-space: nowrap;
       text-align: center;
       transition: all 0.2s ease;
@@ -330,11 +342,11 @@
     }
 
     .step-active-line {
-      width: 28px;
+      width: 24px;
       height: 2px;
       background: var(--primary);
       border-radius: 2px;
-      margin-top: 4px;
+      margin-top: 3px;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
@@ -369,11 +381,11 @@
     .step-desc {
       font-size: 13px;
       color: var(--slate-500);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .form-label {
@@ -381,7 +393,7 @@
       font-size: 12.5px;
       font-weight: 700;
       color: var(--navy-900);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .form-label .req {
@@ -391,10 +403,10 @@
 
     .form-input, .form-select {
       width: 100%;
-      padding: 11px 14px;
-      border-radius: 10px;
+      padding: 10px 13px;
+      border-radius: 9px;
       border: 1.5px solid var(--slate-200);
-      font-size: 14px;
+      font-size: 13.5px;
       outline: none;
       background: #FFFFFF;
       color: var(--slate-800);
@@ -432,10 +444,10 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 11px 14px;
+      padding: 10px 13px;
       background: var(--slate-50);
       border-right: 1.5px solid var(--slate-200);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       color: var(--navy-900);
     }
@@ -443,26 +455,26 @@
     .phone-input-group input {
       flex: 1;
       border: none;
-      padding: 11px 14px;
-      font-size: 14px;
+      padding: 10px 13px;
+      font-size: 13.5px;
       outline: none;
     }
 
     /* Primary Action Buttons */
     .btn-primary-blue {
       width: 100%;
-      padding: 13px;
+      padding: 12px;
       border-radius: 12px;
       border: none;
       background: var(--primary);
       color: #FFFFFF;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
       box-shadow: 0 4px 12px rgba(0, 102, 230, 0.25);
-      margin-top: 8px;
+      margin-top: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -480,12 +492,12 @@
     }
 
     .btn-secondary-outline {
-      padding: 12px 18px;
+      padding: 11px 16px;
       border-radius: 10px;
       border: 1.5px solid var(--slate-200);
       background: #FFFFFF;
       color: var(--slate-600);
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -501,13 +513,13 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 18px;
     }
 
     /* Security callout pill */
     .security-notice-card {
-      margin-top: 16px;
-      padding: 12px 14px;
+      margin-top: 14px;
+      padding: 11px 13px;
       border-radius: 12px;
       background: var(--primary-light);
       display: flex;
@@ -522,7 +534,7 @@
     }
 
     .security-notice-card p {
-      font-size: 12.5px;
+      font-size: 12px;
       color: #1E40AF;
       line-height: 1.4;
     }
@@ -532,7 +544,7 @@
       display: flex;
       align-items: center;
       text-align: center;
-      margin: 20px 0 16px;
+      margin: 18px 0 14px;
       color: var(--slate-400);
       font-size: 12px;
       font-weight: 500;
@@ -578,8 +590,8 @@
 
     .auth-login-link {
       text-align: center;
-      margin-top: 20px;
-      font-size: 13.5px;
+      margin-top: 16px;
+      font-size: 13px;
       color: var(--slate-500);
     }
 
@@ -598,24 +610,25 @@
     .otp-verify-box {
       background: var(--slate-50);
       border: 1px solid var(--slate-200);
-      border-radius: 14px;
-      padding: 18px;
-      margin-top: 14px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
     }
 
     .otp-inputs-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
-      margin: 14px 0;
+      margin: 10px 0;
     }
 
     .otp-digit-input {
-      width: 44px;
-      height: 48px;
+      width: 180px;
+      height: 44px;
       text-align: center;
       font-size: 20px;
       font-weight: 800;
+      letter-spacing: 8px;
       border-radius: 8px;
       border: 1.5px solid var(--slate-200);
       background: #FFFFFF;
@@ -639,7 +652,7 @@
       color: #166534;
       font-size: 12px;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     /* Preference toggle cards */
@@ -647,30 +660,30 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-radius: 10px;
       border: 1px solid var(--slate-200);
-      margin-bottom: 10px;
+      margin-bottom: 9px;
       background: var(--slate-50);
     }
 
     .pref-text h5 {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--navy-900);
       margin-bottom: 2px;
     }
 
     .pref-text p {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--slate-500);
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 42px;
-      height: 24px;
+      width: 40px;
+      height: 22px;
       flex-shrink: 0;
     }
 
@@ -686,14 +699,14 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #CBD5E1;
       transition: .2s;
-      border-radius: 24px;
+      border-radius: 22px;
     }
 
     .slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
+      height: 16px;
+      width: 16px;
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -712,10 +725,10 @@
     /* Consent Checkboxes */
     .consent-card {
       background: var(--slate-50);
-      border-radius: 12px;
+      border-radius: 11px;
       border: 1px solid var(--slate-200);
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
     }
 
     .checkbox-label {
@@ -723,7 +736,7 @@
       align-items: flex-start;
       gap: 10px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--slate-800);
       line-height: 1.45;
     }
@@ -739,19 +752,19 @@
     /* Complete Step Card */
     .complete-card-box {
       text-align: center;
-      padding: 20px 10px;
+      padding: 14px 10px;
     }
 
     .success-celebrate-icon {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
       background: #DCFCE7;
       color: #16A34A;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 14px;
       box-shadow: 0 4px 14px rgba(22, 163, 74, 0.2);
     }
 
@@ -759,34 +772,34 @@
       background: linear-gradient(135deg, #003B73 0%, #002B5C 100%);
       color: #FFFFFF;
       border-radius: 16px;
-      padding: 20px;
-      margin: 20px 0 24px;
+      padding: 18px;
+      margin: 16px 0 20px;
       box-shadow: 0 10px 25px -5px rgba(0, 43, 92, 0.25);
       position: relative;
       overflow: hidden;
     }
 
     .health-id-display-widget .hid-tag {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #38BDF8;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .health-id-display-widget .hid-number {
       font-family: monospace;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: 1.5px;
       color: #FFFFFF;
     }
 
     .health-id-display-widget .hid-patient-name {
-      font-size: 14px;
+      font-size: 13.5px;
       color: #93C5FD;
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     /* Alert / Validation Boxes */
@@ -794,7 +807,7 @@
       padding: 10px 14px;
       border-radius: 8px;
       font-size: 13px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: none;
     }
 
@@ -815,21 +828,31 @@
       display: none;
     }
 
+    /* Back home link */
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--slate-500);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .back-home:hover {
+      color: var(--primary);
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .signup-wrapper {
         grid-template-columns: 1fr;
-        max-width: 620px;
+        max-width: 540px;
       }
       .promo-panel {
-        order: 2;
-        padding: 20px 10px;
-      }
-      .card-panel {
-        order: 1;
-      }
-      .promo-artwork-box {
-        justify-content: center;
+        display: none;
       }
     }
 
@@ -841,16 +864,13 @@
         padding: 24px 20px;
         border-radius: 20px;
       }
-      .main-hero-title {
-        font-size: 32px;
-      }
       .progress-bar-container {
-        margin: 12px 0 20px;
+        margin: 10px 0 18px;
       }
       .step-circle {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
       }
       .step-label {
         font-size: 9.5px;
@@ -871,7 +891,7 @@
 
   <div class="signup-wrapper">
     
-    <!-- LEFT SIDE: Healthcare promotional & branding panel -->
+    <!-- LEFT SIDE: Healthcare promotional & branding panel (Matching Signup.png) -->
     <div class="promo-panel">
       <!-- Top Logo -->
       <div class="brand-top">
@@ -881,80 +901,82 @@
       </div>
 
       <!-- Main Heading -->
-      <h1 class="main-hero-title">
-        Join MediCare<br>
-        <span>for a Healthier<br>Tomorrow</span>
-      </h1>
+      <div>
+        <h1 class="main-hero-title">
+          Join MediCare<br>
+          <span>for a Healthier<br>Tomorrow</span>
+        </h1>
 
-      <p class="main-hero-sub">
-        Create your account and take control of your healthcare journey.
-      </p>
-
-      <!-- 4 Features list -->
-      <div class="feature-list">
-        <div class="feature-item">
-          <div class="feature-icon-circle icon-blue">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <line x1="10" y1="9" x2="8" y2="9"></line>
-            </svg>
-          </div>
-          <div class="feature-content">
-            <h4>Manage Your Health Records</h4>
-            <p>All your medical information in one place</p>
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="feature-icon-circle icon-green">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <div class="feature-content">
-            <h4>Book Appointments</h4>
-            <p>Find hospitals and specialist doctors</p>
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="feature-icon-circle icon-purple">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-          <div class="feature-content">
-            <h4>AI Case Intake</h4>
-            <p>Quick and structured consultation</p>
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="feature-icon-circle icon-orange">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <polyline points="9 12 11 14 15 10"></polyline>
-            </svg>
-          </div>
-          <div class="feature-content">
-            <h4>Secure &amp; Trusted</h4>
-            <p>Your health data is safe with us</p>
-          </div>
-        </div>
+        <p class="main-hero-sub">
+          Create your account and take control of your healthcare journey.
+        </p>
       </div>
 
-      <!-- Healthcare illustration placed at the lower portion of the left panel -->
-      <div class="promo-artwork-box">
-        <img src="{{ url_for('static', filename='images/signup_patient_art.png') }}" alt="MediCare Healthcare Character" class="promo-artwork-img">
+      <!-- Lower row: 4 features on left, illustration on right (Side-by-side) -->
+      <div class="promo-lower-row">
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-icon-circle icon-blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h4>Manage Your Health Records</h4>
+              <p>All your medical information in one place</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-circle icon-green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h4>Book Appointments</h4>
+              <p>Find hospitals and specialist doctors</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-circle icon-purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h4>AI Case Intake</h4>
+              <p>Quick and structured consultation</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-circle icon-orange">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h4>Secure &amp; Trusted</h4>
+              <p>Your health data is safe with us</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Healthcare character illustration -->
+        <div class="promo-artwork-box">
+          <img src="{{ url_for('static', filename='images/signup_patient_art.png') }}" alt="MediCare Healthcare Character" class="promo-artwork-img">
+        </div>
       </div>
     </div>
 
@@ -1051,7 +1073,7 @@
             </div>
             
             <div class="otp-inputs-row">
-              <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" style="width:180px; letter-spacing:8px;" placeholder="123456">
+              <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" placeholder="123456">
             </div>
 
             <div style="font-size:12px; color:#0369A1; text-align:center; margin-bottom:10px;" id="demoOtpHint">
@@ -1063,7 +1085,7 @@
             </button>
 
             <div style="text-align:center; margin-top:10px;">
-              <button type="button" onclick="handleSendOtp()" style="background:none; border:none; color:var(--primary); font-size:12.5px; font-weight:700; cursor:pointer;" id="btnResendOtp">
+              <button type="button" onclick="handleSendOtp()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;" id="btnResendOtp">
                 Resend OTP
               </button>
             </div>
@@ -1173,7 +1195,7 @@
             <button type="button" class="btn-secondary-outline" onclick="goToStep(1)">
               &larr; Back
             </button>
-            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:12px 28px;" onclick="validateAndGoToPreferences()">
+            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="validateAndGoToPreferences()">
               Continue to Preferences &rarr;
             </button>
           </div>
@@ -1232,7 +1254,7 @@
             <button type="button" class="btn-secondary-outline" onclick="goToStep(2)">
               &larr; Back
             </button>
-            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:12px 28px;" onclick="goToStep(4)">
+            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="goToStep(4)">
               Continue to Consent &rarr;
             </button>
           </div>
@@ -1243,7 +1265,7 @@
           <h3 class="step-title">Privacy &amp; Consent</h3>
           <p class="step-desc">Your clinical records are confidential and stored in full adherence with digital health privacy guidelines.</p>
 
-          <div class="security-notice-card" style="margin-bottom:18px;">
+          <div class="security-notice-card" style="margin-bottom:16px;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               <polyline points="9 12 11 14 15 10"></polyline>
@@ -1276,7 +1298,7 @@
             <button type="button" class="btn-secondary-outline" onclick="goToStep(3)">
               &larr; Back
             </button>
-            <button type="button" class="btn-primary-blue" id="btnCreateAccount" style="margin-top:0; width:auto; padding:13px 32px;" onclick="handleFinalPatientSubmit()">
+            <button type="button" class="btn-primary-blue" id="btnCreateAccount" style="margin-top:0; width:auto; padding:12px 28px;" onclick="handleFinalPatientSubmit()">
               <span>Create Account &rarr;</span>
             </button>
           </div>
@@ -1286,12 +1308,12 @@
         <div class="step-content" id="stepSection5">
           <div class="complete-card-box">
             <div class="success-celebrate-icon">
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
 
-            <h3 class="step-title" style="font-size:24px;">Your MediCare account is ready!</h3>
+            <h3 class="step-title" style="font-size:22px;">Your MediCare account is ready!</h3>
             <p class="step-desc" style="margin-bottom:0;">Welcome to MediCare. Your unique Health ID and patient profile have been generated.</p>
 
             <!-- Health ID Display Card -->
@@ -1299,14 +1321,14 @@
               <div class="hid-tag">MediCare Health ID</div>
               <div class="hid-number" id="displayGeneratedHealthId">CB-2026-001245</div>
               <div class="hid-patient-name" id="displayPatientName">Sajil Binu</div>
-              <div style="margin-top:12px;">
-                <button type="button" onclick="copyHealthId()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#FFFFFF; border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer; font-weight:600;">
+              <div style="margin-top:10px;">
+                <button type="button" onclick="copyHealthId()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#FFFFFF; border-radius:6px; padding:5px 12px; font-size:11.5px; cursor:pointer; font-weight:600;">
                   Copy Health ID
                 </button>
               </div>
             </div>
 
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
               <a href="/dashboard" class="btn-primary-blue" style="text-decoration:none;">
                 Go to Dashboard &rarr;
               </a>
@@ -1406,6 +1428,10 @@
     </div>
   </div>
 
+  <a href="/" class="back-home">
+    &larr; Back to MediCare Public Home
+  </a>
+
   <script>
     // State management for Patient 5-step registration
     let currentStep = 1;
@@ -1415,7 +1441,6 @@
     // Max DOB allowed is today
     const todayStr = new Date().toISOString().split('T')[0];
     document.getElementById('patientDobInput').setAttribute('max', todayStr);
-    // Set reasonable default DOB (e.g. 1996-01-01)
     document.getElementById('patientDobInput').value = '1998-05-14';
 
     function showError(msg) {
@@ -1424,7 +1449,6 @@
       succ.style.display = 'none';
       err.textContent = msg;
       err.style.display = 'block';
-      err.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function hideAlerts() {
@@ -1615,7 +1639,6 @@
             if (s === 'Kerala') opt.selected = true;
             stateSelect.appendChild(opt);
           });
-          // Load districts for selected state (Kerala by default)
           await loadDistricts('Kerala');
         }
       } catch (err) {
@@ -1748,7 +1771,6 @@
           document.getElementById('displayGeneratedHealthId').textContent = generatedHid;
           document.getElementById('displayPatientName').textContent = payload.name;
 
-          // Save session state to localStorage
           localStorage.setItem('name', payload.name);
           localStorage.setItem('role', 'patient');
           localStorage.setItem('health_id', generatedHid);
