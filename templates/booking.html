@@ -1367,10 +1367,13 @@
           `<span style="background:#F1F5F9; color:#334155; font-size:11px; padding:2px 8px; border-radius:4px;">${d}</span>`
         ).join(' ');
 
-        const isVerified = (fac.verification_status || '').includes('Verified');
+        const isVerified = (fac.verification_status || '').toLowerCase() === 'verified facility';
         const badgeHtml = isVerified 
-          ? '<span class="abdm-badge badge-success" style="font-size:11px;">Verified ABDM Facility</span>'
+          ? '<span class="abdm-badge badge-success" style="font-size:11px;">Verified Facility</span>'
           : '<span class="abdm-badge badge-outline" style="font-size:11px;">Demo Facility</span>';
+
+        const facDisplayName = fac.facility_name || fac.name || 'Healthcare Facility';
+        const facIdVal = fac.facility_id || fac._id;
 
         card.innerHTML = `
           <div>
@@ -1380,14 +1383,14 @@
             </div>
 
             <h3 style="font-family:var(--font-heading); font-size:16px; font-weight:800; color:#12345B; margin-bottom:4px;">
-              ${fac.name}
+              ${facDisplayName}
             </h3>
             <div style="font-size:12px; color:#0066E6; font-weight:600; margin-bottom:8px;">
               ${fac.facility_type || 'Healthcare Facility'}
             </div>
 
             <p style="font-size:12.5px; color:#5F7187; line-height:1.45; margin-bottom:12px;">
-              📍 ${fac.address || ''}, ${fac.district || ''}, ${fac.state || ''} ${fac.pincode ? 'PIN: ' + fac.pincode : ''}
+              📍 ${fac.address || ''}, ${fac.city ? fac.city + ', ' : ''}${fac.district || ''}, ${fac.state || ''} ${fac.pincode ? 'PIN: ' + fac.pincode : ''}
             </p>
 
             <div style="margin-bottom:14px;">
@@ -1401,9 +1404,9 @@
           <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #F1F5F9; padding-top:12px; margin-top:8px;">
             <div style="font-size:12px; color:#16A05D; font-weight:600; display:flex; align-items:center; gap:5px;">
               <span style="width:7px; height:7px; border-radius:50%; background:#16A05D; display:inline-block;"></span>
-              Available Today
+              ${fac.availability || 'Available Today'}
             </div>
-            <button class="abdm-btn-primary" onclick="selectFacility('${fac._id}', '${encodeURIComponent(fac.name)}')" style="padding:6px 14px; font-size:12.5px;">
+            <button class="abdm-btn-primary" onclick="selectFacility('${facIdVal}', '${encodeURIComponent(facDisplayName)}')" style="padding:6px 14px; font-size:12.5px;">
               Select Hospital &rarr;
             </button>
           </div>
@@ -1424,7 +1427,12 @@
       bookingState.facility = { _id: id, name: decodeURIComponent(encName) };
     }
 
-    document.getElementById('facilityNameBannerStep4').textContent = bookingState.facility.name;
+    const facDisplayName = bookingState.facility.facility_name || bookingState.facility.name || decodeURIComponent(encName);
+    bookingState.facility.name = facDisplayName;
+    bookingState.facility.facility_name = facDisplayName;
+    bookingState.facility._id = bookingState.facility._id || bookingState.facility.facility_id || id;
+
+    document.getElementById('facilityNameBannerStep4').textContent = facDisplayName;
     document.getElementById('facilityDetailsBannerStep4').textContent = `${bookingState.facility.district || bookingState.location.district}, ${bookingState.facility.state || bookingState.location.state} • ${bookingState.facility.medical_system || bookingState.medical_system.name}`;
 
     goToStep(4);
@@ -2350,11 +2358,15 @@
     const payload = {
       doctor_id: bookingState.doctor.id,
       doctor_name: bookingState.doctor.name,
-      facility_id: bookingState.facility._id,
-      facility_name: bookingState.facility.name,
+      facility_id: bookingState.facility._id || bookingState.facility.facility_id,
+      facility_name: bookingState.facility.name || bookingState.facility.facility_name,
       department: bookingState.department,
       medical_system: bookingState.medical_system.name,
+      state: (bookingState.location && bookingState.location.state) || bookingState.facility.state || '',
+      district: (bookingState.location && bookingState.location.district) || bookingState.facility.district || '',
+      city: (bookingState.location && bookingState.location.city) || bookingState.facility.city || '',
       date: date,
+      appointment_date: date,
       slot: bookingState.slot.slot,
       priority: bookingState.triage.priority,
       ai_case_id: bookingState.ai_case.session_id || ''

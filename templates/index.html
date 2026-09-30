@@ -741,19 +741,55 @@
       </a>
 
       <nav>
-        <ul class="pub-nav-links">
+        <ul class="pub-nav-links" id="pubNavLinks">
           <li><a href="#hero">Home</a></li>
+          <li><a href="#workflow">About</a></li>
+          <li><a href="#services">Features</a></li>
+          <li><a href="#security">Resources</a></li>
+          <li><a href="/health-id">Health ID</a></li>
           <li><a href="#roles">Portals</a></li>
-          <li><a href="#services">Health Services</a></li>
-          <li><a href="#workflow">How It Works</a></li>
-          <li><a href="#security">ABDM Security</a></li>
           <li><a href="#support">Support</a></li>
         </ul>
       </nav>
 
-      <div class="pub-auth-actions">
-        <a href="/login" class="btn-pub-outline">Sign In</a>
-        <a href="/register" class="btn-pub-primary">Register</a>
+      <!-- Right Side: Authentication Navigation (Aware of Auth State) -->
+      <div class="pub-auth-wrapper">
+        <!-- Unauthenticated Public Actions: Login & Sign Up -->
+        <div class="pub-auth-actions" id="pubAuthActions" style="{% if is_authenticated %}display:none;{% else %}display:flex;{% endif %}">
+          <a href="/login" class="btn-pub-outline" id="navLoginBtn" title="Login to MediCare">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Login</span>
+          </a>
+          <a href="/signup" class="btn-pub-primary" id="navSignupBtn" title="Create New Account">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            <span>Sign Up</span>
+          </a>
+        </div>
+
+        <!-- Authenticated User Controls: Dashboard, Profile, Settings, Logout -->
+        <div class="pub-user-controls" id="pubUserControls" style="{% if not is_authenticated %}display:none;{% else %}display:flex;{% endif %}">
+          <a href="/dashboard" class="btn-pub-primary" id="navDashboardLink" style="padding:8px 16px; font-size:13px;">
+            <span>Dashboard &rarr;</span>
+          </a>
+          <a href="/profile" class="btn-pub-outline" style="padding:8px 14px; font-size:13px;">
+            <span>Profile</span>
+          </a>
+          <a href="/settings" class="btn-pub-outline" style="padding:8px 14px; font-size:13px;">
+            <span>Settings</span>
+          </a>
+          <button type="button" onclick="handleLogout()" class="btn-pub-outline" style="padding:8px 14px; font-size:13px; border-color:#FECACA; color:#DC2626; background:#FEF2F2;">
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -873,7 +909,7 @@
           <a href="/login?role=patient" class="btn-role-login patient">
             Patient Login &rarr;
           </a>
-          <a href="/register?role=patient" class="btn-role-signup">
+          <a href="/signup?role=patient" class="btn-role-signup">
             Patient Sign Up
           </a>
         </div>
@@ -899,7 +935,7 @@
           <a href="/login?role=doctor" class="btn-role-login doctor">
             Doctor Login &rarr;
           </a>
-          <a href="/register?role=doctor" class="btn-role-signup">
+          <a href="/signup?role=doctor" class="btn-role-signup">
             Doctor Sign Up
           </a>
         </div>
@@ -926,7 +962,7 @@
           <a href="/login?role=hospital" class="btn-role-login hospital">
             Hospital Login &rarr;
           </a>
-          <a href="/register?role=hospital" class="btn-role-signup">
+          <a href="/signup?role=hospital" class="btn-role-signup">
             Hospital Sign Up
           </a>
         </div>
@@ -1146,34 +1182,52 @@
 
   <!-- Client-Side Session Detection Script -->
   <script>
+    function updateNavAuthState(isAuthenticated, role, name) {
+      const pubAuthActions = document.getElementById('pubAuthActions');
+      const pubUserControls = document.getElementById('pubUserControls');
+      const banner = document.getElementById('authenticatedSessionBanner');
+      const roleLabel = document.getElementById('activeSessionRole');
+      const nameLabel = document.getElementById('activeSessionName');
+      const link = document.getElementById('activeDashboardLink');
+      const navDashboardLink = document.getElementById('navDashboardLink');
+
+      if (isAuthenticated) {
+        if (pubAuthActions) pubAuthActions.style.display = 'none';
+        if (pubUserControls) pubUserControls.style.display = 'flex';
+
+        let dashboardUrl = '/dashboard';
+        if (role === 'doctor') dashboardUrl = '/doctor';
+        else if (role === 'clinic_admin' || role === 'hospital') dashboardUrl = '/clinic_dashboard';
+        else if (role === 'main_admin') dashboardUrl = '/admin';
+
+        if (navDashboardLink) navDashboardLink.href = dashboardUrl;
+
+        if (banner) {
+          banner.style.display = 'block';
+          if (roleLabel) roleLabel.textContent = role ? (role.charAt(0).toUpperCase() + role.slice(1)) : 'User';
+          if (nameLabel) nameLabel.textContent = name || 'User';
+          if (link) {
+            link.href = dashboardUrl;
+            link.textContent = `Continue to ${role ? (role.charAt(0).toUpperCase() + role.slice(1)) : ''} Dashboard →`;
+          }
+        }
+      } else {
+        if (pubAuthActions) pubAuthActions.style.display = 'flex';
+        if (pubUserControls) pubUserControls.style.display = 'none';
+        if (banner) banner.style.display = 'none';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const token = localStorage.getItem('token');
       const role = localStorage.getItem('role');
       const name = localStorage.getItem('name');
 
-      // Check if user has an active authenticated session
-      if (token && role) {
-        const banner = document.getElementById('authenticatedSessionBanner');
-        const roleLabel = document.getElementById('activeSessionRole');
-        const nameLabel = document.getElementById('activeSessionName');
-        const link = document.getElementById('activeDashboardLink');
+      // Server-side rendered state
+      const serverAuth = {{ 'true' if is_authenticated else 'false' }};
+      const isAuth = serverAuth || (Boolean(token) && Boolean(role));
 
-        if (banner) {
-          banner.style.display = 'block';
-          if (roleLabel) roleLabel.textContent = role.charAt(0).toUpperCase() + role.slice(1);
-          if (nameLabel) nameLabel.textContent = name || 'User';
-
-          let dashboardUrl = '/dashboard';
-          if (role === 'doctor') dashboardUrl = '/doctor';
-          else if (role === 'clinic_admin' || role === 'hospital') dashboardUrl = '/clinic_dashboard';
-          else if (role === 'main_admin') dashboardUrl = '/admin';
-
-          if (link) {
-            link.href = dashboardUrl;
-            link.textContent = `Continue to ${role.charAt(0).toUpperCase() + role.slice(1)} Dashboard →`;
-          }
-        }
-      }
+      updateNavAuthState(isAuth, role, name);
     });
 
     function handleLogout() {
@@ -1185,6 +1239,7 @@
       document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "auth_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "auth_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      updateNavAuthState(false);
       window.location.href = '/logout';
     }
   </script>

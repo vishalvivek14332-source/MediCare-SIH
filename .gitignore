@@ -37,6 +37,9 @@ venv.bak/
 *.log
 scratch/
 .system_generated/
+cookies.txt
+/*.png
+/test_dashboard.html
 
 # IDE & Editor files
 .vscode/

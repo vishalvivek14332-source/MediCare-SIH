@@ -587,17 +587,17 @@
       <div class="abha-demographics">
         <div class="abha-field-name">
           <div class="abha-field-label">Name</div>
-          <div class="abha-patient-name" id="cardFullName">{{ patient.name or 'Sajil Binu' }}</div>
+          <div class="abha-patient-name" id="cardFullName">{{ patient.name }}</div>
         </div>
 
         <div class="abha-grid-details">
           <div class="abha-grid-item">
             <span class="abha-field-label">ABHA Number</span>
-            <strong class="abha-number-highlight" id="cardAbhaNumber">{{ qr_payload.hidn if qr_payload else '91-2026-4589-1234' }}</strong>
+            <strong class="abha-number-highlight" id="cardAbhaNumber">{{ qr_payload.hidn if qr_payload and qr_payload.hidn else (patient.health_id or '') }}</strong>
           </div>
           <div class="abha-grid-item">
             <span class="abha-field-label">ABHA Address / Health ID</span>
-            <strong id="cardAbhaAddress">{{ qr_payload.hid if qr_payload else 'CB-2026-001245@abdm' }}</strong>
+            <strong id="cardAbhaAddress">{{ qr_payload.hid if qr_payload and qr_payload.hid else (patient.abdm_id or patient.health_id or '') }}</strong>
           </div>
           <div class="abha-grid-item">
             <span class="abha-field-label">Gender / Blood Group</span>
@@ -605,12 +605,12 @@
           </div>
           <div class="abha-grid-item">
             <span class="abha-field-label">Date of Birth</span>
-            <strong id="cardDob">{{ patient.dob or '12 Mar 2002' }}</strong>
+            <strong id="cardDob">{{ patient.dob or patient.date_of_birth or '' }}</strong>
           </div>
         </div>
 
         <div class="abha-sub-details">
-          <span><strong>Mobile:</strong> <span id="cardMobile">{{ patient.phone or '+91 98765 43210' }}</span></span>
+          <span><strong>Mobile:</strong> <span id="cardMobile">{{ patient.phone or patient.mobile or '' }}</span></span>
           <span>&bull;</span>
           <span><strong>State:</strong> <span id="cardState">{{ patient.state or 'Kerala' }}</span></span>
         </div>
@@ -790,31 +790,50 @@
     }
   }
 
-  // Sync profile if custom name exists in localStorage
+  // Sync profile dynamically from /api/auth/me
   document.addEventListener('DOMContentLoaded', async () => {
     try {
-      const res = await fetch('/api/patient/profile');
+      const token = localStorage.getItem('token');
+      const headers = token ? {'Authorization': 'Bearer ' + token} : {};
+      const res = await fetch('/api/auth/me', { headers });
       if (res.ok) {
         const json = await res.json();
         if (json.data) {
           const p = json.data;
           if (p.name) {
             document.getElementById('cardFullName').textContent = p.name;
-            document.getElementById('cardAvatarInitial').textContent = p.name.charAt(0).toUpperCase();
+            const init = p.name.trim().charAt(0).toUpperCase();
+            if (document.getElementById('cardAvatarInitial')) {
+              document.getElementById('cardAvatarInitial').textContent = init;
+            }
             if (document.getElementById('modalName')) {
               document.getElementById('modalName').textContent = p.name;
             }
           }
-          if (p.phone) {
-            document.getElementById('cardMobile').textContent = p.phone;
+          if (p.health_id) {
+            if (document.getElementById('cardAbhaNumber')) {
+              document.getElementById('cardAbhaNumber').textContent = p.health_id;
+            }
+            if (document.getElementById('cardAbhaAddress')) {
+              document.getElementById('cardAbhaAddress').textContent = p.health_id + '@abdm';
+            }
+          }
+          if (p.mobile || p.phone) {
+            document.getElementById('cardMobile').textContent = p.mobile || p.phone;
           }
           if (p.state) {
             document.getElementById('cardState').textContent = p.state;
           }
+          if (p.dob) {
+            document.getElementById('cardDob').textContent = p.dob;
+          }
+          if (p.gender || p.blood_group) {
+            document.getElementById('cardGenderBlood').textContent = `${p.gender || 'Male'} / ${p.blood_group || 'O+'}`;
+          }
         }
       }
     } catch (e) {
-      console.warn('Profile fetch note:', e);
+      console.warn('Health ID profile fetch note:', e);
     }
   });
 </script>

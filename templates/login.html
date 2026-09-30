@@ -12,21 +12,24 @@
   
   <style>
     :root {
-      --primary: #0066E6;
-      --primary-hover: #0052BF;
+      --primary: #087CF0;
+      --primary-hover: #0066E6;
       --primary-light: #EFF6FF;
-      --navy-900: #0A2540;
-      --navy-800: #002B5C;
-      --slate-800: #1E293B;
-      --slate-600: #475569;
-      --slate-500: #64748B;
-      --slate-400: #94A3B8;
-      --slate-200: #E2E8F0;
-      --slate-100: #F1F5F9;
+      --navy: #082E67;
+      --navy-dark: #062452;
+      --text: #193B67;
+      --muted: #4F6B91;
+      --bg: #EAF6FF;
+      --border: #D7E4F2;
+      --white: #FFFFFF;
       --slate-50: #F8FAFC;
-      --green-600: #059669;
-      --purple-600: #7C3AED;
-      --orange-500: #EA580C;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-400: #94A3B8;
+      --slate-500: #5D7698;
+      --green: #19B98A;
+      --purple: #8B5CF6;
+      --orange: #FF8A00;
     }
 
     * {
@@ -37,16 +40,17 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EFF6FF 0%, #E0F2FE 40%, #DBEAFE 100%);
-      color: var(--slate-800);
+      background: linear-gradient(135deg, #EAF6FF 0%, #DDF1FF 50%, #EAF6FF 100%);
+      color: var(--text);
+      width: 100%;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px 16px;
       position: relative;
       overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
 
     /* Subtle background medical cross motifs */
@@ -58,54 +62,86 @@
       pointer-events: none;
       z-index: 1;
     }
-    .bg-plus-1 { top: 8%; left: 42%; font-size: 52px; }
-    .bg-plus-2 { top: 32%; left: 38%; font-size: 64px; }
-    .bg-plus-3 { top: 48%; left: 43%; font-size: 72px; }
-    .bg-plus-4 { bottom: 12%; left: 10%; font-size: 48px; }
+    .bg-plus-1 { top: 6%; left: 35%; font-size: 56px; }
+    .bg-plus-2 { top: 34%; left: 33%; font-size: 64px; }
+    .bg-plus-3 { top: 52%; left: 40%; font-size: 72px; }
+    .bg-plus-4 { bottom: 8%; left: 6%; font-size: 48px; }
 
-    /* Main Container */
-    .login-wrapper {
+    /* Main Container Shell (Proportions match reference: ~96vw x ~95vh) */
+    .login-shell {
       position: relative;
       z-index: 10;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
+      width: min(96vw, 1740px);
+      height: calc(100vh - 40px);
+      min-height: calc(100vh - 40px);
+      margin: 20px auto;
+      border-radius: 28px;
+      background: #F0F8FF;
+      border: 1.5px solid #D6E8FA;
+      box-shadow: 0 20px 50px -15px rgba(6, 43, 99, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+      overflow: hidden;
       display: grid;
-      grid-template-columns: 1fr 1.08fr;
-      gap: 36px;
-      align-items: center;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: stretch;
+      box-sizing: border-box;
     }
 
-    /* Left Promotional Panel */
-    .promo-panel {
-      padding: 10px 10px 10px 0;
+    /* ================= LEFT HERO SECTION ================= */
+    .left-panel {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      background: #F0F8FF;
+      overflow: hidden;
+      padding: 44px 44px 0 68px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      position: relative;
-      min-height: 520px;
-      justify-content: space-between;
     }
 
+    /* Internal decorative plus marks matching reference */
+    .left-deco-plus {
+      position: absolute;
+      color: rgba(56, 189, 248, 0.25);
+      font-weight: 300;
+      user-select: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .left-deco-plus-1 { top: 22%; right: 18%; font-size: 64px; }
+    .left-deco-plus-2 { top: 44%; right: 14%; font-size: 70px; }
+
+    /* Logo at top-left */
     .brand-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
       margin-bottom: 22px;
+      position: relative;
+      z-index: 4;
     }
 
     .brand-logo-img {
-      height: 46px;
+      width: 325px;
+      max-width: 100%;
+      height: auto;
       object-fit: contain;
+      display: block;
+    }
+
+    /* Hero Text & Features */
+    .left-content {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      max-width: 530px;
     }
 
     .main-hero-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 42px;
+      font-size: clamp(36px, 3.1vw, 50px);
       font-weight: 800;
-      color: var(--navy-900);
-      line-height: 1.15;
-      letter-spacing: -0.8px;
-      margin-bottom: 12px;
+      line-height: 1.02;
+      letter-spacing: -1px;
+      color: var(--navy);
+      margin: 0 0 14px 0;
     }
 
     .main-hero-title span {
@@ -113,91 +149,119 @@
     }
 
     .main-hero-sub {
-      font-size: 14.5px;
-      color: var(--slate-600);
-      line-height: 1.5;
-      margin-bottom: 24px;
-      max-width: 440px;
+      font-size: clamp(15px, 1.05vw, 17px);
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 0 24px 0;
     }
 
-    /* Lower Section: Features on Left, Illustration on Right */
-    .promo-lower-row {
-      display: flex;
-      align-items: flex-end;
-      position: relative;
-      min-height: 280px;
-    }
-
-    /* 4 Feature Items */
+    /* Four Feature Badges */
     .feature-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-width: 320px;
-      z-index: 2;
+      gap: 14px;
+      position: relative;
+      z-index: 4;
+      max-width: 350px;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     .feature-icon-circle {
-      width: 42px;
-      height: 42px;
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #FFFFFF;
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .icon-blue { background: #0066E6; }
-    .icon-green { background: #10B981; }
-    .icon-purple { background: #8B5CF6; }
-    .icon-orange { background: #F97316; }
+    .icon-blue { background: var(--primary); }
+    .icon-green { background: var(--green); }
+    .icon-purple { background: var(--purple); }
+    .icon-orange { background: var(--orange); }
 
     .feature-content h4 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 14.5px;
+      font-size: 15.5px;
       font-weight: 700;
-      color: var(--navy-900);
-      margin-bottom: 2px;
+      color: var(--navy);
+      margin: 0 0 2px 0;
+      line-height: 1.25;
     }
 
     .feature-content p {
-      font-size: 12px;
-      color: var(--slate-500);
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin: 0;
     }
 
-    /* Left Panel Illustration */
-    .promo-artwork-box {
+    /* Medical Illustration (Bottom-Right of Left Section) */
+    .hero-illustration {
       position: absolute;
-      bottom: -15px;
-      right: -10px;
-      width: 270px;
-      z-index: 1;
+      right: 0;
+      bottom: 0;
+      width: 50%;
+      max-width: 505px;
+      height: auto;
+      object-fit: contain;
+      object-position: bottom right;
+      z-index: 3;
       pointer-events: none;
     }
 
-    .promo-artwork-img {
+    /* Bottom Decorative Waves */
+    .shell-bottom-wave {
+      position: absolute;
+      left: 0;
+      bottom: 0;
       width: 100%;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 14px 28px rgba(0, 43, 92, 0.08));
+      height: 190px;
+      pointer-events: none;
+      z-index: 1;
     }
 
-    /* Right Login Card */
-    .card-panel {
-      background: #FFFFFF;
-      border-radius: 28px;
-      border: 1px solid var(--slate-200);
-      box-shadow: 0 20px 45px -12px rgba(0, 43, 92, 0.12);
-      padding: 34px 36px;
+    .shell-bottom-wave svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ================= RIGHT LOGIN CARD ================= */
+    .right-panel {
+      padding: 20px 24px 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
       position: relative;
+      z-index: 5;
+      height: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .login-card {
+      background: #FFFFFF;
+      border-radius: 26px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 16px 40px rgba(8, 46, 103, 0.08);
+      padding: 40px 48px;
+      width: 100%;
+      max-width: 686px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .card-header {
@@ -206,47 +270,53 @@
 
     .card-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 30px;
+      font-size: clamp(38px, 2.7vw, 44px);
       font-weight: 800;
-      color: var(--navy-800);
-      letter-spacing: -0.4px;
-      margin-bottom: 4px;
+      color: var(--navy);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
     }
 
     .card-subtitle {
-      font-size: 13.5px;
+      font-size: 15.5px;
+      line-height: 1.45;
       color: var(--slate-500);
     }
 
-    /* 4 Role Tabs Grid */
+    /* 4 Equal Role Tabs */
     .role-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 22px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .role-btn {
-      border: 1px solid var(--slate-200);
+      border: 1.5px solid var(--slate-200);
       background: var(--slate-50);
-      padding: 10px 6px;
-      border-radius: 12px;
+      height: 85px;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       cursor: pointer;
       transition: all 0.15s ease;
-      color: var(--slate-600);
+      color: var(--navy);
     }
 
     .role-btn svg {
-      color: currentColor;
+      width: 22px;
+      height: 22px;
+      color: var(--navy);
     }
 
     .role-btn span {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
+      color: var(--navy);
     }
 
     .role-btn:hover:not(.active) {
@@ -255,136 +325,163 @@
       color: var(--primary);
     }
 
+    .role-btn:hover:not(.active) svg,
+    .role-btn:hover:not(.active) span {
+      color: var(--primary);
+    }
+
     .role-btn.active {
       background: var(--primary);
       border-color: var(--primary);
       color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.3);
+      box-shadow: 0 6px 16px rgba(8, 124, 245, 0.28);
     }
 
-    /* Radio Mode Selector for Patient */
-    .auth-mode-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 18px;
+    .role-btn.active svg,
+    .role-btn.active span {
+      color: #FFFFFF;
     }
 
-    .auth-mode-option {
+    /* Radio Auth Mode Selector Rows */
+    .auth-radio-row {
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--slate-200);
-      background: #FFFFFF;
+      margin-top: 10px;
+      margin-bottom: 10px;
       cursor: pointer;
+      user-select: none;
+    }
+
+    .custom-radio {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--slate-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      flex-shrink: 0;
       transition: all 0.15s ease;
     }
 
-    .auth-mode-option.active {
+    .custom-radio-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+
+    .auth-radio-row.active .custom-radio {
       border-color: var(--primary);
-      background: var(--primary-light);
     }
 
-    .auth-mode-option input[type="radio"] {
+    .auth-radio-row.active .custom-radio-dot {
+      background: var(--primary);
+    }
+
+    .auth-radio-icon {
+      color: var(--navy);
       margin-top: 3px;
-      accent-color: var(--primary);
+      flex-shrink: 0;
     }
 
-    .auth-mode-info h5 {
-      font-size: 13.5px;
+    .auth-radio-text h5 {
+      font-size: 15px;
       font-weight: 700;
-      color: var(--navy-900);
+      color: var(--navy);
       margin-bottom: 2px;
+      line-height: 1.25;
     }
 
-    .auth-mode-info p {
-      font-size: 11.5px;
-      color: var(--slate-500);
-    }
-
-    /* Form Fields */
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    .form-label {
-      display: block;
+    .auth-radio-text p {
       font-size: 12.5px;
-      font-weight: 700;
-      color: var(--navy-900);
-      margin-bottom: 6px;
+      color: var(--slate-500);
+      line-height: 1.35;
     }
 
+    /* Inputs */
     .form-input {
       width: 100%;
-      padding: 11px 14px;
+      height: 54px;
+      padding: 0 16px;
       border-radius: 10px;
-      border: 1.5px solid var(--slate-200);
-      font-size: 14px;
+      border: 1.5px solid #D7E1ED;
+      font-size: 15px;
       outline: none;
       background: #FFFFFF;
-      color: var(--slate-800);
+      color: var(--navy);
       transition: all 0.15s ease;
+      box-sizing: border-box;
     }
 
     .form-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+      box-shadow: 0 0 0 3px rgba(8, 124, 245, 0.15);
     }
 
-    /* Mobile Number with +91 group */
+    /* Mobile Number with +91 Group */
     .phone-input-group {
       display: flex;
       align-items: center;
-      border: 1.5px solid var(--slate-200);
+      border: 1.5px solid #D7E1ED;
       border-radius: 10px;
       background: #FFFFFF;
       overflow: hidden;
+      height: 54px;
       transition: all 0.15s ease;
+      box-sizing: border-box;
     }
 
     .phone-input-group:focus-within {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+      box-shadow: 0 0 0 3px rgba(8, 124, 245, 0.15);
     }
 
     .country-code-badge {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 11px 14px;
-      background: var(--slate-50);
-      border-right: 1.5px solid var(--slate-200);
-      font-size: 14px;
+      gap: 6px;
+      width: 88px;
+      justify-content: center;
+      height: 100%;
+      background: #FFFFFF;
+      border-right: 1.5px solid #D7E1ED;
+      font-size: 15px;
       font-weight: 700;
-      color: var(--navy-900);
+      color: var(--navy);
+      cursor: pointer;
     }
 
     .phone-input-group input {
       flex: 1;
       border: none;
-      padding: 11px 14px;
-      font-size: 14px;
+      padding: 0 16px;
+      font-size: 15px;
       outline: none;
+      height: 100%;
+      color: var(--navy);
     }
 
-    /* Primary Action Buttons */
+    /* Action Buttons */
     .btn-primary-blue {
       width: 100%;
-      padding: 13px;
-      border-radius: 12px;
+      height: 54px;
+      padding: 0 20px;
+      border-radius: 10px;
       border: none;
       background: var(--primary);
       color: #FFFFFF;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.25);
-      margin-top: 6px;
+      box-shadow: 0 4px 14px rgba(8, 124, 245, 0.25);
+      margin-top: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -401,26 +498,32 @@
       cursor: not-allowed;
     }
 
-    /* Light Blue Inactive/Pending Login button style */
-    .btn-primary-light {
-      background: #BAE6FD;
-      color: #0369A1;
+    /* Light blue disabled-style login button */
+    .btn-login-muted {
+      background: #B9DAFC;
       box-shadow: none;
-    }
-    .btn-primary-light:hover:not(:disabled) {
-      background: #7DD3FC;
-      color: #075985;
+      cursor: pointer;
     }
 
-    /* Divider & Google Auth */
+    .btn-login-muted.btn-active-blue {
+      background: var(--primary);
+      box-shadow: 0 4px 14px rgba(8, 124, 245, 0.25);
+    }
+
+    .btn-login-muted:hover:not(:disabled) {
+      background: var(--primary);
+    }
+
+    /* Divider */
     .auth-divider {
       display: flex;
       align-items: center;
       text-align: center;
-      margin: 18px 0 14px;
+      margin: 14px 0;
       color: var(--slate-400);
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
     .auth-divider::before, .auth-divider::after {
@@ -430,47 +533,21 @@
     }
 
     .auth-divider span {
-      padding: 0 10px;
+      padding: 0 12px;
     }
 
-    .btn-google {
-      width: 100%;
-      padding: 11px;
-      border-radius: 12px;
-      border: 1.5px solid var(--slate-200);
-      background: #FFFFFF;
-      color: var(--slate-800);
-      font-size: 13.5px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      cursor: not-allowed;
-      opacity: 0.85;
-    }
-
-    .coming-soon-tag {
-      font-size: 10px;
-      background: #FEF3C7;
-      color: #92400E;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-weight: 800;
-      margin-left: 6px;
-    }
-
+    /* Sign up link */
     .auth-signup-link {
       text-align: center;
-      margin-top: 18px;
-      font-size: 13.5px;
+      font-size: 14.5px;
       color: var(--slate-500);
+      margin: 12px 0 10px;
     }
 
     .auth-signup-link a {
       color: var(--primary);
-      font-weight: 800;
       text-decoration: none;
+      font-weight: 700;
       margin-left: 4px;
     }
 
@@ -478,130 +555,177 @@
       text-decoration: underline;
     }
 
-    /* OTP Inputs box */
-    .otp-verify-box {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 10px;
-      margin-bottom: 12px;
+    /* Google Button */
+    .btn-google {
+      width: 100%;
+      height: 52px;
+      border-radius: 10px;
+      border: 1.5px solid #D7E1ED;
+      background: #FFFFFF;
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .otp-inputs-row {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin: 10px 0;
+    .btn-google:hover {
+      background: var(--slate-50);
+      border-color: var(--slate-400);
+    }
+
+    /* OTP Verification Reveal Box */
+    .otp-verify-box {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: #F0F9FF;
+      border: 1.5px solid #BAE6FD;
+      border-radius: 10px;
     }
 
     .otp-digit-input {
-      width: 180px;
-      height: 44px;
+      width: 100%;
+      height: 48px;
       text-align: center;
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 8px;
+      border: 1.5px solid #7DD3FC;
       border-radius: 8px;
-      border: 1.5px solid var(--slate-200);
       background: #FFFFFF;
+      color: var(--navy);
+      margin: 8px 0;
       outline: none;
     }
 
-    .otp-digit-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
-    }
-
-    /* Quick Demo Credentials Pill */
-    .quick-creds-box {
-      margin-top: 12px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      background: #F1F5F9;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--slate-600);
-    }
-
-    .quick-creds-btn {
-      background: #FFFFFF;
-      border: 1px solid var(--slate-200);
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--primary);
-      cursor: pointer;
-    }
-
-    /* Alert / Validation Boxes */
+    /* Alert messages */
     .form-alert {
       padding: 10px 14px;
       border-radius: 8px;
       font-size: 13px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: none;
+      line-height: 1.4;
     }
 
     .form-alert-error {
-      background: #FEE2E2;
-      border: 1px solid #F87171;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
       color: #991B1B;
     }
 
     .form-alert-success {
-      background: #DCFCE7;
-      border: 1px solid #86EFAC;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
       color: #166534;
     }
 
-    /* Back home link */
-    .back-home {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 18px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--slate-500);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    .back-home:hover {
-      color: var(--primary);
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .login-wrapper {
-        grid-template-columns: 1fr;
-        max-width: 540px;
+    /* ================= RESPONSIVE BEHAVIOR ================= */
+    @media (max-width: 1200px) {
+      .login-shell {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+        min-height: calc(100vh - 40px);
       }
-      .promo-panel {
-        display: none;
+      .left-panel {
+        padding: 36px 36px 0 44px;
+      }
+      .right-panel {
+        padding: 20px 28px;
+      }
+      .hero-illustration {
+        width: 55%;
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 992px) {
       body {
-        padding: 16px 8px;
+        overflow-y: auto;
       }
-      .card-panel {
-        padding: 24px 20px;
-        border-radius: 20px;
+      .login-shell {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: auto;
+        margin: 16px;
+        width: calc(100% - 32px);
       }
-      .role-grid {
-        gap: 6px;
+      .left-panel {
+        padding: 36px 28px 240px 28px;
+        height: auto;
+      }
+      .hero-illustration {
+        width: 260px;
+      }
+      .right-panel {
+        padding: 28px 20px;
+        height: auto;
+      }
+      .login-card {
+        padding: 28px 24px;
+      }
+    }
+
+    @media (max-height: 800px) and (min-width: 993px) {
+      .login-shell {
+        margin: 10px auto;
+        min-height: calc(100vh - 20px);
+        height: calc(100vh - 20px);
+      }
+      .left-panel {
+        padding: 24px 36px 0 48px;
+      }
+      .brand-top {
+        margin-bottom: 14px;
+      }
+      .brand-logo-img {
+        width: 270px;
+      }
+      .main-hero-title {
+        font-size: 36px;
+        margin-bottom: 8px;
+      }
+      .main-hero-sub {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .feature-list {
+        gap: 10px;
+      }
+      .feature-icon-circle {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+      }
+      .right-panel {
+        padding: 10px 24px;
+      }
+      .login-card {
+        padding: 22px 32px;
+      }
+      .card-header {
+        margin-bottom: 10px;
+      }
+      .card-title {
+        font-size: 32px;
       }
       .role-btn {
-        padding: 8px 4px;
+        height: 68px;
       }
-      .role-btn span {
-        font-size: 10.5px;
+      .phone-input-group,
+      .form-input,
+      .btn-primary-blue,
+      .btn-google {
+        height: 46px;
+      }
+      .auth-divider {
+        margin: 8px 0;
+      }
+      .auth-signup-link {
+        margin: 6px 0;
       }
     }
   </style>
@@ -614,40 +738,46 @@
   <div class="bg-plus bg-plus-3">+</div>
   <div class="bg-plus bg-plus-4">+</div>
 
-  <div class="login-wrapper">
+  <!-- Main Container Shell -->
+  <div class="login-shell">
     
-    <!-- LEFT SIDE: Healthcare promotional & branding panel (Matching Login.png) -->
-    <div class="promo-panel">
-      <!-- Top Branding -->
+    <!-- LEFT HERO SECTION -->
+    <div class="left-panel">
+      <!-- Decorative background plus elements -->
+      <div class="left-deco-plus left-deco-plus-1">+</div>
+      <div class="left-deco-plus left-deco-plus-2">+</div>
+
+      <!-- MediCare Logo -->
       <div class="brand-top">
-        <a href="/" style="text-decoration:none;">
-          <img src="{{ url_for('static', filename='images/medicare_logo_full.png') }}" alt="MediCare — AI-Powered Digital Healthcare Platform" class="brand-logo-img">
+        <a href="/" title="Back to MediCare Home" style="display:inline-block; text-decoration:none;">
+          <img src="{{ url_for('static', filename='images/medicare_logo_clean.png') }}" alt="MediCare - AI-Powered Digital Healthcare Platform" class="brand-logo-img">
         </a>
       </div>
 
-      <!-- Main Heading -->
-      <div>
+      <!-- Main Heading & Description -->
+      <div class="left-content">
         <h1 class="main-hero-title">
           Smarter<br>
           Healthcare<br>
           <span>for a Healthier India</span>
         </h1>
-
         <p class="main-hero-sub">
-          Access your health records, book appointments, consult doctors and manage your healthcare journey — all in one place.
+          Access your health records, book appointments,<br>
+          consult doctors and manage your healthcare<br>
+          journey — all in one place.
         </p>
-      </div>
 
-      <!-- Lower row: 4 features on left, illustration on right -->
-      <div class="promo-lower-row">
+        <!-- Four Feature Items -->
         <div class="feature-list">
+          <!-- 1. Digital Health Records -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-blue">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
             </div>
             <div class="feature-content">
@@ -656,9 +786,10 @@
             </div>
           </div>
 
+          <!-- 2. Book Appointments -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-green">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -671,12 +802,14 @@
             </div>
           </div>
 
+          <!-- 3. AI Case Intake -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-purple">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
             </div>
             <div class="feature-content">
@@ -685,9 +818,10 @@
             </div>
           </div>
 
+          <!-- 4. Secure & Trusted -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-orange">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 <polyline points="9 12 11 14 15 10"></polyline>
               </svg>
@@ -698,201 +832,234 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Healthcare character artwork -->
-        <div class="promo-artwork-box">
-          <img src="{{ url_for('static', filename='images/signup_patient_art.png') }}" alt="MediCare Healthcare" class="promo-artwork-img">
-        </div>
+      <!-- Medical Illustration -->
+      <img src="{{ url_for('static', filename='images/login_patient_art_perfect.png') }}" alt="MediCare Healthcare Illustration" class="hero-illustration">
+
+      <!-- Decorative Bottom Waves -->
+      <div class="shell-bottom-wave">
+        <svg viewBox="0 0 1000 160" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="waveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0E8AF7" stop-opacity="1"/>
+            </linearGradient>
+            <linearGradient id="waveSoft" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#93C5FD" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 65C140 40 280 90 460 120C620 145 780 95 1000 105V160H0V65Z" fill="url(#waveSoft)"/>
+          <path d="M0 95C160 70 320 115 520 135C680 150 820 115 1000 125V160H0V95Z" fill="url(#waveGrad)"/>
+        </svg>
       </div>
     </div>
 
-    <!-- RIGHT SIDE: Welcome Back Login Card -->
-    <div class="card-panel">
+    <!-- RIGHT LOGIN CARD -->
+    <div class="right-panel">
+      <div class="login-card">
 
-      <!-- Card Header -->
-      <div class="card-header">
-        <h2 class="card-title">Welcome Back</h2>
-        <p class="card-subtitle" id="cardSubText">Login to access your health records, appointments and more.</p>
-      </div>
-
-      <!-- 4 Role Selection Cards -->
-      <div class="role-grid">
-        <!-- Patient -->
-        <button type="button" class="role-btn active" id="tabPatient" onclick="switchLoginRole('patient')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <span>Patient</span>
-        </button>
-
-        <!-- Doctor -->
-        <button type="button" class="role-btn" id="tabDoctor" onclick="switchLoginRole('doctor')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-          </svg>
-          <span>Doctor</span>
-        </button>
-
-        <!-- Hospital -->
-        <button type="button" class="role-btn" id="tabHospital" onclick="switchLoginRole('hospital')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M3 21h18"></path>
-            <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
-            <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path>
-            <line x1="10" y1="9" x2="14" y2="9"></line>
-            <line x1="12" y1="7" x2="12" y2="11"></line>
-          </svg>
-          <span>Hospital</span>
-        </button>
-
-        <!-- Admin -->
-        <button type="button" class="role-btn" id="tabAdmin" onclick="switchLoginRole('main_admin')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-          <span>Admin</span>
-        </button>
-      </div>
-
-      <!-- Alerts -->
-      <div class="form-alert form-alert-error" id="formErrorAlert"></div>
-      <div class="form-alert form-alert-success" id="formSuccessAlert"></div>
-
-      <!-- ================= PATIENT AUTHENTICATION OPTIONS ================= -->
-      <div id="patientAuthSection">
-        
-        <!-- Radio Option 1: Mobile Number (OTP Login) -->
-        <div class="auth-mode-option active" id="modeOptionMobile" onclick="selectPatientAuthMode('mobile')">
-          <input type="radio" name="patientAuthMode" id="radioMobile" value="mobile" checked>
-          <div class="auth-mode-info">
-            <h5>📱 Mobile Number (OTP Login)</h5>
-            <p>Enter your mobile number to receive a One-Time Password (OTP).</p>
-          </div>
+        <!-- Welcome Back Header -->
+        <div class="card-header">
+          <h2 class="card-title">Welcome Back</h2>
+          <p class="card-subtitle" id="cardSubText">Login to access your health records,<br>appointments and more.</p>
         </div>
 
-        <div id="mobileAuthFields" style="margin-bottom:14px;">
-          <div class="phone-input-group" style="margin-top:8px;">
-            <div class="country-code-badge">
-              <span>+91</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </div>
-            <input type="tel" id="mobileNumberInput" placeholder="Enter your mobile number" maxlength="10" value="9876543210">
-          </div>
-
-          <button type="button" class="btn-primary-blue" id="btnSendOtp" onclick="handleSendLoginOtp()">
-            <span>Send OTP</span>
+        <!-- 4 Role Selector Tabs -->
+        <div class="role-grid">
+          <!-- Patient -->
+          <button type="button" class="role-btn active" id="tabPatient" onclick="switchLoginRole('patient')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Patient</span>
           </button>
 
-          <!-- OTP Input Box (reveals after OTP sent) -->
-          <div class="otp-verify-box" id="otpBox" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:13px; font-weight:700; color:var(--navy-800);">Enter 6-Digit Code</span>
-              <span id="otpCountdown" style="font-size:12px; color:var(--slate-500);">Expires in 120s</span>
+          <!-- Doctor -->
+          <button type="button" class="role-btn" id="tabDoctor" onclick="switchLoginRole('doctor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.5 3v5a4.5 4.5 0 0 0 9 0V3"></path>
+              <path d="M9 12.5V17a3 3 0 0 0 6 0v-2.5"></path>
+              <circle cx="15" cy="14.5" r="2.5"></circle>
+            </svg>
+            <span>Doctor</span>
+          </button>
+
+          <!-- Hospital -->
+          <button type="button" class="role-btn" id="tabHospital" onclick="switchLoginRole('hospital')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+              <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path>
+              <line x1="10" y1="9" x2="14" y2="9"></line>
+              <line x1="12" y1="7" x2="12" y2="11"></line>
+            </svg>
+            <span>Hospital</span>
+          </button>
+
+          <!-- Admin -->
+          <button type="button" class="role-btn" id="tabAdmin" onclick="switchLoginRole('main_admin')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Admin</span>
+          </button>
+        </div>
+
+        <!-- Alerts -->
+        <div class="form-alert form-alert-error" id="formErrorAlert"></div>
+        <div class="form-alert form-alert-success" id="formSuccessAlert"></div>
+
+        <!-- ================= PATIENT AUTHENTICATION OPTIONS ================= -->
+        <div id="patientAuthSection">
+          
+          <!-- 1. Mobile Number (OTP Login) -->
+          <div class="auth-radio-row active" id="modeOptionMobile" onclick="selectPatientAuthMode('mobile')">
+            <div class="custom-radio">
+              <div class="custom-radio-dot"></div>
             </div>
-            
-            <div class="otp-inputs-row">
-              <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" placeholder="123456" value="123456">
+            <input type="radio" name="patientAuthMode" id="radioMobile" value="mobile" checked style="display:none;">
+            <svg class="auth-radio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <div class="auth-radio-text">
+              <h5>Mobile Number (OTP Login)</h5>
+              <p>Enter your mobile number to receive a One-Time Password (OTP).</p>
+            </div>
+          </div>
+
+          <!-- Phone Input + Send OTP Button -->
+          <div id="mobileAuthFields">
+            <div class="phone-input-group">
+              <div class="country-code-badge">
+                <span>+91</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <input type="tel" id="mobileNumberInput" placeholder="Enter your mobile number" maxlength="10" onfocus="selectPatientAuthMode('mobile')">
             </div>
 
-            <div style="font-size:12px; color:#0369A1; text-align:center; margin-bottom:8px;">
-              Demo OTP: <strong>123456</strong>
-            </div>
+            <button type="button" class="btn-primary-blue" id="btnSendOtp" onclick="handleSendLoginOtp()">
+              <span>Send OTP</span>
+            </button>
 
-            <button type="button" class="btn-primary-blue" id="btnVerifyLoginOtp" onclick="handleVerifyLoginOtp()" style="margin-top:0;">
-              <span>Verify &amp; Sign In</span>
+            <!-- OTP Input Box (reveals after OTP sent) -->
+            <div class="otp-verify-box" id="otpBox" style="display:none;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:13px; font-weight:700; color:var(--navy);">Enter 6-Digit Code</span>
+                <span id="otpCountdown" style="font-size:12px; color:var(--slate-500);">Expires in 120s</span>
+              </div>
+              
+              <div class="otp-inputs-row">
+                <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" placeholder="123456" value="123456">
+              </div>
+
+              <div style="font-size:12px; color:#0369A1; text-align:center; margin-bottom:8px;">
+                Demo OTP: <strong>123456</strong>
+              </div>
+
+              <button type="button" class="btn-primary-blue" id="btnVerifyLoginOtp" onclick="handleVerifyLoginOtp()" style="margin-top:0;">
+                <span>Verify &amp; Sign In</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- OR Divider -->
+          <div class="auth-divider">
+            <span>OR</span>
+          </div>
+
+          <!-- 2. MediCare Health ID Login -->
+          <div class="auth-radio-row" id="modeOptionHealthId" onclick="selectPatientAuthMode('health_id')">
+            <div class="custom-radio">
+              <div class="custom-radio-dot"></div>
+            </div>
+            <input type="radio" name="patientAuthMode" id="radioHealthId" value="health_id" style="display:none;">
+            <svg class="auth-radio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+              <circle cx="9" cy="10" r="2"></circle>
+              <line x1="15" y1="8" x2="17" y2="8"></line>
+              <line x1="15" y1="12" x2="17" y2="12"></line>
+              <line x1="7" y1="16" x2="17" y2="16"></line>
+            </svg>
+            <div class="auth-radio-text">
+              <h5>MediCare Health ID</h5>
+              <p>Login using your MediCare Health ID.</p>
+            </div>
+          </div>
+
+          <!-- Health ID Input + Login Button -->
+          <div id="healthIdAuthFields">
+            <div style="margin-bottom:8px;">
+              <input type="text" id="healthIdInput" class="form-input" placeholder="Enter your Health ID (e.g. CB-2026-001245)" onfocus="selectPatientAuthMode('health_id')" oninput="handleHealthIdInputChanged()">
+            </div>
+            <!-- Hidden password for demo compatibility -->
+            <input type="password" id="healthIdPasswordInput" value="password123" style="display:none;">
+            <button type="button" class="btn-primary-blue btn-login-muted" id="btnLoginWithHealthId" onclick="handleHealthIdLogin()">
+              <span>Login</span>
             </button>
           </div>
         </div>
 
-        <!-- OR Divider -->
-        <div class="auth-divider">
-          <span>OR</span>
+        <!-- ================= NON-PATIENT (DOCTOR / HOSPITAL / ADMIN) ================= -->
+        <div id="nonPatientAuthSection" style="display:none;">
+          <form id="nonPatientLoginForm" onsubmit="handleNonPatientLogin(event)">
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:13.5px; font-weight:700; color:var(--navy); margin-bottom:6px;" id="nonPatientIdentifierLabel">Email or ID</label>
+              <input type="text" id="nonPatientIdentifier" class="form-input" required autocomplete="username">
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                <label style="font-size:13.5px; font-weight:700; color:var(--navy); margin-bottom:0;">Password</label>
+                <a href="#" onclick="event.preventDefault(); showToast('Demo credentials autofilled below', 'info'); fillActiveDemoCreds();" style="font-size:12px; color:var(--primary); text-decoration:none; font-weight:600;">Autofill Demo</a>
+              </div>
+              <input type="password" id="nonPatientPassword" class="form-input" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn-primary-blue" id="btnNonPatientLogin">
+              <span>Sign In &rarr;</span>
+            </button>
+
+            <!-- Quick Demo Credential Pill -->
+            <div style="margin-top:12px; padding:8px 12px; background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="fillActiveDemoCreds()">
+              <span style="font-size:11.5px; color:var(--slate-500); font-weight:600;" id="quickCredsText">Demo: Ready</span>
+              <span style="font-size:11px; color:var(--primary); font-weight:700;">Click to fill</span>
+            </div>
+          </form>
         </div>
 
-        <!-- Radio Option 2: MediCare Health ID -->
-        <div class="auth-mode-option" id="modeOptionHealthId" onclick="selectPatientAuthMode('health_id')">
-          <input type="radio" name="patientAuthMode" id="radioHealthId" value="health_id">
-          <div class="auth-mode-info">
-            <h5>🪪 MediCare Health ID</h5>
-            <p>Login using your MediCare Health ID or registered email.</p>
-          </div>
+        <!-- Sign Up Link -->
+        <div class="auth-signup-link" id="signupFooterRow">
+          New to MediCare? <a href="/signup" id="signupLinkUrl">Sign Up</a>
         </div>
 
-        <div id="healthIdAuthFields" style="display:none; margin-top:10px;">
-          <div class="form-group">
-            <input type="text" id="healthIdInput" class="form-input" placeholder="Enter your Health ID (e.g. CB-2026-001245) or Email" value="CB-2026-001245">
-          </div>
-          <div class="form-group">
-            <input type="password" id="healthIdPasswordInput" class="form-input" placeholder="Enter your password" value="password123">
-          </div>
-
-          <button type="button" class="btn-primary-blue" id="btnLoginWithHealthId" onclick="handleHealthIdLogin()">
-            <span>Login &rarr;</span>
-          </button>
+        <!-- Or continue with Divider -->
+        <div class="auth-divider" style="margin: 10px 0 12px 0;">
+          <span>Or continue with</span>
         </div>
 
+        <!-- Google OAuth Button -->
+        <button type="button" class="btn-google" onclick="showToast('Google sign-in is coming soon to MediCare.', 'info')" title="Continue with Google">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
       </div>
-
-      <!-- ================= NON-PATIENT FORM (DOCTOR, HOSPITAL, ADMIN) ================= -->
-      <div id="nonPatientAuthSection" style="display:none;">
-        <form id="nonPatientLoginForm" onsubmit="handleNonPatientLogin(event)">
-          <div class="form-group">
-            <label class="form-label" id="nonPatientIdentifierLabel">Email Address</label>
-            <input type="text" id="nonPatientIdentifier" class="form-input" required placeholder="name@example.com">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="password" id="nonPatientPassword" class="form-input" required placeholder="••••••••">
-          </div>
-
-          <button type="submit" class="btn-primary-blue" id="btnNonPatientLogin">
-            Sign In &rarr;
-          </button>
-
-          <!-- Quick Demo Credentials Fill -->
-          <div class="quick-creds-box">
-            <span id="quickCredsText">Demo: Dr. Shonna (doctor123)</span>
-            <button type="button" class="quick-creds-btn" onclick="fillActiveDemoCreds()">Auto Fill</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Sign Up Link -->
-      <div class="auth-signup-link" id="signupFooterRow">
-        New to MediCare? <a href="/register?role=patient" id="signupLinkUrl">Sign Up</a>
-      </div>
-
-      <!-- Google Divider -->
-      <div class="auth-divider">
-        <span>Or continue with</span>
-      </div>
-
-      <!-- Google Button -->
-      <button type="button" class="btn-google" title="Google OAuth coming soon" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span>Continue with Google</span>
-        <span class="coming-soon-tag">Coming Soon</span>
-      </button>
-
     </div>
-
   </div>
 
-  <a href="/" class="back-home">
-    &larr; Back to MediCare Public Home
-  </a>
-
+  <!-- Interactive JavaScript Logic -->
   <script>
     let activeRole = 'patient';
     let patientAuthMode = 'mobile';
@@ -900,13 +1067,13 @@
 
     const roleConfig = {
       patient: {
-        title: 'Login to access your health records, appointments and more.',
-        signupUrl: '/register?role=patient',
+        title: 'Login to access your health records,<br>appointments and more.',
+        signupUrl: '/signup',
         showSignup: true
       },
       doctor: {
         title: 'Sign in to Doctor Consultation Console & OPD Queue.',
-        signupUrl: '/register?role=doctor',
+        signupUrl: '/signup?role=doctor',
         showSignup: true,
         label: 'Doctor Email or Medical Reg ID',
         demoUser: 'shonna@gmail.com',
@@ -915,7 +1082,7 @@
       },
       hospital: {
         title: 'Sign in to Hospital & Outpatient Token Management.',
-        signupUrl: '/register?role=hospital',
+        signupUrl: '/signup?role=hospital',
         showSignup: true,
         label: 'Facility Email / Admin ID',
         demoUser: 'vishal@gmail.com',
@@ -954,6 +1121,10 @@
       document.getElementById('formSuccessAlert').style.display = 'none';
     }
 
+    function showToast(message, type = 'info') {
+      alert(message);
+    }
+
     // Role switching
     function switchLoginRole(roleKey) {
       hideAlerts();
@@ -971,7 +1142,7 @@
       });
 
       const cfg = roleConfig[roleKey] || roleConfig.patient;
-      document.getElementById('cardSubText').textContent = cfg.title;
+      document.getElementById('cardSubText').innerHTML = cfg.title;
 
       const signupFooterRow = document.getElementById('signupFooterRow');
       const signupLinkUrl = document.getElementById('signupLinkUrl');
@@ -994,7 +1165,7 @@
         document.getElementById('nonPatientIdentifier').value = cfg.demoUser;
         document.getElementById('nonPatientPassword').value = cfg.demoPass;
         document.getElementById('quickCredsText').textContent = `Demo: ${cfg.demoDesc}`;
-        document.getElementById('btnNonPatientLogin').textContent = `Sign In as ${roleKey === 'main_admin' ? 'Admin' : roleKey.charAt(0).toUpperCase() + roleKey.slice(1)} \u2192`;
+        document.getElementById('btnNonPatientLogin').innerHTML = `<span>Sign In as ${roleKey === 'main_admin' ? 'Admin' : roleKey.charAt(0).toUpperCase() + roleKey.slice(1)} &rarr;</span>`;
       }
     }
 
@@ -1010,18 +1181,29 @@
     function selectPatientAuthMode(mode) {
       patientAuthMode = mode;
       hideAlerts();
+      const mobileRow = document.getElementById('modeOptionMobile');
+      const healthRow = document.getElementById('modeOptionHealthId');
       if (mode === 'mobile') {
         document.getElementById('radioMobile').checked = true;
-        document.getElementById('modeOptionMobile').classList.add('active');
-        document.getElementById('modeOptionHealthId').classList.remove('active');
-        document.getElementById('mobileAuthFields').style.display = 'block';
-        document.getElementById('healthIdAuthFields').style.display = 'none';
+        document.getElementById('radioHealthId').checked = false;
+        mobileRow.classList.add('active');
+        healthRow.classList.remove('active');
       } else {
         document.getElementById('radioHealthId').checked = true;
-        document.getElementById('modeOptionHealthId').classList.add('active');
-        document.getElementById('modeOptionMobile').classList.remove('active');
-        document.getElementById('mobileAuthFields').style.display = 'none';
-        document.getElementById('healthIdAuthFields').style.display = 'block';
+        document.getElementById('radioMobile').checked = false;
+        healthRow.classList.add('active');
+        mobileRow.classList.remove('active');
+      }
+    }
+
+    function handleHealthIdInputChanged() {
+      const val = document.getElementById('healthIdInput').value.trim();
+      const btn = document.getElementById('btnLoginWithHealthId');
+      if (val.length > 0) {
+        selectPatientAuthMode('health_id');
+        btn.classList.add('btn-active-blue');
+      } else {
+        btn.classList.remove('btn-active-blue');
       }
     }
 
@@ -1081,7 +1263,6 @@
       btn.innerHTML = '<span>Signing In...</span>';
 
       try {
-        // First verify OTP
         const vRes = await fetch('/api/auth/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1096,7 +1277,6 @@
           return;
         }
 
-        // Perform login
         const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1110,14 +1290,25 @@
 
         const loginData = await loginRes.json();
         if (loginData.success && loginData.data) {
-          localStorage.setItem('name', loginData.data.name || 'Patient');
-          localStorage.setItem('role', 'patient');
-          if (loginData.data.access_token) localStorage.setItem('token', loginData.data.access_token);
+          const token = loginData.data.access_token || '';
+          const role = loginData.data.role || 'patient';
+          const name = loginData.data.name || 'Sajil Binu';
+          const healthId = loginData.data.health_id || 'CB-2026-001245';
+
+          localStorage.setItem('name', name);
+          localStorage.setItem('role', role);
+          if (token) localStorage.setItem('token', token);
+          localStorage.setItem('health_id', healthId);
+
+          // Explicitly store credentials in document cookies for immediate server-side route evaluation
+          document.cookie = "auth_token=" + token + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_role=" + role + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_name=" + encodeURIComponent(name) + "; path=/; max-age=604800; SameSite=Lax";
 
           showSuccess('Sign in successful! Redirecting to Patient Dashboard...');
           setTimeout(() => {
-            window.location.href = loginData.data.redirect_url || '/dashboard';
-          }, 800);
+            window.location.href = '/dashboard';
+          }, 300);
         } else {
           showError(loginData.message || 'Sign in failed.');
           btn.disabled = false;
@@ -1137,11 +1328,7 @@
       const password = document.getElementById('healthIdPasswordInput').value;
 
       if (!identifier) {
-        showError('Please enter your MediCare Health ID or Email.');
-        return;
-      }
-      if (!password) {
-        showError('Please enter your password.');
+        showError('Please enter your MediCare Health ID.');
         return;
       }
 
@@ -1162,27 +1349,38 @@
 
         const data = await res.json();
         if (data.success && data.data) {
-          localStorage.setItem('name', data.data.name || 'Patient');
-          localStorage.setItem('role', 'patient');
-          if (data.data.access_token) localStorage.setItem('token', data.data.access_token);
+          const token = data.data.access_token || '';
+          const role = data.data.role || 'patient';
+          const name = data.data.name || 'Sajil Binu';
+          const healthId = data.data.health_id || 'CB-2026-001245';
+
+          localStorage.setItem('name', name);
+          localStorage.setItem('role', role);
+          if (token) localStorage.setItem('token', token);
+          localStorage.setItem('health_id', healthId);
+
+          // Explicitly store credentials in document cookies for immediate server-side route evaluation
+          document.cookie = "auth_token=" + token + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_role=" + role + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_name=" + encodeURIComponent(name) + "; path=/; max-age=604800; SameSite=Lax";
 
           showSuccess('Login successful! Redirecting to Patient Dashboard...');
           setTimeout(() => {
-            window.location.href = data.data.redirect_url || '/dashboard';
-          }, 800);
+            window.location.href = '/dashboard';
+          }, 300);
         } else {
-          showError(data.message || 'Invalid Health ID or password.');
+          showError(data.message || 'Invalid Health ID.');
           btn.disabled = false;
-          btn.innerHTML = '<span>Login &rarr;</span>';
+          btn.innerHTML = '<span>Login</span>';
         }
       } catch (err) {
         showError('Network error during authentication.');
         btn.disabled = false;
-        btn.innerHTML = '<span>Login &rarr;</span>';
+        btn.innerHTML = '<span>Login</span>';
       }
     }
 
-    // Non-Patient: Doctor / Hospital / Admin Login
+    // Non-Patient Login
     async function handleNonPatientLogin(e) {
       e.preventDefault();
       hideAlerts();
@@ -1208,14 +1406,24 @@
 
         const data = await res.json();
         if (data.success && data.data) {
-          localStorage.setItem('name', data.data.name || 'User');
-          localStorage.setItem('role', data.data.role || activeRole);
-          if (data.data.access_token) localStorage.setItem('token', data.data.access_token);
+          const token = data.data.access_token || '';
+          const role = data.data.role || activeRole;
+          const name = data.data.name || 'User';
 
+          localStorage.setItem('name', name);
+          localStorage.setItem('role', role);
+          if (token) localStorage.setItem('token', token);
+
+          // Explicitly store credentials in document cookies
+          document.cookie = "auth_token=" + token + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_role=" + role + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_name=" + encodeURIComponent(name) + "; path=/; max-age=604800; SameSite=Lax";
+
+          const destUrl = data.data.redirect_url || (role === 'doctor' ? '/doctor' : (role === 'main_admin' ? '/admin' : '/clinic_dashboard'));
           showSuccess('Sign in successful! Redirecting to your console...');
           setTimeout(() => {
-            window.location.href = data.data.redirect_url || '/';
-          }, 800);
+            window.location.href = destUrl;
+          }, 300);
         } else {
           showError(data.message || 'Invalid credentials.');
           btn.disabled = false;

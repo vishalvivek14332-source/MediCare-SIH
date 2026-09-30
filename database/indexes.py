@@ -28,9 +28,13 @@ def init_indexes():
 
         # 6. Doctors collection
         mongo.db.doctors.create_index([("clinic_id", 1), ("department", 1)], background=True)
+        mongo.db.doctors.create_index([("facility_id", 1), ("department", 1)], background=True)
         mongo.db.doctors.create_index([("email", 1)], background=True)
 
-        # 7. Clinics collection
+        # 7. Clinics collection (Fast server-side filtering across location & medical system)
+        mongo.db.clinics.create_index([("medical_system", 1), ("state", 1), ("district", 1), ("city", 1)], background=True)
+        mongo.db.clinics.create_index([("state", 1), ("district", 1)], background=True)
+        mongo.db.clinics.create_index([("facility_id", 1)], background=True)
         mongo.db.clinics.create_index([("name", 1), ("city", 1)], background=True)
 
         # 8. AI Case Sessions

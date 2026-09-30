@@ -1,6 +1,16 @@
-<!-- ABDM Reusable Sidebar (width ~248px, matching image_sih) -->
-<aside class="abdm-sidebar" id="mainSidebar">
+<!-- ABDM Reusable Sidebar (width ~240px, matching visual reference) -->
+<aside class="abdm-sidebar" id="mainSidebar" style="width:260px; min-width:260px; flex-shrink:0;">
   <ul class="abdm-sidebar-nav">
+    <li>
+      <a href="/dashboard" class="{% if active_page == 'dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
     <li>
       <a href="/health-records" class="{% if active_page == 'health_records' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -64,7 +74,7 @@
     </li>
 
     <li>
-      <a href="/booking" class="{% if active_page in ['booking', 'ai_case_taking'] %}active{% endif %}">
+      <a href="/booking" class="{% if active_page in ['booking', 'find_clinic', 'ai_case_taking'] %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
           <path d="M13 5v2"></path>
@@ -96,8 +106,61 @@
     </li>
   </ul>
 
-  <!-- Bottom Promotional Card matching reference images -->
-  <div class="abdm-sidebar-bottom-card" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none; margin-top:auto;">
-    <img src="{{ url_for('static', filename='images/sidebar_card_exact.png') }}?v=1" alt="Together for a Healthier Tomorrow - Share. Access. Care." style="width:100%; border-radius:12px; display:block; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+  <!-- Bottom Promotional Card matching reference image (Together for a Healthier Tomorrow) -->
+  <div class="abdm-sidebar-bottom-card sidebar-help-card" id="sidebarFamilyCard" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none;">
+    <img src="{{ url_for('static', filename='images/sidebar_family_card_crisp.png') }}" alt="Together for a Healthier Tomorrow - Share. Access. Care." style="width:100%; height:auto; object-fit:contain; border-radius:12px; display:block; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
   </div>
 </aside>
+
+<style>
+  .abdm-sidebar {
+    width: 260px !important;
+    min-width: 260px !important;
+    padding: 16px 12px !important;
+    box-sizing: border-box !important;
+  }
+  .abdm-sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .abdm-sidebar-nav li a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 9.5px 14px !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    text-decoration: none !important;
+    border-radius: 9px !important;
+    white-space: nowrap !important;
+    transition: all 0.15s ease !important;
+    line-height: 1.25 !important;
+  }
+  .abdm-sidebar-nav li a svg {
+    width: 18.5px !important;
+    height: 18.5px !important;
+    color: #64748B !important;
+    flex-shrink: 0 !important;
+    transition: color 0.15s ease !important;
+  }
+  .abdm-sidebar-nav li a:hover {
+    background-color: #F1F5F9 !important;
+    color: #0F2942 !important;
+  }
+  .abdm-sidebar-nav li a:hover svg {
+    color: #0066E6 !important;
+  }
+  .abdm-sidebar-nav li a.active {
+    background-color: #EAF4FF !important;
+    color: #0066E6 !important;
+    font-weight: 600 !important;
+  }
+  .abdm-sidebar-nav li a.active svg {
+    color: #0066E6 !important;
+  }
+</style>

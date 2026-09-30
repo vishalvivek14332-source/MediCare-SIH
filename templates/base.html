@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Base ABDM Theme CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}?v=6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/abdm_theme.css') }}?v=12">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
   {% block extra_head %}{% endblock %}
@@ -41,43 +41,59 @@
     // Synchronize authenticated user identity dynamically across all pages
     async function syncAuthenticatedUser() {
       const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
-      const isDoctorOrAdmin = window.location.pathname.startsWith('/doctor') || 
-                              window.location.pathname.startsWith('/admin') || 
-                              window.location.pathname.startsWith('/clinic_dashboard');
-
-      // Purge mismatched non-patient session from citizen portal
-      if (!isDoctorOrAdmin && role && role !== 'patient') {
-        localStorage.removeItem('name');
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = 'Bearer ' + token;
       }
 
       try {
-        const headers = {};
-        if (token && role === 'patient') {
-          headers['Authorization'] = 'Bearer ' + token;
-        }
-        const res = await fetch('/api/patient/profile', { headers });
+        const res = await fetch('/api/auth/me', { headers });
         if (res.ok) {
           const json = await res.json();
           if (json && json.data) {
-            const patient = json.data;
-            const name = patient.name || 'Sajil Binu';
-            const initial = (name.trim().charAt(0) || 'S').toUpperCase();
+            const user = json.data;
+            const name = user.name || 'User';
+            const initial = (name.trim().charAt(0) || 'U').toUpperCase();
 
-            // Persist the consistent patient name in localStorage
-            if (!isDoctorOrAdmin) {
-              localStorage.setItem('name', name);
-              localStorage.setItem('patient_id', patient._id || patient.id || '');
-              if (patient.health_id) localStorage.setItem('health_id', patient.health_id);
-            }
+            // Persist user in window global and localStorage
+            window.authenticatedUser = user;
+            localStorage.setItem('name', name);
+            localStorage.setItem('role', user.role || 'patient');
+            if (user.id) localStorage.setItem('patient_id', user.id);
+            if (user.health_id) localStorage.setItem('health_id', user.health_id);
 
-            // Dynamically update header display elements
+            // Show header auth actions with dynamic button state (Sign Out only when authenticated)
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            const headerSignupBtn = document.getElementById('headerSignupBtn');
+            const headerSignoutBtn = document.getElementById('headerSignoutBtn');
+            const headerTopUserWrap = document.getElementById('headerTopUserWrap');
+            const headerTopUserName = document.getElementById('headerTopUserName');
+            const headerTopAvatar = document.getElementById('headerTopAvatarInitials');
             const navUserName = document.getElementById('navUserName');
             const navAvatarInitials = document.getElementById('navAvatarInitials');
+            const userProfileChip = document.getElementById('userProfileChip');
+            const tier2NavAuth = document.getElementById('tier2NavAuthActions');
+            const navNotifWrapper = document.getElementById('navNotificationWrapper');
+
+            if (headerLoginBtn) headerLoginBtn.style.display = 'none';
+            if (headerSignupBtn) headerSignupBtn.style.display = 'none';
+            if (headerTopUserWrap) headerTopUserWrap.style.display = 'inline-flex';
+            if (headerSignoutBtn) headerSignoutBtn.style.display = 'inline-flex';
+            if (tier2NavAuth) tier2NavAuth.style.display = 'none';
+
+            if (userProfileChip) {
+              userProfileChip.style.display = 'flex';
+              userProfileChip.classList.remove('hidden-logged-out');
+            }
+            if (navNotifWrapper) navNotifWrapper.style.display = 'block';
             if (navUserName) navUserName.textContent = name;
-            if (navAvatarInitials) navAvatarInitials.textContent = initial;
+            if (headerTopUserName) headerTopUserName.textContent = name;
+            if (headerTopAvatar) headerTopAvatar.textContent = initial;
+            if (navAvatarInitials) {
+              const span = navAvatarInitials.querySelector('span');
+              if (span) span.textContent = initial;
+              else navAvatarInitials.textContent = initial;
+            }
 
             // Dynamically update any element marked as patient-auth-name across the active page
             document.querySelectorAll('.patient-auth-name').forEach(el => {
@@ -85,42 +101,79 @@
             });
 
             // Dispatch global event for page-specific components
-            window.dispatchEvent(new CustomEvent('patientProfileSynced', { detail: patient }));
+            window.dispatchEvent(new CustomEvent('patientProfileSynced', { detail: user }));
+            return;
           }
         }
+
+        const serverIsAuth = {{ 'true' if is_authenticated else 'false' }};
+        if (serverIsAuth) {
+          // If server rendered this page as authenticated, preserve authenticated UI
+          const headerLoginBtn = document.getElementById('headerLoginBtn');
+          const headerSignupBtn = document.getElementById('headerSignupBtn');
+          const headerSignoutBtn = document.getElementById('headerSignoutBtn');
+          const headerTopUserWrap = document.getElementById('headerTopUserWrap');
+          const userProfileChip = document.getElementById('userProfileChip');
+          const tier2NavAuth = document.getElementById('tier2NavAuthActions');
+          const navNotifWrapper = document.getElementById('navNotificationWrapper');
+
+          if (headerLoginBtn) headerLoginBtn.style.display = 'none';
+          if (headerSignupBtn) headerSignupBtn.style.display = 'none';
+          if (headerTopUserWrap) headerTopUserWrap.style.display = 'inline-flex';
+          if (headerSignoutBtn) headerSignoutBtn.style.display = 'inline-flex';
+          if (tier2NavAuth) tier2NavAuth.style.display = 'none';
+
+          if (userProfileChip) {
+            userProfileChip.style.display = 'flex';
+            userProfileChip.classList.remove('hidden-logged-out');
+          }
+          if (navNotifWrapper) navNotifWrapper.style.display = 'block';
+          return;
+        }
+
+        // When truly unauthenticated / logged-out:
+        // SHOW Login and Sign Up in both Top Header and Navigation
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const headerSignupBtn = document.getElementById('headerSignupBtn');
+        const headerSignoutBtn = document.getElementById('headerSignoutBtn');
+        const headerTopUserWrap = document.getElementById('headerTopUserWrap');
+        const userProfileChip = document.getElementById('userProfileChip');
+        const tier2NavAuth = document.getElementById('tier2NavAuthActions');
+        const navNotifWrapper = document.getElementById('navNotificationWrapper');
+
+        if (headerLoginBtn) headerLoginBtn.style.display = 'inline-flex';
+        if (headerSignupBtn) headerSignupBtn.style.display = 'inline-flex';
+        if (headerTopUserWrap) headerTopUserWrap.style.display = 'none';
+        if (headerSignoutBtn) headerSignoutBtn.style.display = 'none';
+        if (tier2NavAuth) tier2NavAuth.style.display = 'flex';
+
+        if (userProfileChip) {
+          userProfileChip.style.display = 'none';
+          userProfileChip.classList.add('hidden-logged-out');
+        }
+        if (navNotifWrapper) navNotifWrapper.style.display = 'none';
+
+        // Clear stale local storage
+        localStorage.removeItem('name');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('patient_id');
+        localStorage.removeItem('health_id');
       } catch (err) {
         console.warn('Authenticated profile sync note:', err);
       }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const isDoctorOrAdmin = window.location.pathname.startsWith('/doctor') || 
-                              window.location.pathname.startsWith('/admin') || 
-                              window.location.pathname.startsWith('/clinic_dashboard');
-
-      const role = localStorage.getItem('role');
-      if (!isDoctorOrAdmin && role && role !== 'patient') {
-        localStorage.removeItem('name');
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-      }
-
-      const storedName = localStorage.getItem('name');
-      const navUserName = document.getElementById('navUserName');
-      const navAvatarInitials = document.getElementById('navAvatarInitials');
-      if (storedName) {
-        if (navUserName) navUserName.textContent = storedName;
-        if (navAvatarInitials) navAvatarInitials.textContent = (storedName.trim().charAt(0) || 'S').toUpperCase();
-      }
-
-      // Fetch authentic patient record from /api/patient/profile
       syncAuthenticatedUser();
     });
 
     function toggleUserDropdown(e) {
       e.stopPropagation();
       const menu = document.getElementById('userDropdown');
+      const topMenu = document.getElementById('headerTopUserDropdown');
       const notifMenu = document.getElementById('notificationDropdown');
+      if (topMenu) topMenu.classList.remove('show');
       if (notifMenu) notifMenu.classList.remove('show');
       if (menu) menu.classList.toggle('show');
     }
@@ -129,6 +182,8 @@
       e.stopPropagation();
       const menu = document.getElementById('notificationDropdown');
       const userMenu = document.getElementById('userDropdown');
+      const topMenu = document.getElementById('headerTopUserDropdown');
+      if (topMenu) topMenu.classList.remove('show');
       if (userMenu) userMenu.classList.remove('show');
       if (menu) menu.classList.toggle('show');
     }
@@ -136,21 +191,53 @@
     // Close open menus when clicking anywhere else
     document.addEventListener('click', () => {
       const userMenu = document.getElementById('userDropdown');
+      const topMenu = document.getElementById('headerTopUserDropdown');
       const notifMenu = document.getElementById('notificationDropdown');
       if (userMenu) userMenu.classList.remove('show');
+      if (topMenu) topMenu.classList.remove('show');
       if (notifMenu) notifMenu.classList.remove('show');
     });
 
-    function handleLogout() {
+    async function handleLogout() {
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('name');
       localStorage.removeItem('patient_id');
       localStorage.removeItem('health_id');
+      localStorage.removeItem('cached_appointments');
+      localStorage.removeItem('booking_state');
+      if (window.sessionStorage) sessionStorage.clear();
       document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "auth_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "auth_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      window.location.href = '/logout';
+      document.cookie = "auth_patient_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "auth_health_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+      const headerLoginBtn = document.getElementById('headerLoginBtn');
+      const headerSignupBtn = document.getElementById('headerSignupBtn');
+      const headerSignoutBtn = document.getElementById('headerSignoutBtn');
+      const headerTopUserWrap = document.getElementById('headerTopUserWrap');
+      const userProfileChip = document.getElementById('userProfileChip');
+      const tier2NavAuth = document.getElementById('tier2NavAuthActions');
+      const navNotifWrapper = document.getElementById('navNotificationWrapper');
+
+      if (headerLoginBtn) headerLoginBtn.style.display = 'inline-flex';
+      if (headerSignupBtn) headerSignupBtn.style.display = 'inline-flex';
+      if (headerTopUserWrap) headerTopUserWrap.style.display = 'none';
+      if (headerSignoutBtn) headerSignoutBtn.style.display = 'none';
+      if (tier2NavAuth) tier2NavAuth.style.display = 'flex';
+
+      if (userProfileChip) {
+        userProfileChip.style.display = 'none';
+        userProfileChip.classList.add('hidden-logged-out');
+      }
+      if (navNotifWrapper) navNotifWrapper.style.display = 'none';
+
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch(e) {}
+
+      window.location.href = '/login';
     }
 
     // Interactive Toast Notification

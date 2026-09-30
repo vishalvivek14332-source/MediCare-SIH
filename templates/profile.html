@@ -48,7 +48,7 @@
             </button>
           </div>
 
-          <div class="abdm-profile-name" id="profileDisplayName">{{ current_user.name if current_user else 'Sajil Binu' }}</div>
+          <div class="abdm-profile-name" id="profileDisplayName">{{ current_user.name if current_user else '' }}</div>
           <div class="abdm-verified-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
               <polyline points="20 6 9 17 4 12"></polyline>
@@ -59,7 +59,7 @@
           <div class="abdm-health-id-card-snippet">
             <div style="font-size:11px; color:#5F7187; margin-bottom:2px;">Health ID</div>
             <div class="abdm-health-id-number">
-              <span id="profileHealthId">{{ current_user.health_id if current_user else '91-XXXX-XXXX-1234' }}</span>
+              <span id="profileHealthId">{{ current_user.health_id if current_user else '' }}</span>
               <button onclick="copyHealthId()" style="background:none; border:none; cursor:pointer; color:#0066E6;" title="Copy ID">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               </button>
@@ -77,10 +77,10 @@
         <div>
           <dl class="abdm-info-dl">
             <dt>Full Name</dt>
-            <dd id="infoFullName">{{ current_user.name if current_user else 'Sajil Binu' }}</dd>
+            <dd id="infoFullName">{{ current_user.name if current_user else '' }}</dd>
 
             <dt>Date of Birth</dt>
-            <dd id="infoDob">{{ current_user.dob if current_user else '12 Mar 2002' }}</dd>
+            <dd id="infoDob">{{ current_user.dob if current_user else '' }}</dd>
 
             <dt>Gender</dt>
             <dd id="infoGender">{{ current_user.gender if current_user else 'Male' }}</dd>
@@ -89,20 +89,20 @@
             <dd id="infoBloodGroup">{{ current_user.blood_group if current_user else 'O+' }}</dd>
 
             <dt>Mobile Number</dt>
-            <dd id="infoMobile">{{ current_user.phone if current_user else '+91 98765 43210' }}</dd>
+            <dd id="infoMobile">{{ current_user.phone if current_user else '' }}</dd>
 
             <dt>Email Address</dt>
-            <dd id="infoEmail">{{ current_user.email if current_user else 'sajilbinu@example.com' }}</dd>
+            <dd id="infoEmail">{{ current_user.email if current_user else '' }}</dd>
 
             <dt>Address</dt>
-            <dd id="infoAddress">{{ current_user.address if current_user else 'Panoor, Kannur, Kerala, 670692' }}</dd>
+            <dd id="infoAddress">{{ current_user.address if current_user else '' }}</dd>
 
             <dt>Language Preference</dt>
             <dd id="infoLanguage">English</dd>
 
             <dt>Emergency Contact</dt>
             <dd id="infoEmergency">
-              <div>{{ current_user.emergency_contact if current_user else 'Biju Mathew (Father) +91 98987 65432' }}</div>
+              <div>{{ current_user.emergency_contact if current_user else '' }}</div>
             </dd>
           </dl>
         </div>
@@ -238,12 +238,16 @@
     </div>
     <div class="abdm-modal-body">
       <div class="abdm-form-group">
+        <label>Full Name</label>
+        <input type="text" id="editName" class="abdm-form-input" value="{{ current_user.name if current_user else '' }}" placeholder="Enter full name">
+      </div>
+      <div class="abdm-form-group">
         <label>Mobile Number</label>
-        <input type="text" id="editMobile" class="abdm-form-input" value="+91 98765 43210">
+        <input type="text" id="editMobile" class="abdm-form-input" value="{{ current_user.phone if current_user else '' }}">
       </div>
       <div class="abdm-form-group">
         <label>Address</label>
-        <input type="text" id="editAddress" class="abdm-form-input" value="Panoor, Kannur, Kerala, 670692">
+        <input type="text" id="editAddress" class="abdm-form-input" value="{{ current_user.address if current_user else '' }}">
       </div>
       <div class="abdm-form-group">
         <label>Occupation</label>
@@ -251,7 +255,7 @@
       </div>
       <div class="abdm-form-group">
         <label>Emergency Contact</label>
-        <input type="text" id="editEmergency" class="abdm-form-input" value="Biju Mathew (Father) +91 98987 65432">
+        <input type="text" id="editEmergency" class="abdm-form-input" value="{{ current_user.emergency_contact if current_user else '' }}">
       </div>
     </div>
     <div class="abdm-modal-footer">
@@ -313,11 +317,17 @@
   });
 
   async function saveProfileChanges() {
+    const name = document.getElementById('editName') ? document.getElementById('editName').value.trim() : '';
     const mobile = document.getElementById('editMobile').value;
     const address = document.getElementById('editAddress').value;
     const occupation = document.getElementById('editOccupation').value;
     const emergency = document.getElementById('editEmergency').value;
 
+    if (name) {
+      document.getElementById('profileDisplayName').textContent = name;
+      document.getElementById('profileAvatarLarge').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('infoFullName').textContent = name;
+    }
     document.getElementById('infoMobile').textContent = mobile;
     document.getElementById('infoAddress').textContent = address;
     document.getElementById('infoOccupation').textContent = occupation;
@@ -330,13 +340,15 @@
       const token = localStorage.getItem('token');
       const headers = {'Content-Type': 'application/json'};
       if (token) headers['Authorization'] = 'Bearer ' + token;
+      const updateData = {phone: mobile, address, occupation, emergency_contact: emergency};
+      if (name) updateData.name = name;
       await fetch('/api/patient/profile', {
         method: 'PUT',
         headers,
-        body: JSON.stringify({phone: mobile, address, occupation, emergency_contact: emergency})
+        body: JSON.stringify(updateData)
       });
       if (typeof syncAuthenticatedUser === 'function') {
-        syncAuthenticatedUser();
+        await syncAuthenticatedUser();
       }
     } catch (e) {}
   }

@@ -59,14 +59,18 @@ def get_facilities():
     if medical_system and medical_system.lower() != 'all':
         # Match either exact name or code
         sys_info = get_system_by_code_or_name(medical_system)
-        if sys_info:
-            query["$or"] = [
-                {"medical_system": sys_info["name"]},
-                {"medical_system": sys_info["code"]},
-                {"medical_system": {"$regex": f"^{re.escape(sys_info['name'])}$", "$options": "i"}}
-            ]
+        target_name = sys_info["name"] if sys_info else medical_system
+        target_code = sys_info["code"] if sys_info else medical_system
+
+        if "integrated" in target_name.lower():
+            query["medical_system"] = {"$regex": ".*integrated.*ayush.*", "$options": "i"}
         else:
-            query["medical_system"] = {"$regex": f"^{re.escape(medical_system)}$", "$options": "i"}
+            query["$or"] = [
+                {"medical_system": target_name},
+                {"medical_system": target_code},
+                {"medical_system": {"$regex": f"^{re.escape(target_name)}$", "$options": "i"}},
+                {"medical_system": {"$regex": ".*integrated.*ayush.*", "$options": "i"}}
+            ]
 
     if state and state.lower() != 'all':
         query["state"] = {"$regex": f"^{re.escape(state)}$", "$options": "i"}
@@ -85,6 +89,7 @@ def get_facilities():
         search_filter = {
             "$or": [
                 {"name": reg},
+                {"facility_name": reg},
                 {"address": reg},
                 {"city": reg},
                 {"district": reg},
@@ -92,7 +97,8 @@ def get_facilities():
             ]
         }
         if "$or" in query:
-            query = {"$and": [query, search_filter]}
+            existing_or = query.pop("$or")
+            query["$and"] = [{"$or": existing_or}, search_filter]
         else:
             query.update(search_filter)
 
@@ -101,31 +107,42 @@ def get_facilities():
     if sort_by == 'availability':
         sort_field = [("availability", 1), ("name", 1)]
 
-    facilities = list(mongo.db.clinics.find(query).sort(sort_field).limit(50))
+    facilities = list(mongo.db.clinics.find(query).sort(sort_field).limit(100))
     for fac in facilities:
         fac['_id'] = str(fac['_id'])
+        fac['facility_id'] = str(fac.get('facility_id') or fac['_id'])
+        fac['facility_name'] = fac.get('facility_name') or fac.get('name', '')
+        if not fac.get('name'):
+            fac['name'] = fac['facility_name']
         if 'password' in fac:
             del fac['password']
         if 'departments' not in fac or not fac['departments']:
             fac['departments'] = ["General Medicine"]
-        if 'verification_status' not in fac:
+        if 'verification_status' not in fac or 'abdm' in str(fac.get('verification_status', '')).lower():
             fac['verification_status'] = "Demo Facility"
+        if 'availability' not in fac:
+            fac['availability'] = "Available Today"
 
     return success_response(data=facilities)
 
 @facility_bp.route('/facilities/<facility_id>', methods=['GET'])
 def get_facility_by_id(facility_id):
     """Retrieve details for a single healthcare facility."""
+    fac = None
     try:
         obj_id = ObjectId(facility_id)
-        fac = mongo.db.clinics.find_one({"_id": obj_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": obj_id}, {"facility_id": facility_id}]})
     except Exception:
-        fac = mongo.db.clinics.find_one({"_id": facility_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": facility_id}, {"facility_id": facility_id}]})
 
     if not fac:
         return error_response("Facility not found", status=404)
 
     fac['_id'] = str(fac['_id'])
+    fac['facility_id'] = str(fac.get('facility_id') or fac['_id'])
+    fac['facility_name'] = fac.get('facility_name') or fac.get('name', '')
+    if not fac.get('name'):
+        fac['name'] = fac['facility_name']
     if 'password' in fac:
         del fac['password']
     return success_response(data=fac)
@@ -136,11 +153,12 @@ def get_facility_departments(facility_id):
     Return ONLY the departments configured for this healthcare facility.
     Does NOT return departments from other facilities.
     """
+    fac = None
     try:
         obj_id = ObjectId(facility_id)
-        fac = mongo.db.clinics.find_one({"_id": obj_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": obj_id}, {"facility_id": facility_id}]})
     except Exception:
-        fac = mongo.db.clinics.find_one({"_id": facility_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": facility_id}, {"facility_id": facility_id}]})
 
     if not fac:
         return error_response("Facility not found", status=404)
@@ -148,12 +166,19 @@ def get_facility_departments(facility_id):
     departments = fac.get('departments', [])
     if not departments:
         # Fallback to doctor departments linked to this facility
-        doctor_depts = mongo.db.doctors.distinct("department", {"clinic_id": str(fac['_id'])})
+        doctor_depts = mongo.db.doctors.distinct("department", {
+            "$or": [
+                {"clinic_id": str(fac['_id'])},
+                {"facility_id": str(fac.get('facility_id') or fac['_id'])}
+            ]
+        })
         departments = doctor_depts or ["General Medicine"]
 
     return success_response(data={
-        "facility_id": str(fac['_id']),
-        "facility_name": fac.get('name', ''),
+        "facility_id": str(fac.get('facility_id') or fac['_id']),
+        "_id": str(fac['_id']),
+        "facility_name": fac.get('facility_name') or fac.get('name', ''),
+        "name": fac.get('name') or fac.get('facility_name', ''),
         "medical_system": fac.get('medical_system', 'Modern / Conventional Medicine'),
         "departments": departments
     })
@@ -163,18 +188,19 @@ def get_facility_department_doctors(facility_id, dept_name):
     """
     Return ONLY doctors associated with the selected facility and department.
     """
+    fac = None
     try:
         obj_id = ObjectId(facility_id)
-        fac = mongo.db.clinics.find_one({"_id": obj_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": obj_id}, {"facility_id": facility_id}]})
     except Exception:
-        fac = mongo.db.clinics.find_one({"_id": facility_id})
+        fac = mongo.db.clinics.find_one({"$or": [{"_id": facility_id}, {"facility_id": facility_id}]})
 
     if not fac:
         return error_response("Facility not found", status=404)
 
-    # Search doctors matching clinic_id (either ObjectId or string) or facility_name
-    fac_id_str = str(fac['_id'])
-    fac_name = fac.get('name', '')
+    fac_id_str = str(fac.get('facility_id') or fac['_id'])
+    fac_obj_str = str(fac['_id'])
+    fac_name = fac.get('facility_name') or fac.get('name', '')
 
     dept_regex = re.compile(f"^{re.escape(dept_name.strip())}$", re.IGNORECASE)
 
@@ -183,6 +209,9 @@ def get_facility_department_doctors(facility_id, dept_name):
             {
                 "$or": [
                     {"clinic_id": fac_id_str},
+                    {"clinic_id": fac_obj_str},
+                    {"facility_id": fac_id_str},
+                    {"facility_id": fac_obj_str},
                     {"facility_name": fac_name},
                     {"facility_name": {"$regex": f".*{re.escape(fac_name)}.*", "$options": "i"}}
                 ]
@@ -192,8 +221,26 @@ def get_facility_department_doctors(facility_id, dept_name):
     }
 
     doctors = list(mongo.db.doctors.find(query, {"password": 0}))
+    if not doctors:
+        dept_prefix = re.compile(f"^{re.escape(dept_name.strip()[:4])}", re.IGNORECASE)
+        fallback_query = {
+            "$and": [
+                {
+                    "$or": [
+                        {"clinic_id": fac_id_str},
+                        {"clinic_id": fac_obj_str},
+                        {"facility_id": fac_id_str},
+                        {"facility_id": fac_obj_str}
+                    ]
+                },
+                {"department": dept_prefix}
+            ]
+        }
+        doctors = list(mongo.db.doctors.find(fallback_query, {"password": 0}))
+
     for doc in doctors:
         doc['_id'] = str(doc['_id'])
+        doc['id'] = doc['_id']
         if 'clinic_id' in doc and isinstance(doc['clinic_id'], ObjectId):
             doc['clinic_id'] = str(doc['clinic_id'])
         doc['facility_name'] = fac_name
@@ -202,7 +249,7 @@ def get_facility_department_doctors(facility_id, dept_name):
             doc['qualification'] = "MBBS" if "Modern" in fac.get('medical_system', '') else "Certified Practitioner"
         if 'experience' not in doc:
             doc['experience'] = "8 years"
-        if 'verification_status' not in doc:
+        if 'verification_status' not in doc or 'abdm' in str(doc.get('verification_status', '')).lower():
             doc['verification_status'] = "Demo Facility Doctor"
         if 'available_today' not in doc:
             doc['available_today'] = True
@@ -224,4 +271,5 @@ def get_doctor_by_id(doctor_id):
         return error_response("Doctor not found", status=404)
 
     doc['_id'] = str(doc['_id'])
+    doc['id'] = doc['_id']
     return success_response(data=doc)

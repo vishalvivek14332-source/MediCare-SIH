@@ -18,13 +18,13 @@
     </div>
     <div>
       <div style="display:flex; align-items:center; gap:10px;">
-        <h1 class="abdm-page-title patient-auth-name" style="font-size:24px;">{{ current_user.name if current_user else 'Sajil Binu' }}</h1>
+        <h1 class="abdm-page-title patient-auth-name" style="font-size:24px;">{{ brief_patient.name if brief_patient else (current_user.name if current_user else 'Patient') }}</h1>
         <span class="abdm-badge {% if appointment and appointment.priority == 'Routine' %}badge-success{% elif appointment and (appointment.priority == 'Urgent' or appointment.priority == 'Emergency') %}badge-critical{% else %}badge-warning{% endif %}" style="font-size:12px;">
           {{ appointment.priority if appointment and appointment.priority else 'Priority' }} Consultation
         </span>
       </div>
       <p class="abdm-page-subtitle">
-        24 Yrs &bull; Male &bull; Health ID: <strong>CB-2026-001245</strong> &bull; Slot: <strong>{{ appointment.slot if appointment and appointment.slot else '10:25 AM' }}</strong>
+        {{ brief_patient.age if brief_patient and brief_patient.age else '24' }} Yrs &bull; {{ brief_patient.gender if brief_patient and brief_patient.gender else 'Male' }} &bull; Health ID: <strong>{{ brief_patient.health_id or brief_patient.abdm_id if brief_patient else 'CB-2026-001245' }}</strong> &bull; Slot: <strong>{{ appointment.slot if appointment and appointment.slot else '10:25 AM' }}</strong>
         &bull; Facility: <strong>{{ appointment.facility_name if appointment and appointment.facility_name else 'KPHC Thalassery' }}</strong>
       </p>
       <div style="margin-top:4px; font-size:12.5px; color:#475569;">

@@ -1,24 +1,53 @@
 <!-- Two-Tier Header: Top White Brand Bar + Primary Navy Nav Bar (matching exact reference banner with detailed symbols and letters) -->
 <header class="abdm-header-container">
-  <!-- Tier 1: White National / Digital Health Mission Banner (~94px) -->
+  <!-- Tier 1: White National / Digital Health Mission Banner (96px, matching Reference 2) -->
   <div class="abdm-top-header">
     <!-- Left: Ministry of Health & Family Welfare / Government of India -->
     <div class="brand-left">
-      <img src="{{ url_for('static', filename='images/ministry_text_v2.png') }}?v=3" alt="Ministry of Health &amp; Family Welfare, Government of India" class="ministry-img">
+      <div class="brand-ministry-text">
+        <div class="ministry-title">Ministry of Health &amp; Family Welfare</div>
+        <div class="ministry-sub">Government of India</div>
+      </div>
     </div>
 
-    <!-- Center: Ayushman Bharat Digital Health Mission (Full Lotus + Title + One Nation, One Digital Health Ecosystem) -->
+    <!-- Center: Ayushman Bharat Digital Health Mission (Lotus + Text) -->
     <a href="/" class="brand-center">
-      <img src="{{ url_for('static', filename='images/abdm_mission_v2.png') }}?v=3" alt="Ayushman Bharat Digital Health Mission - One Nation, One Digital Health Ecosystem" class="abdm-mission-img">
+      <div class="brand-abdm-wrap">
+        <img src="{{ url_for('static', filename='images/abdm_lotus_vector_crisp.png') }}" alt="Ayushman Bharat Lotus" class="abdm-lotus-icon">
+        <div class="abdm-text-block">
+          <div class="abdm-title-main">Ayushman Bharat</div>
+          <div class="abdm-title-sub">Digital Health Mission</div>
+          <div class="abdm-tagline">One Nation, One Digital Health Ecosystem</div>
+        </div>
+      </div>
     </a>
 
-    <!-- Right: Health ID + Auth Actions (Login & Sign Up) -->
+    <!-- Right: Health ID + Divider + Login / Sign Up -->
     <div class="brand-right">
       <a href="/health-id" class="health-id-link">
-        <img src="{{ url_for('static', filename='images/health_id_v2.png') }}?v=3" alt="Health ID - Your Health, Your Identity" class="health-id-img">
+        <div class="brand-healthid-wrap">
+          <img src="{{ url_for('static', filename='images/healthid_badge_crisp.png') }}" alt="Health ID" class="healthid-circle-icon">
+          <div class="healthid-text-block">
+            <div class="healthid-title">Health ID</div>
+            <div class="healthid-sub">Your Health, Your Identity</div>
+          </div>
+        </div>
       </a>
-      <div class="header-auth-actions">
-        <a href="/login" class="header-auth-btn header-login-btn">
+      <div class="header-v-divider" id="headerVDivider"></div>
+      <div class="header-auth-actions" id="headerAuthActions">
+        {% if is_authenticated %}
+        <!-- Single Sign Out button when authenticated -->
+        <button type="button" onclick="handleLogout()" class="header-auth-btn header-signout-btn" id="headerSignoutBtn" title="Sign Out of MediCare">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out</span>
+        </button>
+        {% else %}
+        <!-- When Logged Out: ONLY Login and Sign Up in Tier 1 -->
+        <a href="/login" class="header-auth-btn header-login-btn" id="headerLoginBtn" title="Login to MediCare">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
             <polyline points="10 17 15 12 10 7"></polyline>
@@ -26,7 +55,7 @@
           </svg>
           <span>Login</span>
         </a>
-        <a href="/register" class="header-auth-btn header-signup-btn">
+        <a href="/signup" class="header-auth-btn header-signup-btn" id="headerSignupBtn" title="Sign Up for MediCare">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="8.5" cy="7" r="4"></circle>
@@ -35,6 +64,7 @@
           </svg>
           <span>Sign Up</span>
         </a>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -116,8 +146,8 @@
         </svg>
       </div>
 
-      <!-- Notification Bell with Red Badge -->
-      <div style="position:relative;">
+      <!-- Notification Bell with Red Dot -->
+      <div style="position:relative; {% if not is_authenticated %}display:none;{% endif %}" id="navNotificationWrapper">
         <button class="abdm-notification-btn" id="navNotificationBtn" onclick="toggleNotificationDropdown(event)" aria-label="Notifications">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -155,12 +185,14 @@
         </div>
       </div>
 
-      <!-- User Profile Chip with circular avatar 'S', name and down arrow -->
-      <div class="abdm-user-profile" id="userProfileChip" onclick="toggleUserDropdown(event)">
-        <button class="abdm-user-chip">
-          <div class="abdm-user-avatar" id="navAvatarInitials">{{ current_user.initial if current_user else 'S' }}</div>
-          <span class="abdm-user-name" id="navUserName">{{ current_user.name if current_user else 'Sajil Binu' }}</span>
-          <svg style="width:11px; height:11px; margin-left:4px; display:inline-block; vertical-align:middle; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- User Profile Chip with circular avatar, name and down arrow -->
+      <div class="abdm-user-profile navbar-user-menu {% if not is_authenticated %}hidden-logged-out{% endif %}" id="userProfileChip" onclick="toggleUserDropdown(event)" style="{% if not is_authenticated %}display:none !important;{% endif %}">
+        <button class="abdm-user-chip" type="button" aria-haspopup="true" aria-expanded="false">
+          <div class="navbar-user-avatar abdm-user-avatar avatar">
+            <span id="navAvatarInitials">{{ current_user.initial if current_user and current_user.initial else (current_user.name[:1] if current_user and current_user.name else 'P') }}</span>
+          </div>
+          <span class="navbar-user-name abdm-user-name" id="navUserName">{{ current_user.name if current_user and current_user.name else 'Patient' }}</span>
+          <svg class="navbar-user-arrow abdm-user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
@@ -169,6 +201,10 @@
           <a href="/profile">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             Profile
+          </a>
+          <a href="/health-id">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><line x1="15" y1="8" x2="17" y2="8"></line><line x1="15" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg>
+            Health ID
           </a>
           <a href="/settings">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -185,6 +221,12 @@
           </button>
         </div>
       </div>
+
+      <!-- Unauthenticated Nav Actions for Tier 2 (Login & Sign Up) -->
+      <div class="nav-auth-actions-tier2" id="tier2NavAuthActions" style="{% if is_authenticated %}display:none;{% else %}display:flex;{% endif %} align-items:center; gap:8px;">
+        <a href="/login" class="tier2-nav-btn tier2-login-btn" id="navLoginBtn">Login</a>
+        <a href="/signup" class="tier2-nav-btn tier2-signup-btn" id="navSignupBtn">Sign Up</a>
+      </div>
     </div>
   </nav>
 </header>
@@ -193,4 +235,274 @@
   function showAboutModal() {
     showToast('Ayushman Bharat Digital Health Mission (ABDM) &bull; CareBridge Digital Ecosystem', 'info');
   }
+
+  function toggleTopUserDropdown(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('headerTopUserDropdown');
+    const navUserMenu = document.getElementById('userDropdown');
+    const notifMenu = document.getElementById('notificationDropdown');
+    if (navUserMenu) navUserMenu.classList.remove('show');
+    if (notifMenu) notifMenu.classList.remove('show');
+    if (menu) menu.classList.toggle('show');
+  }
 </script>
+
+<style>
+  /* Dedicated Navbar User Avatar Circle Styles */
+  .navbar-user-menu,
+  .abdm-user-profile {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: max-content;
+    flex-shrink: 0;
+  }
+
+  .navbar-user-menu.hidden-logged-out,
+  .abdm-user-profile.hidden-logged-out,
+  #userProfileChip.hidden-logged-out {
+    display: none !important;
+  }
+
+  .abdm-user-chip {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+  }
+
+  .navbar-user-avatar,
+  .abdm-user-avatar,
+  .avatar {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    flex: 0 0 32px !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 9px 0 0 !important;
+    overflow: hidden !important;
+    background: #FFFFFF !important;
+    color: #003B73 !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    border: 0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    position: relative !important;
+    transform: none !important;
+  }
+
+  .navbar-user-avatar span,
+  .abdm-user-avatar span,
+  .avatar span {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+
+  .navbar-user-name,
+  .abdm-user-name {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.1px !important;
+    margin-right: 7px !important;
+    flex-shrink: 1 !important;
+  }
+
+  .navbar-user-arrow,
+  .abdm-user-chevron {
+    width: 11px !important;
+    height: 11px !important;
+    color: #FFFFFF !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+    opacity: 0.9 !important;
+  }
+
+  /* Tier 2 Unauthenticated Navigation Buttons */
+  .tier2-nav-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    height: 34px !important;
+    padding: 0 14px !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    user-select: none !important;
+  }
+
+  .tier2-login-btn {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  }
+
+  .tier2-login-btn:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
+  }
+
+  .tier2-signup-btn {
+    background: #0066E6 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #0066E6 !important;
+    box-shadow: 0 2px 6px rgba(0, 102, 230, 0.35) !important;
+  }
+
+  .tier2-signup-btn:hover {
+    background: #0052BF !important;
+    border-color: #0052BF !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Header Sign Out Button (Matching premium header auth buttons) */
+  .header-signout-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(220, 38, 38, 0.4) !important;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25) !important;
+  }
+
+  .header-signout-btn svg {
+    color: #FFFFFF !important;
+    width: 15px !important;
+    height: 15px !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  .header-signout-btn:hover {
+    background: linear-gradient(135deg, #B91C1C 0%, #991B1B 100%) !important;
+    border-color: #991B1B !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.38) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .header-signout-btn:hover svg {
+    transform: translateX(2px) !important;
+  }
+
+  .header-signout-btn:active {
+    background: #991B1B !important;
+    transform: translateY(0) !important;
+  }
+
+  /* Top Header User Profile Chip */
+  .header-top-user-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .header-top-user-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    height: 40px !important;
+    padding: 0 14px 0 6px !important;
+    border-radius: 20px !important;
+    background: #F8FAFC !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #1E293B !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .header-top-user-btn:hover {
+    background: #F1F5F9 !important;
+    border-color: #94A3B8 !important;
+  }
+
+  .header-top-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    border-radius: 50% !important;
+    background: #003B73 !important;
+    color: #FFFFFF !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+  }
+
+  .header-top-name {
+    max-width: 140px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    color: #0F172A !important;
+  }
+
+  .header-top-chevron {
+    width: 11px !important;
+    height: 11px !important;
+    color: #64748B !important;
+    margin-left: 2px !important;
+  }
+
+  .header-top-dropdown {
+    right: 0 !important;
+    top: calc(100% + 8px) !important;
+    min-width: 180px !important;
+  }
+</style>

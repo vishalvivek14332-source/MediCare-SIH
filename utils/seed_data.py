@@ -5,6 +5,7 @@ matching the reference screenshots in image_sih immediately.
 from database.db import mongo
 from werkzeug.security import generate_password_hash
 from datetime import datetime
+from utils.facility_dataset import seed_all_facilities_and_doctors
 
 _SEEDED = False
 
@@ -13,6 +14,7 @@ def seed_database():
     try:
         seed_core_patient_and_base()
         seed_healthcare_facilities_and_doctors()
+        seed_all_facilities_and_doctors(mongo.db)
         _SEEDED = True
     except Exception as e:
         print(f"Seed data error: {e}")
@@ -42,7 +44,7 @@ def seed_core_patient_and_base():
                 "state": "Kerala",
                 "district": "Kannur",
                 "pincode": "670692",
-                "health_id": "91-XXXX-XXXX-1234",
+                "health_id": "CB-2026-001245",
                 "abdm_id": "CB-2026-001245",
                 "is_verified": True
             }
@@ -53,7 +55,7 @@ def seed_core_patient_and_base():
             mongo.db.patients.update_one(
                 {"_id": patient_id},
                 {"$set": {
-                    "health_id": "91-XXXX-XXXX-1234",
+                    "health_id": "CB-2026-001245",
                     "abdm_id": "CB-2026-001245",
                     "dob": "12 Mar 2002",
                     "blood_group": "O+",
@@ -393,7 +395,7 @@ def seed_core_patient_and_base():
             }
         ]
 
-        if mongo.db.appointments.count_documents({}) < 4:
+        if mongo.db.appointments.count_documents({"$or": [{"patient_id": patient_id}, {"patient_id": str(patient_id)}]}) == 0:
             for app in appointments_data:
                 mongo.db.appointments.insert_one({
                     "patient_id": patient_id,
@@ -402,6 +404,7 @@ def seed_core_patient_and_base():
                     "day": app["day"],
                     "doctor_name": app["doctor_name"],
                     "facility": app["facility"],
+                    "facility_name": app["facility"],
                     "department": app["department"],
                     "purpose": app["purpose"],
                     "slot": f"{app['time']}",

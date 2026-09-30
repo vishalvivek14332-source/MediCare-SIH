@@ -12,21 +12,31 @@
   
   <style>
     :root {
-      --primary: #0066E6;
-      --primary-hover: #0052BF;
+      --primary: #087CF0;
+      --primary-hover: #0066E6;
       --primary-light: #EFF6FF;
-      --navy-900: #0A2540;
-      --navy-800: #002B5C;
-      --slate-800: #1E293B;
-      --slate-600: #475569;
-      --slate-500: #64748B;
+      --navy: #082E67;
+      --navy-900: #082E67;
+      --navy-800: #082E67;
+      --navy-dark: #062452;
+      --text: #193B67;
+      --slate-800: #193B67;
+      --muted: #4F6B91;
+      --slate-600: #4F6B91;
+      --slate-500: #5D7698;
       --slate-400: #94A3B8;
       --slate-200: #E2E8F0;
       --slate-100: #F1F5F9;
       --slate-50: #F8FAFC;
-      --green-600: #059669;
-      --purple-600: #7C3AED;
-      --orange-500: #EA580C;
+      --bg: #EAF6FF;
+      --border: #D7E4F2;
+      --white: #FFFFFF;
+      --green: #19B98A;
+      --green-600: #19B98A;
+      --purple: #8B5CF6;
+      --purple-600: #8B5CF6;
+      --orange: #FF8A00;
+      --orange-500: #FF8A00;
     }
 
     * {
@@ -37,16 +47,17 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #EFF6FF 0%, #E0F2FE 40%, #DBEAFE 100%);
-      color: var(--slate-800);
+      background: linear-gradient(135deg, #EAF6FF 0%, #DDF1FF 50%, #EAF6FF 100%);
+      color: var(--text);
+      width: 100%;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px 16px;
       position: relative;
       overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
 
     /* Subtle background medical cross motifs */
@@ -58,54 +69,86 @@
       pointer-events: none;
       z-index: 1;
     }
-    .bg-plus-1 { top: 8%; left: 42%; font-size: 52px; }
-    .bg-plus-2 { top: 32%; left: 38%; font-size: 64px; }
-    .bg-plus-3 { top: 48%; left: 43%; font-size: 72px; }
-    .bg-plus-4 { bottom: 12%; left: 10%; font-size: 48px; }
+    .bg-plus-1 { top: 6%; left: 35%; font-size: 56px; }
+    .bg-plus-2 { top: 34%; left: 33%; font-size: 64px; }
+    .bg-plus-3 { top: 52%; left: 40%; font-size: 72px; }
+    .bg-plus-4 { bottom: 8%; left: 6%; font-size: 48px; }
 
-    /* Main Container */
-    .signup-wrapper {
+    /* Main Container Shell (Exact match with login.html: ~96vw x ~95vh, 1.15fr 0.85fr) */
+    .signup-shell {
       position: relative;
       z-index: 10;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
+      width: min(96vw, 1740px);
+      height: calc(100vh - 40px);
+      min-height: calc(100vh - 40px);
+      margin: 20px auto;
+      border-radius: 28px;
+      background: #F0F8FF;
+      border: 1.5px solid #D6E8FA;
+      box-shadow: 0 20px 50px -15px rgba(6, 43, 99, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+      overflow: hidden;
       display: grid;
-      grid-template-columns: 1fr 1.08fr;
-      gap: 36px;
-      align-items: center;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: stretch;
+      box-sizing: border-box;
     }
 
-    /* Left Promotional Panel */
-    .promo-panel {
-      padding: 10px 10px 10px 0;
+    /* ================= LEFT HERO SECTION (Exact match with login.html) ================= */
+    .left-panel {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      background: #F0F8FF;
+      overflow: hidden;
+      padding: 44px 44px 0 68px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      position: relative;
-      min-height: 520px;
-      justify-content: space-between;
     }
 
+    /* Internal decorative plus marks matching login reference */
+    .left-deco-plus {
+      position: absolute;
+      color: rgba(56, 189, 248, 0.25);
+      font-weight: 300;
+      user-select: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .left-deco-plus-1 { top: 22%; right: 18%; font-size: 64px; }
+    .left-deco-plus-2 { top: 44%; right: 14%; font-size: 70px; }
+
+    /* Logo at top-left */
     .brand-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
       margin-bottom: 22px;
+      position: relative;
+      z-index: 4;
     }
 
     .brand-logo-img {
-      height: 46px;
+      width: 325px;
+      max-width: 100%;
+      height: auto;
       object-fit: contain;
+      display: block;
+    }
+
+    /* Hero Text & Features */
+    .left-content {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      max-width: 530px;
     }
 
     .main-hero-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 42px;
+      font-size: clamp(36px, 3.1vw, 50px);
       font-weight: 800;
-      color: var(--navy-900);
-      line-height: 1.15;
-      letter-spacing: -0.8px;
-      margin-bottom: 12px;
+      line-height: 1.02;
+      letter-spacing: -1px;
+      color: var(--navy);
+      margin: 0 0 14px 0;
     }
 
     .main-hero-title span {
@@ -113,170 +156,159 @@
     }
 
     .main-hero-sub {
-      font-size: 14.5px;
-      color: var(--slate-600);
-      line-height: 1.5;
-      margin-bottom: 24px;
-      max-width: 440px;
+      font-size: clamp(15px, 1.05vw, 17px);
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 0 24px 0;
     }
 
-    /* Lower row: Features on left, Illustration on right */
-    .promo-lower-row {
-      display: flex;
-      align-items: flex-end;
-      position: relative;
-      min-height: 280px;
-    }
-
-    /* 4 Feature Items */
+    /* Four Feature Badges */
     .feature-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-width: 320px;
-      z-index: 2;
+      gap: 14px;
+      position: relative;
+      z-index: 4;
+      max-width: 350px;
     }
 
     .feature-item {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     .feature-icon-circle {
-      width: 42px;
-      height: 42px;
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #FFFFFF;
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .icon-blue { background: #0066E6; }
-    .icon-green { background: #10B981; }
-    .icon-purple { background: #8B5CF6; }
-    .icon-orange { background: #F97316; }
+    .icon-blue { background: var(--primary); }
+    .icon-green { background: var(--green); }
+    .icon-purple { background: var(--purple); }
+    .icon-orange { background: var(--orange); }
 
     .feature-content h4 {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 14.5px;
+      font-size: 15.5px;
       font-weight: 700;
-      color: var(--navy-900);
-      margin-bottom: 2px;
+      color: var(--navy);
+      margin: 0 0 2px 0;
+      line-height: 1.25;
     }
 
     .feature-content p {
-      font-size: 12px;
-      color: var(--slate-500);
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin: 0;
     }
 
-    /* Left Panel Illustration */
-    .promo-artwork-box {
+    /* Medical Illustration (Bottom-Right of Left Section) */
+    .hero-illustration {
       position: absolute;
-      bottom: -15px;
-      right: -10px;
-      width: 270px;
-      z-index: 1;
+      right: 0;
+      bottom: 0;
+      width: 50%;
+      max-width: 505px;
+      height: auto;
+      object-fit: contain;
+      object-position: bottom right;
+      z-index: 3;
       pointer-events: none;
     }
 
-    .promo-artwork-img {
+    /* Bottom Decorative Waves */
+    .shell-bottom-wave {
+      position: absolute;
+      left: 0;
+      bottom: 0;
       width: 100%;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 14px 28px rgba(0, 43, 92, 0.08));
+      height: 190px;
+      pointer-events: none;
+      z-index: 1;
     }
 
-    /* Right Registration Card */
-    .card-panel {
-      background: #FFFFFF;
-      border-radius: 28px;
-      border: 1px solid var(--slate-200);
-      box-shadow: 0 20px 45px -12px rgba(0, 43, 92, 0.12);
-      padding: 32px 34px;
-      position: relative;
+    .shell-bottom-wave svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    /* Role selection helper on top right */
-    .role-pills-bar {
+    /* ================= RIGHT SIGNUP CARD PANEL ================= */
+    .right-panel {
+      padding: 20px 24px 20px 16px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--slate-100);
-      padding-bottom: 10px;
+      justify-content: flex-end;
+      position: relative;
+      z-index: 5;
+      height: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
     }
 
-    .role-badge-label {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--slate-400);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .role-tabs {
-      display: inline-flex;
-      background: var(--slate-100);
-      padding: 3px;
-      border-radius: 20px;
-      gap: 3px;
-    }
-
-    .role-pill {
-      border: none;
-      background: transparent;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--slate-500);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      text-decoration: none;
-    }
-
-    .role-pill.active {
+    .signup-card {
       background: #FFFFFF;
-      color: var(--primary);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      border-radius: 26px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 16px 40px rgba(8, 46, 103, 0.08);
+      padding: 34px 48px;
+      width: 100%;
+      max-width: 686px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .card-header {
-      margin-bottom: 18px;
+      margin-bottom: 8px;
     }
 
     .card-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 28px;
+      font-size: clamp(38px, 2.7vw, 44px);
       font-weight: 800;
-      color: var(--navy-800);
-      letter-spacing: -0.4px;
-      margin-bottom: 4px;
+      color: var(--navy-900);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
     }
 
     .card-subtitle {
-      font-size: 13.5px;
+      font-size: 15.5px;
       color: var(--slate-500);
+      line-height: 1.45;
+      margin-bottom: 20px;
     }
 
-    /* Step Progress Indicator */
+    /* 5-Step Progress Indicator (Matching Signup.png) */
     .progress-bar-container {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       position: relative;
-      margin: 14px 0 22px;
+      margin: 0 0 22px 0;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     .progress-track {
       position: absolute;
-      top: 16px;
-      left: 20px;
-      right: 20px;
+      top: 18px;
+      left: 32px;
+      right: 32px;
       height: 2px;
       background: #E2E8F0;
       z-index: 1;
@@ -295,64 +327,53 @@
       align-items: center;
       position: relative;
       z-index: 2;
-      width: 56px;
+      flex: 1 1 0;
+      max-width: 105px;
       cursor: default;
     }
 
     .step-circle {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--slate-100);
-      color: var(--slate-400);
+      background: #F1F5F9;
+      color: #64748B;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12.5px;
+      font-size: 14px;
       font-weight: 700;
-      border: 2px solid #FFFFFF;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      border: 1.5px solid #E2E8F0;
       transition: all 0.25s ease;
     }
 
     .step-item.active .step-circle {
       background: var(--primary);
+      border-color: var(--primary);
       color: #FFFFFF;
-      box-shadow: 0 4px 10px rgba(0, 102, 230, 0.35);
+      box-shadow: 0 4px 12px rgba(8, 124, 240, 0.35);
     }
 
     .step-item.completed .step-circle {
       background: var(--green-600);
+      border-color: var(--green-600);
       color: #FFFFFF;
     }
 
     .step-label {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--slate-400);
-      margin-top: 5px;
-      white-space: nowrap;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      margin-top: 6px;
       text-align: center;
+      line-height: 1.25;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .step-item.active .step-label {
-      color: var(--navy-800);
+      color: var(--navy-900);
       font-weight: 700;
-    }
-
-    .step-active-line {
-      width: 24px;
-      height: 2px;
-      background: var(--primary);
-      border-radius: 2px;
-      margin-top: 3px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .step-item.active .step-active-line {
-      opacity: 1;
     }
 
     /* Form Section Styles */
@@ -372,16 +393,17 @@
 
     .step-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--navy-800);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy-900);
       margin-bottom: 4px;
     }
 
     .step-desc {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--slate-500);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
 
     .form-group {
@@ -390,10 +412,10 @@
 
     .form-label {
       display: block;
-      font-size: 12.5px;
+      font-size: 13.5px;
       font-weight: 700;
       color: var(--navy-900);
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .form-label .req {
@@ -403,78 +425,89 @@
 
     .form-input, .form-select {
       width: 100%;
-      padding: 10px 13px;
-      border-radius: 9px;
-      border: 1.5px solid var(--slate-200);
-      font-size: 13.5px;
+      height: 54px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1.5px solid #D4E0EC;
+      font-size: 15px;
       outline: none;
       background: #FFFFFF;
-      color: var(--slate-800);
+      color: var(--navy-900);
       transition: all 0.15s ease;
+      box-sizing: border-box;
     }
 
     .form-input:focus, .form-select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+      box-shadow: 0 0 0 3px rgba(8, 124, 245, 0.15);
     }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
     /* Mobile Number with +91 group */
     .phone-input-group {
       display: flex;
       align-items: center;
-      border: 1.5px solid var(--slate-200);
+      border: 1.5px solid #D4E0EC;
       border-radius: 10px;
       background: #FFFFFF;
       overflow: hidden;
+      height: 54px;
       transition: all 0.15s ease;
+      box-sizing: border-box;
     }
 
     .phone-input-group:focus-within {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+      box-shadow: 0 0 0 3px rgba(8, 124, 245, 0.15);
     }
 
     .country-code-badge {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 10px 13px;
-      background: var(--slate-50);
-      border-right: 1.5px solid var(--slate-200);
-      font-size: 13.5px;
+      gap: 6px;
+      width: 88px;
+      justify-content: center;
+      height: 100%;
+      background: #FFFFFF;
+      border-right: 1.5px solid #D4E0EC;
+      font-size: 15px;
       font-weight: 700;
       color: var(--navy-900);
+      cursor: pointer;
     }
 
     .phone-input-group input {
       flex: 1;
       border: none;
-      padding: 10px 13px;
-      font-size: 13.5px;
+      padding: 0 16px;
+      font-size: 15px;
       outline: none;
+      height: 100%;
+      color: var(--navy-900);
     }
 
     /* Primary Action Buttons */
     .btn-primary-blue {
       width: 100%;
-      padding: 12px;
-      border-radius: 12px;
+      height: 54px;
+      padding: 0 20px;
+      border-radius: 10px;
       border: none;
       background: var(--primary);
       color: #FFFFFF;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 14.5px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 0 4px 12px rgba(0, 102, 230, 0.25);
-      margin-top: 6px;
+      box-shadow: 0 4px 14px rgba(8, 124, 245, 0.25);
+      margin-top: 12px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -492,15 +525,19 @@
     }
 
     .btn-secondary-outline {
-      padding: 11px 16px;
+      height: 54px;
+      padding: 0 22px;
       border-radius: 10px;
       border: 1.5px solid var(--slate-200);
       background: #FFFFFF;
       color: var(--slate-600);
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-secondary-outline:hover {
@@ -516,16 +553,18 @@
       margin-top: 18px;
     }
 
-    /* Security callout pill */
+    /* Security callout card */
     .security-notice-card {
-      margin-top: 14px;
-      padding: 11px 13px;
-      border-radius: 12px;
-      background: var(--primary-light);
+      margin-top: 0;
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #EEF7FF;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border: 1px solid #BFDBFE;
+      gap: 12px;
+      border: 1px solid #CDE6FF;
+      box-sizing: border-box;
     }
 
     .security-notice-card svg {
@@ -534,9 +573,10 @@
     }
 
     .security-notice-card p {
-      font-size: 12px;
-      color: #1E40AF;
-      line-height: 1.4;
+      font-size: 13px;
+      color: #4B6B94;
+      line-height: 1.35;
+      margin: 0;
     }
 
     /* Divider & Google Auth */
@@ -544,10 +584,11 @@
       display: flex;
       align-items: center;
       text-align: center;
-      margin: 18px 0 14px;
+      margin: 12px 0 14px;
       color: var(--slate-400);
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
     .auth-divider::before, .auth-divider::after {
@@ -557,47 +598,43 @@
     }
 
     .auth-divider span {
-      padding: 0 10px;
+      padding: 0 14px;
     }
 
     .btn-google {
       width: 100%;
-      padding: 11px;
-      border-radius: 12px;
-      border: 1.5px solid var(--slate-200);
+      height: 52px;
+      border-radius: 10px;
+      border: 1.5px solid #D6E1EC;
       background: #FFFFFF;
-      color: var(--slate-800);
-      font-size: 13.5px;
-      font-weight: 700;
+      color: var(--navy-900);
+      font-size: 15px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      cursor: not-allowed;
-      opacity: 0.85;
-      position: relative;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 0;
+      margin-bottom: 16px;
     }
 
-    .coming-soon-tag {
-      font-size: 10px;
-      background: #FEF3C7;
-      color: #92400E;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-weight: 800;
-      margin-left: 6px;
+    .btn-google:hover {
+      background: var(--slate-50);
+      border-color: var(--slate-400);
     }
 
     .auth-login-link {
       text-align: center;
-      margin-top: 16px;
-      font-size: 13px;
+      margin-top: 0;
+      font-size: 14.5px;
       color: var(--slate-500);
     }
 
     .auth-login-link a {
       color: var(--primary);
-      font-weight: 800;
+      font-weight: 700;
       text-decoration: none;
       margin-left: 4px;
     }
@@ -610,26 +647,27 @@
     .otp-verify-box {
       background: var(--slate-50);
       border: 1px solid var(--slate-200);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 10px;
+      padding: 16px;
       margin-top: 12px;
+      margin-bottom: 14px;
     }
 
     .otp-inputs-row {
       display: flex;
       gap: 8px;
       justify-content: center;
-      margin: 10px 0;
+      margin: 12px 0;
     }
 
     .otp-digit-input {
-      width: 180px;
-      height: 44px;
+      width: 200px;
+      height: 52px;
       text-align: center;
       font-size: 20px;
       font-weight: 800;
-      letter-spacing: 8px;
-      border-radius: 8px;
+      letter-spacing: 6px;
+      border-radius: 10px;
       border: 1.5px solid var(--slate-200);
       background: #FFFFFF;
       outline: none;
@@ -637,53 +675,53 @@
 
     .otp-digit-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.15);
+      box-shadow: 0 0 0 3px rgba(8, 124, 245, 0.15);
     }
 
-    /* Verification Badge */
+    /* Verified Badge */
     .verified-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
       background: #DCFCE7;
       border: 1px solid #86EFAC;
       color: #166534;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       margin-bottom: 14px;
     }
 
-    /* Preference toggle cards */
+    /* Preferences */
     .pref-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
+      padding: 12px 14px;
       border-radius: 10px;
       border: 1px solid var(--slate-200);
-      margin-bottom: 9px;
+      margin-bottom: 10px;
       background: var(--slate-50);
     }
 
     .pref-text h5 {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--navy-900);
       margin-bottom: 2px;
     }
 
     .pref-text p {
-      font-size: 11.5px;
+      font-size: 12.5px;
       color: var(--slate-500);
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 40px;
-      height: 22px;
+      width: 44px;
+      height: 24px;
       flex-shrink: 0;
     }
 
@@ -699,14 +737,14 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #CBD5E1;
       transition: .2s;
-      border-radius: 22px;
+      border-radius: 24px;
     }
 
     .slider:before {
       position: absolute;
       content: "";
-      height: 16px;
-      width: 16px;
+      height: 18px;
+      width: 18px;
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -719,101 +757,99 @@
     }
 
     input:checked + .slider:before {
-      transform: translateX(18px);
+      transform: translateX(20px);
     }
 
     /* Consent Checkboxes */
     .consent-card {
       background: var(--slate-50);
-      border-radius: 11px;
+      border-radius: 12px;
       border: 1px solid var(--slate-200);
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
     }
 
     .checkbox-label {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
-      font-size: 12.5px;
+      font-size: 13.5px;
       color: var(--slate-800);
       line-height: 1.45;
     }
 
     .checkbox-label input {
       margin-top: 3px;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       accent-color: var(--primary);
       cursor: pointer;
     }
 
-    /* Complete Step Card */
+    /* Complete Card */
     .complete-card-box {
       text-align: center;
-      padding: 14px 10px;
+      padding: 12px 0;
     }
 
     .success-celebrate-icon {
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: #DCFCE7;
       color: #16A34A;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 14px;
-      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.2);
+      margin: 0 auto 16px;
     }
 
     .health-id-display-widget {
-      background: linear-gradient(135deg, #003B73 0%, #002B5C 100%);
+      background: linear-gradient(135deg, #082F67 0%, #087CF0 100%);
       color: #FFFFFF;
+      padding: 20px 24px;
       border-radius: 16px;
-      padding: 18px;
-      margin: 16px 0 20px;
-      box-shadow: 0 10px 25px -5px rgba(0, 43, 92, 0.25);
-      position: relative;
-      overflow: hidden;
+      margin: 18px 0 22px;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(8, 124, 240, 0.35);
     }
 
-    .health-id-display-widget .hid-tag {
-      font-size: 10.5px;
-      color: #38BDF8;
+    .hid-tag {
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      opacity: 0.85;
       font-weight: 700;
-      margin-bottom: 4px;
     }
 
-    .health-id-display-widget .hid-number {
-      font-family: monospace;
-      font-size: 24px;
+    .hid-number {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 26px;
       font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #FFFFFF;
+      letter-spacing: 2px;
+      margin: 8px 0;
     }
 
-    .health-id-display-widget .hid-patient-name {
-      font-size: 13.5px;
-      color: #93C5FD;
-      margin-top: 4px;
+    .hid-patient-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      opacity: 0.9;
     }
 
-    /* Alert / Validation Boxes */
+    /* Alerts */
     .form-alert {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 14px;
       display: none;
     }
 
     .form-alert-error {
       background: #FEE2E2;
-      border: 1px solid #F87171;
+      border: 1px solid #FCA5A5;
       color: #991B1B;
     }
 
@@ -823,60 +859,123 @@
       color: #166534;
     }
 
-    /* Doctor/Hospital forms container if accessed via tabs */
-    #nonPatientFormContainer {
-      display: none;
-    }
-
-    /* Back home link */
-    .back-home {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 18px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--slate-500);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    .back-home:hover {
-      color: var(--primary);
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .signup-wrapper {
-        grid-template-columns: 1fr;
-        max-width: 540px;
+    /* Responsive Breakpoints */
+    @media (max-width: 1200px) {
+      .signup-shell {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+        min-height: calc(100vh - 40px);
       }
-      .promo-panel {
-        display: none;
+      .left-panel {
+        padding: 36px 36px 0 44px;
+      }
+      .right-panel {
+        padding: 20px 28px;
+      }
+      .hero-illustration {
+        width: 55%;
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 992px) {
       body {
-        padding: 16px 8px;
+        overflow-y: auto;
       }
-      .card-panel {
-        padding: 24px 20px;
-        border-radius: 20px;
+      .signup-shell {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: auto;
+        margin: 16px;
+        width: calc(100% - 32px);
+      }
+      .left-panel {
+        padding: 36px 28px 240px 28px;
+        height: auto;
+      }
+      .hero-illustration {
+        width: 260px;
+      }
+      .right-panel {
+        padding: 28px 20px;
+        height: auto;
+      }
+      .signup-card {
+        padding: 28px 24px;
+      }
+    }
+
+    @media (max-height: 800px) and (min-width: 993px) {
+      .signup-shell {
+        margin: 10px auto;
+        min-height: calc(100vh - 20px);
+        height: calc(100vh - 20px);
+      }
+      .left-panel {
+        padding: 24px 36px 0 48px;
+      }
+      .brand-top {
+        margin-bottom: 14px;
+      }
+      .brand-logo-img {
+        width: 270px;
+      }
+      .main-hero-title {
+        font-size: 36px;
+        margin-bottom: 8px;
+      }
+      .main-hero-sub {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .feature-list {
+        gap: 10px;
+      }
+      .feature-icon-circle {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+      }
+      .right-panel {
+        padding: 10px 24px;
+      }
+      .signup-card {
+        padding: 22px 32px;
+      }
+      .card-header {
+        margin-bottom: 6px;
+      }
+      .card-title {
+        font-size: 32px;
+      }
+      .card-subtitle {
+        font-size: 13.5px;
+        margin-bottom: 14px;
       }
       .progress-bar-container {
-        margin: 10px 0 18px;
+        margin: 0 0 16px 0;
       }
-      .step-circle {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
+      .phone-input-group,
+      .form-input,
+      .form-select,
+      .btn-primary-blue,
+      .btn-secondary-outline,
+      .btn-google {
+        height: 46px;
+        font-size: 15px;
       }
-      .step-label {
-        font-size: 9.5px;
+      .btn-primary-blue {
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
-      .form-row {
-        grid-template-columns: 1fr;
+      .security-notice-card {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+      }
+      .auth-divider {
+        margin: 8px 0;
+      }
+      .btn-google {
+        margin-bottom: 10px;
       }
     }
   </style>
@@ -889,50 +988,57 @@
   <div class="bg-plus bg-plus-3">+</div>
   <div class="bg-plus bg-plus-4">+</div>
 
-  <div class="signup-wrapper">
+  <!-- Main Container Shell (Matching signup01.png) -->
+  <div class="signup-shell">
     
-    <!-- LEFT SIDE: Healthcare promotional & branding panel (Matching Signup.png) -->
-    <div class="promo-panel">
-      <!-- Top Logo -->
+    <!-- LEFT HERO SECTION (Exact same layout & elements as Login) -->
+    <div class="left-panel">
+      <!-- Decorative background plus elements -->
+      <div class="left-deco-plus left-deco-plus-1">+</div>
+      <div class="left-deco-plus left-deco-plus-2">+</div>
+
+      <!-- MediCare Logo -->
       <div class="brand-top">
-        <a href="/" style="text-decoration:none;">
-          <img src="{{ url_for('static', filename='images/medicare_logo_full.png') }}" alt="MediCare — AI-Powered Digital Healthcare Platform" class="brand-logo-img">
+        <a href="/" title="Back to MediCare Home" style="display:inline-block; text-decoration:none;">
+          <img src="{{ url_for('static', filename='images/medicare_logo_clean.png') }}" alt="MediCare - AI-Powered Digital Healthcare Platform" class="brand-logo-img">
         </a>
       </div>
 
-      <!-- Main Heading -->
-      <div>
+      <!-- Main Heading & Description -->
+      <div class="left-content">
         <h1 class="main-hero-title">
           Join MediCare<br>
-          <span>for a Healthier<br>Tomorrow</span>
+          for a Healthier<br>
+          <span>Tomorrow</span>
         </h1>
-
         <p class="main-hero-sub">
-          Create your account and take control of your healthcare journey.
+          Create your account and take control<br>
+          of your healthcare journey.
         </p>
-      </div>
 
-      <!-- Lower row: 4 features on left, illustration on right (Side-by-side) -->
-      <div class="promo-lower-row">
+        <!-- Four Feature Items -->
         <div class="feature-list">
+          <!-- 1. Manage Your Health Records -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-blue">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
             </div>
             <div class="feature-content">
               <h4>Manage Your Health Records</h4>
-              <p>All your medical information in one place</p>
+              <p>Safe, secure and always with you</p>
             </div>
           </div>
 
+          <!-- 2. Book Appointments -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-green">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -945,12 +1051,14 @@
             </div>
           </div>
 
+          <!-- 3. AI Case Intake -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-purple">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
             </div>
             <div class="feature-content">
@@ -959,9 +1067,10 @@
             </div>
           </div>
 
+          <!-- 4. Secure & Trusted -->
           <div class="feature-item">
             <div class="feature-icon-circle icon-orange">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 <polyline points="9 12 11 14 15 10"></polyline>
               </svg>
@@ -972,465 +1081,472 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Healthcare character illustration -->
-        <div class="promo-artwork-box">
-          <img src="{{ url_for('static', filename='images/signup_patient_art.png') }}" alt="MediCare Healthcare Character" class="promo-artwork-img">
-        </div>
+      <!-- Medical Illustration -->
+      <img src="{{ url_for('static', filename='images/login_patient_art_perfect.png') }}" alt="MediCare Healthcare Illustration" class="hero-illustration">
+
+      <!-- Decorative Bottom Waves -->
+      <div class="shell-bottom-wave">
+        <svg viewBox="0 0 1000 160" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="waveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0E8AF7" stop-opacity="1"/>
+            </linearGradient>
+            <linearGradient id="waveSoft" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#93C5FD" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 65C140 40 280 90 460 120C620 145 780 95 1000 105V160H0V65Z" fill="url(#waveSoft)"/>
+          <path d="M0 95C160 70 320 115 520 135C680 150 820 115 1000 125V160H0V95Z" fill="url(#waveGrad)"/>
+        </svg>
       </div>
     </div>
 
     <!-- RIGHT SIDE: Create Your Account Panel -->
-    <div class="card-panel">
+    <div class="right-panel">
+      <div class="signup-card">
 
-      <!-- Role tabs helper -->
-      <div class="role-pills-bar">
-        <span class="role-badge-label">Portal Sign Up</span>
-        <div class="role-tabs">
-          <button type="button" class="role-pill active" id="tabPatient" onclick="switchPortalRole('patient')">Patient</button>
-          <button type="button" class="role-pill" id="tabDoctor" onclick="switchPortalRole('doctor')">Doctor</button>
-          <button type="button" class="role-pill" id="tabHospital" onclick="switchPortalRole('hospital')">Hospital</button>
-        </div>
-      </div>
-
-      <!-- Main Form Header -->
-      <div class="card-header" id="patientCardHeader">
-        <h2 class="card-title">Create Your Account</h2>
-        <p class="card-subtitle">Join MediCare and take control of your healthcare journey.</p>
-      </div>
-
-      <!-- 5-Step Progress Indicator -->
-      <div class="progress-bar-container" id="patientProgressContainer">
-        <div class="progress-track">
-          <div class="progress-track-fill" id="progressFill"></div>
+        <!-- Role tabs helper (hidden for default patient signup matching signup01.png) -->
+        <div class="role-pills-bar" id="rolePillsBar" style="display:none;">
+          <span class="role-badge-label">Portal Sign Up</span>
+          <div class="role-tabs">
+            <button type="button" class="role-pill active" id="tabPatient" onclick="switchPortalRole('patient')">Patient</button>
+            <button type="button" class="role-pill" id="tabDoctor" onclick="switchPortalRole('doctor')">Doctor</button>
+            <button type="button" class="role-pill" id="tabHospital" onclick="switchPortalRole('hospital')">Hospital</button>
+          </div>
         </div>
 
-        <div class="step-item active" id="stepIndicator1">
-          <div class="step-circle">1</div>
-          <div class="step-label">Mobile Verification</div>
-          <div class="step-active-line"></div>
+        <!-- Main Form Header -->
+        <div class="card-header" id="patientCardHeader">
+          <h2 class="card-title">Create Your Account</h2>
+          <p class="card-subtitle">Join MediCare and take control of your healthcare journey.</p>
         </div>
 
-        <div class="step-item" id="stepIndicator2">
-          <div class="step-circle">2</div>
-          <div class="step-label">Basic Details</div>
-          <div class="step-active-line"></div>
+        <!-- 5-Step Progress Indicator (Matching signup01.png) -->
+        <div class="progress-bar-container" id="patientProgressContainer">
+          <div class="progress-track">
+            <div class="progress-track-fill" id="progressFill"></div>
+          </div>
+
+          <div class="step-item active" id="stepIndicator1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Mobile Verification</div>
+          </div>
+
+          <div class="step-item" id="stepIndicator2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Basic Details</div>
+          </div>
+
+          <div class="step-item" id="stepIndicator3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Preferences</div>
+          </div>
+
+          <div class="step-item" id="stepIndicator4">
+            <div class="step-circle">4</div>
+            <div class="step-label">Consent</div>
+          </div>
+
+          <div class="step-item" id="stepIndicator5">
+            <div class="step-circle">5</div>
+            <div class="step-label">Complete</div>
+          </div>
         </div>
 
-        <div class="step-item" id="stepIndicator3">
-          <div class="step-circle">3</div>
-          <div class="step-label">Preferences</div>
-          <div class="step-active-line"></div>
-        </div>
+        <!-- Global Alerts -->
+        <div class="form-alert form-alert-error" id="formErrorAlert"></div>
+        <div class="form-alert form-alert-success" id="formSuccessAlert"></div>
 
-        <div class="step-item" id="stepIndicator4">
-          <div class="step-circle">4</div>
-          <div class="step-label">Consent</div>
-          <div class="step-active-line"></div>
-        </div>
+        <!-- ================= PATIENT 5-STEP FORM ================= -->
+        <div id="patientFormWizard">
+          
+          <!-- STEP 1: MOBILE VERIFICATION -->
+          <div class="step-content active" id="stepSection1">
+            <h3 class="step-title">Verify Your Mobile Number</h3>
+            <p class="step-desc">Enter your mobile number to receive a One-Time Password (OTP).</p>
 
-        <div class="step-item" id="stepIndicator5">
-          <div class="step-circle">5</div>
-          <div class="step-label">Complete</div>
-          <div class="step-active-line"></div>
-        </div>
-      </div>
-
-      <!-- Global Alerts -->
-      <div class="form-alert form-alert-error" id="formErrorAlert"></div>
-      <div class="form-alert form-alert-success" id="formSuccessAlert"></div>
-
-      <!-- ================= PATIENT 5-STEP FORM ================= -->
-      <div id="patientFormWizard">
-        
-        <!-- STEP 1: MOBILE VERIFICATION -->
-        <div class="step-content active" id="stepSection1">
-          <h3 class="step-title">Verify Your Mobile Number</h3>
-          <p class="step-desc">Enter your mobile number to receive a One-Time Password (OTP).</p>
-
-          <div class="form-group">
-            <label class="form-label">Mobile Number <span class="req">*</span></label>
-            <div class="phone-input-group">
-              <div class="country-code-badge">
-                <span>+91</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
+            <div class="form-group">
+              <label class="form-label">Mobile Number</label>
+              <div class="phone-input-group">
+                <div class="country-code-badge">
+                  <span>+91</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <input type="tel" id="mobileNumberInput" placeholder="Enter your mobile number" maxlength="10">
               </div>
-              <input type="tel" id="mobileNumberInput" placeholder="Enter your mobile number" maxlength="10" autofocus>
-            </div>
-          </div>
-
-          <button type="button" class="btn-primary-blue" id="btnSendOtp" onclick="handleSendOtp()">
-            <span>Send OTP</span>
-          </button>
-
-          <!-- OTP Input Section (Hidden initially) -->
-          <div class="otp-verify-box" id="otpBox" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:13px; font-weight:700; color:var(--navy-800);">Enter Verification Code</span>
-              <span id="otpCountdown" style="font-size:12px; color:var(--slate-500);">Expires in 120s</span>
-            </div>
-            
-            <div class="otp-inputs-row">
-              <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" placeholder="123456">
             </div>
 
-            <div style="font-size:12px; color:#0369A1; text-align:center; margin-bottom:10px;" id="demoOtpHint">
-              Demo OTP: <strong>123456</strong>
-            </div>
-
-            <button type="button" class="btn-primary-blue" id="btnVerifyOtp" onclick="handleVerifyOtp()" style="margin-top:0;">
-              <span>Verify OTP</span>
+            <button type="button" class="btn-primary-blue" id="btnSendOtp" onclick="handleSendOtp()">
+              <span>Send OTP</span>
             </button>
 
-            <div style="text-align:center; margin-top:10px;">
-              <button type="button" onclick="handleSendOtp()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;" id="btnResendOtp">
-                Resend OTP
+            <!-- OTP Input Section (Hidden initially) -->
+            <div class="otp-verify-box" id="otpBox" style="display:none;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:13px; font-weight:700; color:var(--navy-800);">Enter Verification Code</span>
+                <span id="otpCountdown" style="font-size:12px; color:var(--slate-500);">Expires in 120s</span>
+              </div>
+              
+              <div class="otp-inputs-row">
+                <input type="text" maxlength="6" id="otpCodeInput" class="otp-digit-input" placeholder="123456">
+              </div>
+
+              <div style="font-size:12px; color:#0369A1; text-align:center; margin-bottom:10px;" id="demoOtpHint">
+                Demo OTP: <strong>123456</strong>
+              </div>
+
+              <button type="button" class="btn-primary-blue" id="btnVerifyOtp" onclick="handleVerifyOtp()" style="margin-top:0;">
+                <span>Verify OTP</span>
               </button>
-            </div>
-          </div>
 
-          <!-- Security note box -->
-          <div class="security-notice-card">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <polyline points="9 12 11 14 15 10"></polyline>
-            </svg>
-            <p>Your number will be used only for account verification and will be kept secure.</p>
-          </div>
-
-          <!-- Divider -->
-          <div class="auth-divider">
-            <span>Or continue with</span>
-          </div>
-
-          <!-- Google Button (Disabled) -->
-          <button type="button" class="btn-google" title="Google OAuth coming soon" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            <span>Continue with Google</span>
-            <span class="coming-soon-tag">Coming Soon</span>
-          </button>
-
-          <!-- Login Link -->
-          <div class="auth-login-link">
-            Already have an account? <a href="/login?role=patient">Login</a>
-          </div>
-        </div>
-
-        <!-- STEP 2: BASIC DETAILS -->
-        <div class="step-content" id="stepSection2">
-          <div class="verified-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span id="badgeMobileDisplay">+91 Verified</span>
-          </div>
-
-          <h3 class="step-title">Basic Details</h3>
-          <p class="step-desc">Enter your personal information to establish your patient profile.</p>
-
-          <div class="form-group">
-            <label class="form-label">Full Name <span class="req">*</span></label>
-            <input type="text" id="patientNameInput" class="form-input" placeholder="Enter your full name" required>
-          </div>
-
-          <div class="form-row form-group">
-            <div>
-              <label class="form-label">Date of Birth <span class="req">*</span></label>
-              <input type="date" id="patientDobInput" class="form-input" required>
-            </div>
-            <div>
-              <label class="form-label">Gender <span class="req">*</span></label>
-              <select id="patientGenderInput" class="form-select">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row form-group">
-            <div>
-              <label class="form-label">State <span class="req">*</span></label>
-              <select id="patientStateInput" class="form-select" onchange="handleStateChange()">
-                <option value="">Loading States...</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">District <span class="req">*</span></label>
-              <select id="patientDistrictInput" class="form-select">
-                <option value="">Select District</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row form-group">
-            <div>
-              <label class="form-label">Preferred Language <span class="req">*</span></label>
-              <select id="patientLangInput" class="form-select">
-                <option value="en">English (en-IN)</option>
-                <option value="ml" selected>മലയാളം - Malayalam (ml-IN)</option>
-                <option value="hi">हिन्दी - Hindi (hi-IN)</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">Password <span class="req">*</span></label>
-              <input type="password" id="patientPasswordInput" class="form-input" placeholder="Minimum 6 characters" minlength="6" value="password123">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Email Address <span style="font-size:11px; font-weight:normal; color:var(--slate-400);">(Optional)</span></label>
-            <input type="email" id="patientEmailInput" class="form-input" placeholder="name@example.com">
-          </div>
-
-          <div class="btn-nav-row">
-            <button type="button" class="btn-secondary-outline" onclick="goToStep(1)">
-              &larr; Back
-            </button>
-            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="validateAndGoToPreferences()">
-              Continue to Preferences &rarr;
-            </button>
-          </div>
-        </div>
-
-        <!-- STEP 3: PREFERENCES -->
-        <div class="step-content" id="stepSection3">
-          <h3 class="step-title">Communication Preferences</h3>
-          <p class="step-desc">Choose how MediCare notifies you about appointments, tokens, and records.</p>
-
-          <div class="pref-item">
-            <div class="pref-text">
-              <h5>Email Notifications</h5>
-              <p>Receive digital consultation briefs and clinic summaries via email.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="prefEmail" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="pref-item">
-            <div class="pref-text">
-              <h5>SMS Notifications</h5>
-              <p>Receive token confirmations and queue position alerts directly to your phone.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="prefSms" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="pref-item">
-            <div class="pref-text">
-              <h5>Appointment Reminders</h5>
-              <p>Timely reminders 1 hour before scheduled hospital consultation timeslot.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="prefReminders" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="pref-item">
-            <div class="pref-text">
-              <h5>Health &amp; Care Advisories</h5>
-              <p>Occasional preventative healthcare advisories and seasonal health tips.</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="prefHealth">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="btn-nav-row">
-            <button type="button" class="btn-secondary-outline" onclick="goToStep(2)">
-              &larr; Back
-            </button>
-            <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="goToStep(4)">
-              Continue to Consent &rarr;
-            </button>
-          </div>
-        </div>
-
-        <!-- STEP 4: CONSENT -->
-        <div class="step-content" id="stepSection4">
-          <h3 class="step-title">Privacy &amp; Consent</h3>
-          <p class="step-desc">Your clinical records are confidential and stored in full adherence with digital health privacy guidelines.</p>
-
-          <div class="security-notice-card" style="margin-bottom:16px;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <polyline points="9 12 11 14 15 10"></polyline>
-            </svg>
-            <p>MediCare enforces strict encryption and role-based data isolation. Your medical records will never be shared without your explicit authorization.</p>
-          </div>
-
-          <div class="consent-card">
-            <label class="checkbox-label">
-              <input type="checkbox" id="consentTerms">
-              <span><strong>I agree to the Terms of Service and Privacy Policy.</strong> <span class="req">*</span></span>
-            </label>
-          </div>
-
-          <div class="consent-card">
-            <label class="checkbox-label">
-              <input type="checkbox" id="consentData">
-              <span><strong>I consent to MediCare storing and processing my information to provide the digital health services I request.</strong> <span class="req">*</span></span>
-            </label>
-          </div>
-
-          <div class="consent-card">
-            <label class="checkbox-label">
-              <input type="checkbox" id="consentReminders">
-              <span>I agree to receive healthcare-related reminders and outpatient queue notifications.</span>
-            </label>
-          </div>
-
-          <div class="btn-nav-row">
-            <button type="button" class="btn-secondary-outline" onclick="goToStep(3)">
-              &larr; Back
-            </button>
-            <button type="button" class="btn-primary-blue" id="btnCreateAccount" style="margin-top:0; width:auto; padding:12px 28px;" onclick="handleFinalPatientSubmit()">
-              <span>Create Account &rarr;</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- STEP 5: COMPLETE -->
-        <div class="step-content" id="stepSection5">
-          <div class="complete-card-box">
-            <div class="success-celebrate-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-
-            <h3 class="step-title" style="font-size:22px;">Your MediCare account is ready!</h3>
-            <p class="step-desc" style="margin-bottom:0;">Welcome to MediCare. Your unique Health ID and patient profile have been generated.</p>
-
-            <!-- Health ID Display Card -->
-            <div class="health-id-display-widget">
-              <div class="hid-tag">MediCare Health ID</div>
-              <div class="hid-number" id="displayGeneratedHealthId">CB-2026-001245</div>
-              <div class="hid-patient-name" id="displayPatientName">Sajil Binu</div>
-              <div style="margin-top:10px;">
-                <button type="button" onclick="copyHealthId()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#FFFFFF; border-radius:6px; padding:5px 12px; font-size:11.5px; cursor:pointer; font-weight:600;">
-                  Copy Health ID
+              <div style="text-align:center; margin-top:10px;">
+                <button type="button" onclick="handleSendOtp()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;" id="btnResendOtp">
+                  Resend OTP
                 </button>
               </div>
             </div>
 
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <a href="/dashboard" class="btn-primary-blue" style="text-decoration:none;">
-                Go to Dashboard &rarr;
-              </a>
-              <a href="/health-records" class="btn-secondary-outline" style="text-decoration:none; text-align:center;">
-                View Health Records
-              </a>
+            <!-- Security note box (Matching signup01.png) -->
+            <div class="security-notice-card">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#087AF5">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+              </svg>
+              <p>Your number will be used only for account verification and will be kept secure.</p>
+            </div>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span>Or continue with</span>
+            </div>
+
+            <!-- Google Button (Matching signup01.png) -->
+            <button type="button" class="btn-google" onclick="showToast('Google sign-in is coming soon to MediCare.', 'info')" title="Continue with Google">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            <!-- Login Link -->
+            <div class="auth-login-link">
+              Already have an account? <a href="/login">Login</a>
             </div>
           </div>
-        </div>
 
-      </div>
-
-      <!-- ================= DOCTOR / HOSPITAL REGISTRATION FALLBACK ================= -->
-      <div id="nonPatientFormContainer">
-        <form id="nonPatientForm" onsubmit="handleNonPatientSubmit(event)">
-          <input type="hidden" id="nonPatientRole" value="doctor">
-
-          <div class="form-group">
-            <label class="form-label" id="nonPatientNameLabel">Doctor Full Name <span class="req">*</span></label>
-            <input type="text" id="nonPatientNameInput" class="form-input" required placeholder="e.g. Dr. Anand Verma">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Email Address <span class="req">*</span></label>
-            <input type="email" id="nonPatientEmailInput" class="form-input" required placeholder="contact@example.com">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Phone Number <span class="req">*</span></label>
-            <input type="tel" id="nonPatientPhoneInput" class="form-input" required placeholder="+91 98765 43210">
-          </div>
-
-          <div id="doctorExtraFields">
-            <div class="form-row form-group">
-              <div>
-                <label class="form-label">Department</label>
-                <select id="docDeptSelect" class="form-select">
-                  <option value="General Medicine">General Medicine</option>
-                  <option value="Cardiology">Cardiology</option>
-                  <option value="Pediatrics">Pediatrics</option>
-                  <option value="Orthopedics">Orthopedics</option>
-                  <option value="Dermatology">Dermatology</option>
-                  <option value="ENT">ENT</option>
-                  <option value="Kayachikitsa (Internal Medicine)">Kayachikitsa (Ayurveda)</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label">Specialization</label>
-                <input type="text" id="docSpecInput" class="form-input" placeholder="e.g. Consultant Physician">
-              </div>
+          <!-- STEP 2: BASIC DETAILS -->
+          <div class="step-content" id="stepSection2">
+            <div class="verified-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span id="badgeMobileDisplay">+91 Verified</span>
             </div>
+
+            <h3 class="step-title">Basic Details</h3>
+            <p class="step-desc">Enter your personal information to establish your patient profile.</p>
+
             <div class="form-group">
-              <label class="form-label">Consultation Fee (₹)</label>
-              <input type="number" id="docFeesInput" class="form-input" value="350">
+              <label class="form-label">Full Name <span class="req">*</span></label>
+              <input type="text" id="patientNameInput" class="form-input" placeholder="Enter your full name" required>
             </div>
-          </div>
 
-          <div id="hospitalExtraFields" style="display:none;">
             <div class="form-row form-group">
               <div>
-                <label class="form-label">Facility Type</label>
-                <select id="facTypeSelect" class="form-select">
-                  <option value="General Hospital">General Hospital</option>
-                  <option value="Community Health Centre">Community Health Centre</option>
-                  <option value="Specialty Clinic">Specialty Clinic</option>
-                  <option value="Ayush Centre">Ayush Hospital / Centre</option>
+                <label class="form-label">Date of Birth <span class="req">*</span></label>
+                <input type="date" id="patientDobInput" class="form-input" required>
+              </div>
+              <div>
+                <label class="form-label">Gender <span class="req">*</span></label>
+                <select id="patientGenderInput" class="form-select">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row form-group">
+              <div>
+                <label class="form-label">State <span class="req">*</span></label>
+                <select id="patientStateInput" class="form-select" onchange="handleStateChange()">
+                  <option value="">Loading States...</option>
                 </select>
               </div>
               <div>
-                <label class="form-label">Address / Location</label>
-                <input type="text" id="facAddressInput" class="form-input" placeholder="Kannur, Kerala" value="Hospital Road, Kannur, Kerala">
+                <label class="form-label">District <span class="req">*</span></label>
+                <select id="patientDistrictInput" class="form-select">
+                  <option value="">Select District</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row form-group">
+              <div>
+                <label class="form-label">Preferred Language <span class="req">*</span></label>
+                <select id="patientLangInput" class="form-select">
+                  <option value="en">English (en-IN)</option>
+                  <option value="ml" selected>മലയാളം - Malayalam (ml-IN)</option>
+                  <option value="hi">हिन्दी - Hindi (hi-IN)</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Password <span class="req">*</span></label>
+                <input type="password" id="patientPasswordInput" class="form-input" placeholder="Minimum 6 characters" minlength="6" value="password123">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address <span style="font-size:11px; font-weight:normal; color:var(--slate-400);">(Optional)</span></label>
+              <input type="email" id="patientEmailInput" class="form-input" placeholder="name@example.com">
+            </div>
+
+            <div class="btn-nav-row">
+              <button type="button" class="btn-secondary-outline" onclick="goToStep(1)">
+                &larr; Back
+              </button>
+              <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="validateAndGoToPreferences()">
+                Continue to Preferences &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: PREFERENCES -->
+          <div class="step-content" id="stepSection3">
+            <h3 class="step-title">Communication Preferences</h3>
+            <p class="step-desc">Choose how MediCare notifies you about appointments, tokens, and records.</p>
+
+            <div class="pref-item">
+              <div class="pref-text">
+                <h5>Email Notifications</h5>
+                <p>Receive digital consultation briefs and clinic summaries via email.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="prefEmail" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="pref-item">
+              <div class="pref-text">
+                <h5>SMS Notifications</h5>
+                <p>Receive token confirmations and queue position alerts directly to your phone.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="prefSms" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="pref-item">
+              <div class="pref-text">
+                <h5>Appointment Reminders</h5>
+                <p>Timely reminders 1 hour before scheduled hospital consultation timeslot.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="prefReminders" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="pref-item">
+              <div class="pref-text">
+                <h5>Health &amp; Care Advisories</h5>
+                <p>Occasional preventative healthcare advisories and seasonal health tips.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="prefHealth">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="btn-nav-row">
+              <button type="button" class="btn-secondary-outline" onclick="goToStep(2)">
+                &larr; Back
+              </button>
+              <button type="button" class="btn-primary-blue" style="margin-top:0; width:auto; padding:11px 26px;" onclick="goToStep(4)">
+                Continue to Consent &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: CONSENT -->
+          <div class="step-content" id="stepSection4">
+            <h3 class="step-title">Privacy &amp; Consent</h3>
+            <p class="step-desc">Your clinical records are confidential and stored in full adherence with digital health privacy guidelines.</p>
+
+            <div class="security-notice-card" style="margin-bottom:16px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+              <p>MediCare enforces strict encryption and role-based data isolation. Your medical records will never be shared without your explicit authorization.</p>
+            </div>
+
+            <div class="consent-card">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consentTerms">
+                <span><strong>I agree to the Terms of Service and Privacy Policy.</strong> <span class="req">*</span></span>
+              </label>
+            </div>
+
+            <div class="consent-card">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consentData">
+                <span><strong>I consent to MediCare storing and processing my information to provide the digital health services I request.</strong> <span class="req">*</span></span>
+              </label>
+            </div>
+
+            <div class="consent-card">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consentReminders">
+                <span>I agree to receive healthcare-related reminders and outpatient queue notifications.</span>
+              </label>
+            </div>
+
+            <div class="btn-nav-row">
+              <button type="button" class="btn-secondary-outline" onclick="goToStep(3)">
+                &larr; Back
+              </button>
+              <button type="button" class="btn-primary-blue" id="btnCreateAccount" style="margin-top:0; width:auto; padding:12px 28px;" onclick="handleFinalPatientSubmit()">
+                <span>Create Account &rarr;</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: COMPLETE -->
+          <div class="step-content" id="stepSection5">
+            <div class="complete-card-box">
+              <div class="success-celebrate-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+
+              <h3 class="step-title" style="font-size:22px;">Your MediCare account is ready!</h3>
+              <p class="step-desc" style="margin-bottom:0;">Welcome to MediCare. Your unique Health ID and patient profile have been generated.</p>
+
+              <!-- Health ID Display Card -->
+              <div class="health-id-display-widget">
+                <div class="hid-tag">MediCare Health ID</div>
+                <div class="hid-number" id="displayGeneratedHealthId">CB-2026-001245</div>
+                <div class="hid-patient-name" id="displayPatientName">Sajil Binu</div>
+                <div style="margin-top:10px;">
+                  <button type="button" onclick="copyHealthId()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#FFFFFF; border-radius:6px; padding:5px 12px; font-size:11.5px; cursor:pointer; font-weight:600;">
+                    Copy Health ID
+                  </button>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <a href="/dashboard" class="btn-primary-blue" style="text-decoration:none;">
+                  Go to Dashboard &rarr;
+                </a>
+                <a href="/health-records" class="btn-secondary-outline" style="text-decoration:none; text-align:center;">
+                  View Health Records
+                </a>
               </div>
             </div>
           </div>
 
-          <div class="form-row form-group">
-            <div>
-              <label class="form-label">Password <span class="req">*</span></label>
-              <input type="password" id="nonPatientPassword" class="form-input" required placeholder="••••••••" minlength="6">
-            </div>
-            <div>
-              <label class="form-label">Confirm Password <span class="req">*</span></label>
-              <input type="password" id="nonPatientConfirmPassword" class="form-input" required placeholder="••••••••" minlength="6">
-            </div>
-          </div>
-
-          <button type="submit" class="btn-primary-blue" id="btnNonPatientSubmit">
-            Register Profile &rarr;
-          </button>
-        </form>
-
-        <div class="auth-login-link">
-          Already have an account? <a href="/login" id="nonPatientLoginLink">Login here</a>
         </div>
-      </div>
 
+        <!-- ================= DOCTOR / HOSPITAL REGISTRATION FALLBACK ================= -->
+        <div id="nonPatientFormContainer" style="display:none;">
+          <form id="nonPatientForm" onsubmit="handleNonPatientSubmit(event)">
+            <input type="hidden" id="nonPatientRole" value="doctor">
+
+            <div class="form-group">
+              <label class="form-label" id="nonPatientNameLabel">Doctor Full Name <span class="req">*</span></label>
+              <input type="text" id="nonPatientNameInput" class="form-input" required placeholder="e.g. Dr. Anand Verma">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address <span class="req">*</span></label>
+              <input type="email" id="nonPatientEmailInput" class="form-input" required placeholder="contact@example.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="nonPatientPhoneInput" class="form-input" required placeholder="+91 98765 43210">
+            </div>
+
+            <div id="doctorExtraFields">
+              <div class="form-row form-group">
+                <div>
+                  <label class="form-label">Department</label>
+                  <select id="docDeptSelect" class="form-select">
+                    <option value="General Medicine">General Medicine</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="ENT">ENT</option>
+                    <option value="Kayachikitsa (Internal Medicine)">Kayachikitsa (Ayurveda)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Specialization</label>
+                  <input type="text" id="docSpecInput" class="form-input" placeholder="e.g. Consultant Physician">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Consultation Fee (₹)</label>
+                <input type="number" id="docFeesInput" class="form-input" value="350">
+              </div>
+            </div>
+
+            <div id="hospitalExtraFields" style="display:none;">
+              <div class="form-row form-group">
+                <div>
+                  <label class="form-label">Facility Type</label>
+                  <select id="facTypeSelect" class="form-select">
+                    <option value="General Hospital">General Hospital</option>
+                    <option value="Community Health Centre">Community Health Centre</option>
+                    <option value="Specialty Clinic">Specialty Clinic</option>
+                    <option value="Ayush Centre">Ayush Hospital / Centre</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Address / Location</label>
+                  <input type="text" id="facAddressInput" class="form-input" placeholder="Kannur, Kerala" value="Hospital Road, Kannur, Kerala">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row form-group">
+              <div>
+                <label class="form-label">Password <span class="req">*</span></label>
+                <input type="password" id="nonPatientPassword" class="form-input" required placeholder="••••••••" minlength="6">
+              </div>
+              <div>
+                <label class="form-label">Confirm Password <span class="req">*</span></label>
+                <input type="password" id="nonPatientConfirmPassword" class="form-input" required placeholder="••••••••" minlength="6">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary-blue" id="btnNonPatientSubmit">
+              Register Profile &rarr;
+            </button>
+          </form>
+
+          <div class="auth-login-link">
+            Already have an account? <a href="/login" id="nonPatientLoginLink">Login here</a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-
-  <a href="/" class="back-home">
-    &larr; Back to MediCare Public Home
-  </a>
 
   <script>
     // State management for Patient 5-step registration
@@ -1440,8 +1556,11 @@
 
     // Max DOB allowed is today
     const todayStr = new Date().toISOString().split('T')[0];
-    document.getElementById('patientDobInput').setAttribute('max', todayStr);
-    document.getElementById('patientDobInput').value = '1998-05-14';
+    const dobInput = document.getElementById('patientDobInput');
+    if (dobInput) {
+      dobInput.setAttribute('max', todayStr);
+      dobInput.value = '1998-05-14';
+    }
 
     function showError(msg) {
       const err = document.getElementById('formErrorAlert');
@@ -1449,11 +1568,6 @@
       succ.style.display = 'none';
       err.textContent = msg;
       err.style.display = 'block';
-    }
-
-    function hideAlerts() {
-      document.getElementById('formErrorAlert').style.display = 'none';
-      document.getElementById('formSuccessAlert').style.display = 'none';
     }
 
     function showSuccess(msg) {
@@ -1464,53 +1578,13 @@
       succ.style.display = 'block';
     }
 
-    // Role switching between Patient and Doctor/Hospital
-    function switchPortalRole(roleKey) {
-      hideAlerts();
-      ['patient', 'doctor', 'hospital'].forEach(r => {
-        const tab = document.getElementById('tab' + r.charAt(0).toUpperCase() + r.slice(1));
-        if (tab) {
-          if (r === roleKey) tab.classList.add('active');
-          else tab.classList.remove('active');
-        }
-      });
+    function hideAlerts() {
+      document.getElementById('formErrorAlert').style.display = 'none';
+      document.getElementById('formSuccessAlert').style.display = 'none';
+    }
 
-      if (roleKey === 'patient') {
-        document.getElementById('patientFormWizard').style.display = 'block';
-        document.getElementById('patientProgressContainer').style.display = 'flex';
-        document.getElementById('patientCardHeader').style.display = 'block';
-        document.getElementById('nonPatientFormContainer').style.display = 'none';
-      } else {
-        document.getElementById('patientFormWizard').style.display = 'none';
-        document.getElementById('patientProgressContainer').style.display = 'none';
-        document.getElementById('patientCardHeader').style.display = 'block';
-        document.getElementById('nonPatientFormContainer').style.display = 'block';
-        document.getElementById('nonPatientRole').value = roleKey;
-
-        const cardTitle = document.querySelector('.card-title');
-        const cardSub = document.querySelector('.card-subtitle');
-        const nameLabel = document.getElementById('nonPatientNameLabel');
-        const btnSubmit = document.getElementById('btnNonPatientSubmit');
-        const loginLink = document.getElementById('nonPatientLoginLink');
-
-        loginLink.href = `/login?role=${roleKey}`;
-
-        if (roleKey === 'doctor') {
-          cardTitle.textContent = 'Doctor Registration';
-          cardSub.textContent = 'Register your clinical profile to consult OPD patients.';
-          nameLabel.innerHTML = 'Doctor Full Name <span class="req">*</span>';
-          document.getElementById('doctorExtraFields').style.display = 'block';
-          document.getElementById('hospitalExtraFields').style.display = 'none';
-          btnSubmit.innerHTML = 'Register Doctor Profile &rarr;';
-        } else if (roleKey === 'hospital') {
-          cardTitle.textContent = 'Hospital / Facility Registration';
-          cardSub.textContent = 'Register your healthcare facility to manage outpatient tokens.';
-          nameLabel.innerHTML = 'Hospital / Facility Name <span class="req">*</span>';
-          document.getElementById('doctorExtraFields').style.display = 'none';
-          document.getElementById('hospitalExtraFields').style.display = 'block';
-          btnSubmit.innerHTML = 'Register Facility &rarr;';
-        }
-      }
+    function showToast(message, type = 'info') {
+      alert(message);
     }
 
     // Wizard Step Navigation
@@ -1518,41 +1592,38 @@
       hideAlerts();
       currentStep = stepNum;
 
+      // Update progress circles & track
       for (let i = 1; i <= 5; i++) {
+        const item = document.getElementById('stepIndicator' + i);
+        if (item) {
+          if (i === stepNum) {
+            item.className = 'step-item active';
+          } else if (i < stepNum) {
+            item.className = 'step-item completed';
+          } else {
+            item.className = 'step-item';
+          }
+        }
+
         const sec = document.getElementById('stepSection' + i);
-        const ind = document.getElementById('stepIndicator' + i);
         if (sec) {
           if (i === stepNum) sec.classList.add('active');
           else sec.classList.remove('active');
         }
-        if (ind) {
-          ind.classList.remove('active');
-          if (i < stepNum) {
-            ind.classList.add('completed');
-            ind.querySelector('.step-circle').innerHTML = '&#10003;';
-          } else if (i === stepNum) {
-            ind.classList.add('active');
-            ind.querySelector('.step-circle').textContent = i;
-          } else {
-            ind.classList.remove('completed');
-            ind.querySelector('.step-circle').textContent = i;
-          }
-        }
       }
 
-      // Fill progress bar width
-      const fillPercent = ((stepNum - 1) / 4) * 100;
-      document.getElementById('progressFill').style.width = fillPercent + '%';
+      const fillPct = ((stepNum - 1) / 4) * 100;
+      document.getElementById('progressFill').style.width = fillPct + '%';
     }
 
-    // Step 1: Send OTP
+    // STEP 1: Send OTP
     async function handleSendOtp() {
       hideAlerts();
       const rawMobile = document.getElementById('mobileNumberInput').value.trim();
       const cleanMobile = rawMobile.replace(/[\s-]/g, '').replace(/^\+91/, '');
 
       if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
-        showError('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).');
+        showError('Please enter a valid 10-digit Indian mobile number.');
         return;
       }
 
@@ -1576,23 +1647,23 @@
           document.getElementById('otpCodeInput').value = data.data && data.data.demo_otp ? data.data.demo_otp : '123456';
           document.getElementById('otpCodeInput').focus();
         } else {
-          showError(data.message || 'Unable to send OTP. Please check the number.');
+          showError(data.message || 'Unable to send OTP.');
           btn.disabled = false;
           btn.innerHTML = '<span>Send OTP</span>';
         }
       } catch (err) {
-        showError('Network error while requesting OTP. Please check connection.');
+        showError('Network error while requesting OTP.');
         btn.disabled = false;
         btn.innerHTML = '<span>Send OTP</span>';
       }
     }
 
-    // Step 1: Verify OTP
+    // STEP 1: Verify OTP
     async function handleVerifyOtp() {
       hideAlerts();
       const otp = document.getElementById('otpCodeInput').value.trim();
       if (!otp) {
-        showError('Please enter the 6-digit verification code.');
+        showError('Please enter the 6-digit OTP code.');
         return;
       }
 
@@ -1609,79 +1680,28 @@
 
         const data = await res.json();
         if (data.success) {
-          document.getElementById('badgeMobileDisplay').textContent = `+91 ${verifiedMobile} \u2713 Verified`;
+          document.getElementById('badgeMobileDisplay').textContent = '+91 ' + verifiedMobile + ' Verified';
           goToStep(2);
         } else {
-          showError(data.message || 'Invalid verification code. Please enter 123456.');
+          showError(data.message || 'Invalid verification code. Enter 123456.');
           btn.disabled = false;
           btn.innerHTML = '<span>Verify OTP</span>';
         }
       } catch (err) {
-        showError('Verification request failed. Please try again.');
+        showError('Network error during OTP verification.');
         btn.disabled = false;
         btn.innerHTML = '<span>Verify OTP</span>';
       }
     }
 
-    // Location: Load States & Districts from backend
-    async function loadStates() {
-      try {
-        const res = await fetch('/api/states');
-        const json = await res.json();
-        if (json.success && json.data) {
-          statesList = json.data;
-          const stateSelect = document.getElementById('patientStateInput');
-          stateSelect.innerHTML = '<option value="">Select State</option>';
-          statesList.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            if (s === 'Kerala') opt.selected = true;
-            stateSelect.appendChild(opt);
-          });
-          await loadDistricts('Kerala');
-        }
-      } catch (err) {
-        console.warn('Failed to load states:', err);
-      }
-    }
-
-    async function loadDistricts(stateName) {
-      if (!stateName) return;
-      try {
-        const res = await fetch(`/api/districts?state=${encodeURIComponent(stateName)}`);
-        const json = await res.json();
-        if (json.success && json.data) {
-          const distSelect = document.getElementById('patientDistrictInput');
-          distSelect.innerHTML = '<option value="">Select District</option>';
-          json.data.forEach(d => {
-            const opt = document.createElement('option');
-            opt.value = d;
-            opt.textContent = d;
-            if (d === 'Kannur') opt.selected = true;
-            distSelect.appendChild(opt);
-          });
-        }
-      } catch (err) {
-        console.warn('Failed to load districts:', err);
-      }
-    }
-
-    function handleStateChange() {
-      const state = document.getElementById('patientStateInput').value;
-      loadDistricts(state);
-    }
-
-    // Step 2 Validation
+    // STEP 2: Validate Basic Details & Proceed
     function validateAndGoToPreferences() {
       hideAlerts();
       const name = document.getElementById('patientNameInput').value.trim();
       const dob = document.getElementById('patientDobInput').value;
-      const gender = document.getElementById('patientGenderInput').value;
       const state = document.getElementById('patientStateInput').value;
-      const district = document.getElementById('patientDistrictInput').value;
-      const lang = document.getElementById('patientLangInput').value;
-      const password = document.getElementById('patientPasswordInput').value;
+      const dist = document.getElementById('patientDistrictInput').value;
+      const pass = document.getElementById('patientPasswordInput').value;
 
       if (!name) {
         showError('Please enter your full name.');
@@ -1691,69 +1711,58 @@
         showError('Please select your date of birth.');
         return;
       }
-      if (!gender) {
-        showError('Please select your gender.');
-        return;
-      }
       if (!state) {
-        showError('Please select your state.');
+        showError('Please select your residential state.');
         return;
       }
-      if (!district) {
+      if (!dist) {
         showError('Please select your district.');
         return;
       }
-      if (!lang) {
-        showError('Please select your preferred language.');
-        return;
-      }
-      if (!password || password.length < 6) {
-        showError('Please choose a password with at least 6 characters.');
+      if (!pass || pass.length < 6) {
+        showError('Please enter a password of at least 6 characters.');
         return;
       }
 
       goToStep(3);
     }
 
-    // Step 4 Final Submit
+    // STEP 4 -> 5: Final Submission & Account Creation
     async function handleFinalPatientSubmit() {
       hideAlerts();
-      const termsChecked = document.getElementById('consentTerms').checked;
-      const dataChecked = document.getElementById('consentData').checked;
+      const consentTerms = document.getElementById('consentTerms').checked;
+      const consentData = document.getElementById('consentData').checked;
 
-      if (!termsChecked || !dataChecked) {
-        showError('Please accept the required Terms of Service and Health Data Processing consent checkboxes.');
+      if (!consentTerms || !consentData) {
+        showError('Please agree to the Terms of Service and data consent to proceed.');
         return;
       }
 
       const btn = document.getElementById('btnCreateAccount');
       btn.disabled = true;
-      btn.innerHTML = '<span>Creating Account...</span>';
+      btn.innerHTML = '<span>Generating Health ID...</span>';
 
       const payload = {
         role: 'patient',
         mobile: verifiedMobile,
-        phone: verifiedMobile,
-        mobile_verified: true,
         name: document.getElementById('patientNameInput').value.trim(),
-        date_of_birth: document.getElementById('patientDobInput').value,
+        dob: document.getElementById('patientDobInput').value,
         gender: document.getElementById('patientGenderInput').value,
         state: document.getElementById('patientStateInput').value,
         district: document.getElementById('patientDistrictInput').value,
         preferred_language: document.getElementById('patientLangInput').value,
-        email: document.getElementById('patientEmailInput').value.trim(),
         password: document.getElementById('patientPasswordInput').value,
-        communication_preferences: {
-          email: document.getElementById('prefEmail').checked,
-          sms: document.getElementById('prefSms').checked,
+        email: document.getElementById('patientEmailInput').value.trim() || undefined,
+        preferences: {
+          email_notifications: document.getElementById('prefEmail').checked,
+          sms_notifications: document.getElementById('prefSms').checked,
           appointment_reminders: document.getElementById('prefReminders').checked,
-          health_updates: document.getElementById('prefHealth').checked
+          health_advisories: document.getElementById('prefHealth').checked
         },
         consent: {
-          terms: true,
-          privacy: true,
-          health_data_processing: true,
-          reminders: document.getElementById('consentReminders').checked
+          terms_agreed: true,
+          data_processing: true,
+          reminders_agreed: document.getElementById('consentReminders').checked
         }
       };
 
@@ -1765,27 +1774,32 @@
         });
 
         const data = await res.json();
-
         if (data.success && data.data) {
-          const generatedHid = data.data.health_id || 'CB-2026-001245';
-          document.getElementById('displayGeneratedHealthId').textContent = generatedHid;
-          document.getElementById('displayPatientName').textContent = payload.name;
+          const healthId = data.data.health_id || ('CB-2026-' + Math.floor(100000 + Math.random() * 900000));
+          const userName = data.data.name || payload.name;
+          const token = data.data.access_token || '';
 
-          localStorage.setItem('name', payload.name);
-          localStorage.setItem('role', 'patient');
-          localStorage.setItem('health_id', generatedHid);
-          if (data.data.access_token) {
-            localStorage.setItem('token', data.data.access_token);
+          if (token) {
+            localStorage.setItem('token', token);
+            document.cookie = "auth_token=" + token + "; path=/; max-age=604800; SameSite=Lax";
           }
+          localStorage.setItem('name', userName);
+          localStorage.setItem('role', 'patient');
+          localStorage.setItem('health_id', healthId);
 
-          goToStep(5);
+          document.cookie = "auth_role=patient; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_name=" + encodeURIComponent(userName) + "; path=/; max-age=604800; SameSite=Lax";
+          document.cookie = "auth_health_id=" + encodeURIComponent(healthId) + "; path=/; max-age=604800; SameSite=Lax";
+
+          // Redirect immediately to patient dashboard
+          window.location.href = data.data.redirect_url || '/dashboard';
         } else {
-          showError(data.message || 'Registration could not be completed. Please try again.');
+          showError(data.message || 'Registration failed. Please check your details.');
           btn.disabled = false;
           btn.innerHTML = '<span>Create Account &rarr;</span>';
         }
       } catch (err) {
-        showError('Network communication error during account creation. Please try again.');
+        showError('Network error during registration submission.');
         btn.disabled = false;
         btn.innerHTML = '<span>Create Account &rarr;</span>';
       }
@@ -1793,74 +1807,86 @@
 
     function copyHealthId() {
       const hid = document.getElementById('displayGeneratedHealthId').textContent;
-      navigator.clipboard.writeText(hid);
-      alert('Health ID copied: ' + hid);
+      navigator.clipboard.writeText(hid).then(() => {
+        alert('Health ID copied: ' + hid);
+      });
     }
 
-    // Doctor/Hospital submission
-    async function handleNonPatientSubmit(event) {
-      event.preventDefault();
-      hideAlerts();
-      const role = document.getElementById('nonPatientRole').value;
-      const name = document.getElementById('nonPatientNameInput').value.trim();
-      const email = document.getElementById('nonPatientEmailInput').value.trim();
-      const phone = document.getElementById('nonPatientPhoneInput').value.trim();
-      const password = document.getElementById('nonPatientPassword').value;
-      const confirmPassword = document.getElementById('nonPatientConfirmPassword').value;
+    // Role switcher if accessed via ?role=doctor or ?role=hospital
+    function switchPortalRole(role) {
+      if (role === 'patient') {
+        document.getElementById('patientCardHeader').style.display = 'block';
+        document.getElementById('patientProgressContainer').style.display = 'flex';
+        document.getElementById('patientFormWizard').style.display = 'block';
+        document.getElementById('nonPatientFormContainer').style.display = 'none';
+        goToStep(1);
+      } else {
+        document.getElementById('patientCardHeader').style.display = 'none';
+        document.getElementById('patientProgressContainer').style.display = 'none';
+        document.getElementById('patientFormWizard').style.display = 'none';
+        document.getElementById('nonPatientFormContainer').style.display = 'block';
 
-      if (password !== confirmPassword) {
-        showError('Passwords do not match.');
-        return;
-      }
-
-      const btn = document.getElementById('btnNonPatientSubmit');
-      btn.disabled = true;
-      btn.innerHTML = '<span>Registering...</span>';
-
-      const payload = { role, name, email, phone, password };
-
-      if (role === 'doctor') {
-        payload.department = document.getElementById('docDeptSelect').value;
-        payload.specialization = document.getElementById('docSpecInput').value || 'Consultant Specialist';
-        payload.fees = parseInt(document.getElementById('docFeesInput').value) || 350;
-      } else if (role === 'hospital') {
-        payload.facility_type = document.getElementById('facTypeSelect').value;
-        payload.address = document.getElementById('facAddressInput').value;
-      }
-
-      try {
-        const res = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          showSuccess('Account registered successfully! Redirecting to login...');
-          setTimeout(() => {
-            window.location.href = `/login?role=${role}`;
-          }, 1200);
+        document.getElementById('nonPatientRole').value = role;
+        if (role === 'doctor') {
+          document.getElementById('nonPatientNameLabel').innerHTML = 'Doctor Full Name <span class="req">*</span>';
+          document.getElementById('doctorExtraFields').style.display = 'block';
+          document.getElementById('hospitalExtraFields').style.display = 'none';
         } else {
-          showError(data.message || 'Registration failed.');
-          btn.disabled = false;
-          btn.innerHTML = '<span>Register Profile &rarr;</span>';
+          document.getElementById('nonPatientNameLabel').innerHTML = 'Hospital / Facility Name <span class="req">*</span>';
+          document.getElementById('doctorExtraFields').style.display = 'none';
+          document.getElementById('hospitalExtraFields').style.display = 'block';
         }
-      } catch (err) {
-        showError('Network error during registration.');
-        btn.disabled = false;
-        btn.innerHTML = '<span>Register Profile &rarr;</span>';
       }
     }
 
-    // On Load
-    document.addEventListener('DOMContentLoaded', () => {
-      loadStates();
+    // State & District data loader
+    async function loadStatesAndDistricts() {
+      try {
+        const res = await fetch('/api/public/states-districts');
+        const data = await res.json();
+        if (data.success && data.data) {
+          statesList = data.data;
+          const stateSelect = document.getElementById('patientStateInput');
+          stateSelect.innerHTML = '<option value="">Select State</option>';
+          statesList.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.state;
+            opt.textContent = s.state;
+            if (s.state === 'Kerala') opt.selected = true;
+            stateSelect.appendChild(opt);
+          });
+          handleStateChange();
+        }
+      } catch (e) {
+        console.warn('Could not load states list:', e);
+      }
+    }
 
+    function handleStateChange() {
+      const selectedState = document.getElementById('patientStateInput').value;
+      const distSelect = document.getElementById('patientDistrictInput');
+      distSelect.innerHTML = '<option value="">Select District</option>';
+
+      const found = statesList.find(s => s.state === selectedState);
+      if (found && found.districts) {
+        found.districts.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = d;
+          if (d === 'Kannur') opt.selected = true;
+          distSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // Auto-detect role from URL
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStatesAndDistricts();
       const urlParams = new URLSearchParams(window.location.search);
-      const requestedRole = urlParams.get('role');
-      if (requestedRole && requestedRole !== 'patient') {
-        switchPortalRole(requestedRole);
+      const roleParam = urlParams.get('role');
+      if (roleParam && (roleParam === 'doctor' || roleParam === 'hospital')) {
+        document.getElementById('rolePillsBar').style.display = 'flex';
+        switchPortalRole(roleParam);
       }
     });
   </script>
