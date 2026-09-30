@@ -1,6 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from utils.helpers import success_response, error_response
-from utils.india_locations import get_all_states, get_districts_by_state, get_cities_by_district
+from utils.india_locations import get_all_states, get_districts_by_state, get_cities_by_district, INDIAN_STATES_AND_UTS
 from utils.medical_systems import get_medical_systems_list, get_system_by_code_or_name
 from database.db import mongo
 from bson.objectid import ObjectId
@@ -18,16 +18,42 @@ def get_medical_systems():
 def get_states():
     """Returns all 28 states and 8 Union Territories in India."""
     states = get_all_states()
-    return success_response(data=states)
+    return jsonify({
+        "success": True,
+        "states": states,
+        "data": states
+    }), 200
 
 @facility_bp.route('/districts', methods=['GET'])
 def get_districts():
-    """Returns districts for the given state query parameter."""
+    """Returns districts for the given state query parameter with validation."""
     state = request.args.get('state', '').strip()
     if not state:
-        return error_response("State parameter is required", status=400)
-    districts = get_districts_by_state(state)
-    return success_response(data=districts)
+        return jsonify({
+            "success": False,
+            "message": "State parameter is required"
+        }), 400
+
+    # Validate requested state
+    canonical_state = None
+    for s_name in INDIAN_STATES_AND_UTS:
+        if s_name.lower() == state.lower():
+            canonical_state = s_name
+            break
+
+    if not canonical_state:
+        return jsonify({
+            "success": False,
+            "message": f"Invalid state: '{state}'. Please provide a valid Indian State or Union Territory."
+        }), 400
+
+    districts = get_districts_by_state(canonical_state)
+    return jsonify({
+        "success": True,
+        "state": canonical_state,
+        "districts": districts,
+        "data": districts
+    }), 200
 
 @facility_bp.route('/cities', methods=['GET'])
 def get_cities():

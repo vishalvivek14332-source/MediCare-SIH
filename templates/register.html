@@ -1279,13 +1279,13 @@
               <div>
                 <label class="form-label">State <span class="req">*</span></label>
                 <select id="patientStateInput" class="form-select" onchange="handleStateChange()">
-                  <option value="">Loading States...</option>
+                  <option value="">Select State</option>
                 </select>
               </div>
               <div>
                 <label class="form-label">District <span class="req">*</span></label>
-                <select id="patientDistrictInput" class="form-select">
-                  <option value="">Select District</option>
+                <select id="patientDistrictInput" class="form-select" disabled>
+                  <option value="">Select State First</option>
                 </select>
               </div>
             </div>
@@ -1839,44 +1839,90 @@
       }
     }
 
+    // State & District caching
+    let cachedStates = [];
+    const districtCache = {};
+
     // State & District data loader
     async function loadStatesAndDistricts() {
+      const stateSelect = document.getElementById('patientStateInput');
+      const distSelect = document.getElementById('patientDistrictInput');
+      if (!stateSelect) return;
+
       try {
-        const res = await fetch('/api/public/states-districts');
+        const res = await fetch('/api/states');
         const data = await res.json();
-        if (data.success && data.data) {
-          statesList = data.data;
-          const stateSelect = document.getElementById('patientStateInput');
+        const states = data.states || data.data || [];
+        if (data.success && states.length > 0) {
+          cachedStates = states;
           stateSelect.innerHTML = '<option value="">Select State</option>';
-          statesList.forEach(s => {
+          states.forEach(s => {
             const opt = document.createElement('option');
-            opt.value = s.state;
-            opt.textContent = s.state;
-            if (s.state === 'Kerala') opt.selected = true;
+            opt.value = s;
+            opt.textContent = s;
             stateSelect.appendChild(opt);
           });
-          handleStateChange();
+          stateSelect.disabled = false;
+        } else {
+          stateSelect.innerHTML = '<option value="">Select State</option>';
         }
       } catch (e) {
         console.warn('Could not load states list:', e);
+        stateSelect.innerHTML = '<option value="">Select State</option>';
       }
     }
 
-    function handleStateChange() {
-      const selectedState = document.getElementById('patientStateInput').value;
+    async function handleStateChange() {
+      const stateSelect = document.getElementById('patientStateInput');
       const distSelect = document.getElementById('patientDistrictInput');
-      distSelect.innerHTML = '<option value="">Select District</option>';
+      if (!stateSelect || !distSelect) return;
 
-      const found = statesList.find(s => s.state === selectedState);
-      if (found && found.districts) {
-        found.districts.forEach(d => {
-          const opt = document.createElement('option');
-          opt.value = d;
-          opt.textContent = d;
-          if (d === 'Kannur') opt.selected = true;
-          distSelect.appendChild(opt);
-        });
+      const selectedState = stateSelect.value.trim();
+
+      if (!selectedState) {
+        distSelect.innerHTML = '<option value="">Select State First</option>';
+        distSelect.disabled = true;
+        return;
       }
+
+      // Check cache first for instant response
+      if (districtCache[selectedState]) {
+        renderDistricts(selectedState, districtCache[selectedState]);
+        return;
+      }
+
+      distSelect.innerHTML = '<option value="">Loading Districts...</option>';
+      distSelect.disabled = true;
+
+      try {
+        const res = await fetch(`/api/districts?state=${encodeURIComponent(selectedState)}`);
+        const data = await res.json();
+        const districts = data.districts || data.data || [];
+        if (data.success && districts.length > 0) {
+          districtCache[selectedState] = districts;
+          renderDistricts(selectedState, districts);
+        } else {
+          distSelect.innerHTML = '<option value="">Unable to load districts. Please try again.</option>';
+          distSelect.disabled = false;
+        }
+      } catch (err) {
+        console.warn('Failed to load districts:', err);
+        distSelect.innerHTML = '<option value="">Unable to load districts. Please try again.</option>';
+        distSelect.disabled = false;
+      }
+    }
+
+    function renderDistricts(stateName, districts) {
+      const distSelect = document.getElementById('patientDistrictInput');
+      if (!distSelect) return;
+      distSelect.innerHTML = '<option value="">Select District</option>';
+      districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        distSelect.appendChild(opt);
+      });
+      distSelect.disabled = false;
     }
 
     // Auto-detect role from URL

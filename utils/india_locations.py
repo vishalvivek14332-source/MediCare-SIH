@@ -351,19 +351,25 @@ INDIA_LOCATIONS = {
 }
 
 
+INDIAN_STATES_AND_UTS = sorted(list(INDIA_LOCATIONS.keys()))
+DISTRICTS_BY_STATE = {s: sorted(list(data["districts"].keys())) for s, data in INDIA_LOCATIONS.items()}
+
+
 def get_all_states():
     """Return sorted list of all 28 states and 8 Union Territories."""
-    return sorted(list(INDIA_LOCATIONS.keys()))
+    return INDIAN_STATES_AND_UTS
 
 
 def get_districts_by_state(state):
     """Return sorted list of districts for a given State/UT."""
     if not state:
         return []
+    if state in DISTRICTS_BY_STATE:
+        return DISTRICTS_BY_STATE[state]
     # Case-insensitive match
-    for s_name, data in INDIA_LOCATIONS.items():
+    for s_name, districts in DISTRICTS_BY_STATE.items():
         if s_name.lower() == state.strip().lower():
-            return sorted(list(data["districts"].keys()))
+            return districts
     return []
 
 
