@@ -281,6 +281,22 @@ def get_facility_department_doctors(facility_id, dept_name):
             doc['available_today'] = True
         if 'next_token' not in doc:
             doc['next_token'] = "A-024"
+        if 'photo' not in doc or not doc['photo']:
+            name_lower = (doc.get('name') or '').lower()
+            if 'arun' in name_lower:
+                doc['photo'] = '/static/images/doctors/dr_arun_kumar.png'
+            elif 'arjun' in name_lower:
+                doc['photo'] = '/static/images/doctors/dr_arjun_kumar.png'
+            elif 'faisal' in name_lower:
+                doc['photo'] = '/static/images/doctors/dr_faisal_rahman.png'
+            elif 'sreelakshmi' in name_lower:
+                doc['photo'] = '/static/images/doctors/dr_sreelakshmi_nair.png'
+            elif any(m in name_lower for m in ['rajesh', 'santhosh', 'ramesh', 'manoj', 'vinod', 'harikrishnan', 'suresh']):
+                doc['photo'] = '/static/images/doctors/dr_arun_kumar.png'
+            else:
+                doc['photo'] = '/static/images/doctors/dr_meera_nair.png'
+        doc['image'] = doc['photo']
+        doc['profile_image'] = doc['photo']
 
     return success_response(data=doctors)
 

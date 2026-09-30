@@ -1109,6 +1109,12 @@ def seed_all_facilities_and_doctors(db):
     Populates MongoDB Atlas with the comprehensive multi-system facilities and matching doctors.
     Guarantees every facility has distinct, matching doctors for all its departments.
     """
+    try:
+        if db.settings.find_one({"key": "seed_expanded_facilities_done"}):
+            return
+    except Exception:
+        pass
+
     seeded_fac_count = 0
     seeded_doc_count = 0
 
@@ -1198,5 +1204,10 @@ def seed_all_facilities_and_doctors(db):
                         "verification_status": "Demo Facility Doctor"
                     }}
                 )
+
+    try:
+        db.settings.update_one({"key": "seed_expanded_facilities_done"}, {"$set": {"seeded": True}}, upsert=True)
+    except Exception:
+        pass
 
     print(f"[SEED] Expanded facilities processed. Added {seeded_fac_count} new clinics, {seeded_doc_count} new doctors.")

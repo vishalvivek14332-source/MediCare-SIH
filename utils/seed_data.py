@@ -6,15 +6,19 @@ from database.db import mongo
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 from utils.facility_dataset import seed_all_facilities_and_doctors
+from database.seed_kerala_facilities import seed_kerala_facilities
 
 _SEEDED = False
 
 def seed_database():
     global _SEEDED
+    if _SEEDED:
+        return
     try:
         seed_core_patient_and_base()
         seed_healthcare_facilities_and_doctors()
         seed_all_facilities_and_doctors(mongo.db)
+        seed_kerala_facilities(mongo.db)
         _SEEDED = True
     except Exception as e:
         print(f"Seed data error: {e}")
@@ -425,6 +429,12 @@ def seed_healthcare_facilities_and_doctors():
     across states (Kerala, Karnataka, Tamil Nadu, Delhi, Rajasthan, West Bengal, Ladakh, HP).
     All data is clearly categorized as 'Demo Facility' for sandbox testing unless officially verified.
     """
+    try:
+        if mongo.db.settings.find_one({"key": "seed_ayush_v2_completed"}):
+            return
+    except Exception:
+        pass
+
     facilities = [
         # 1. Modern / Conventional Medicine
         {
